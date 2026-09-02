@@ -1,85 +1,435 @@
-<!DOCTYPE html><html lang="ar" dir="rtl">
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>DZ MARKET 🇩🇿</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-</head><body><header class="header">
-    <div class="logo">DZ MARKET 🇩🇿</div><div class="search">
-    <input type="text" placeholder="ابحثي عن منتج...">
-    <button>بحث</button>
-</div>
 
-<div class="actions">
-    <button>❤️</button>
-    <button>🛒</button>
-    <button>👤</button>
-</div>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
 
-</header><main><section class="hero">
-    <div>
-        <h1>مرحبا بك في DZ MARKET 🇩🇿</h1>
-        <p>سوق إلكتروني يجمعك بالمنتجات والمتاجر الجزائرية.</p>
+<body>
 
-        <div class="hero-buttons">
-            <button>اكتشفي المنتجات</button>
-            <button>افتحي متجرك</button>
-        </div>
+<header class="navbar">
+
+    <div class="logo">
+        <span>DZ</span> MARKET 🇩🇿
     </div>
-</section>
 
-<section class="section">
-    <h2>التصنيفات</h2>
-
-    <div class="categories">
-        <div>👗 أزياء</div>
-        <div>📱 إلكترونيات</div>
-        <div>🏠 المنزل</div>
-        <div>💄 الجمال</div>
-        <div>🎁 هدايا</div>
-        <div>🍰 مأكولات</div>
+    <div class="search-box">
+        <input
+            type="text"
+            placeholder="ابحثي عن منتج، متجر أو فئة..."
+        >
+        <button>🔍</button>
     </div>
-</section>
 
-<section class="section">
-    <h2>منتجات مميزة</h2>
+    <div class="nav-actions">
+        <button title="الوضع الليلي" onclick="toggleTheme()">
+            🌙
+        </button>
 
-    <div class="products">
+        <button title="المفضلة">
+            ❤️
+        </button>
 
-        <div class="product">
-            <div class="product-image">📦</div>
-            <h3>منتج جزائري مميز</h3>
-            <p>وصف المنتج</p>
-            <strong>1,500 دج</strong>
-            <button>أضيفي للسلة 🛒</button>
+        <button title="السلة">
+            🛒
+        </button>
+
+        <button title="الحساب">
+            👤
+        </button>
+    </div>
+
+</header>
+
+
+<nav class="categories-bar">
+
+    <a href="#">الرئيسية</a>
+    <a href="#">👗 الأزياء</a>
+    <a href="#">📱 الإلكترونيات</a>
+    <a href="#">🏠 المنزل</a>
+    <a href="#">💄 الجمال</a>
+    <a href="#">🎁 الهدايا</a>
+    <a href="#">🍰 المأكولات</a>
+    <a href="#">🇩🇿 منتجات جزائرية</a>
+
+</nav>
+
+
+<main>
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <span class="badge">
+                🇩🇿 سوق جزائري
+            </span>
+
+            <h1>
+                كل ما تحتاجينه...
+                <br>
+                تلقايه في <span>DZ MARKET</span>
+            </h1>
+
+            <p>
+                اكتشفي المنتجات والمتاجر الجزائرية،
+                وتسوقي بسهولة وأمان.
+            </p>
+
+            <div class="hero-buttons">
+
+                <button class="primary-btn">
+                    🛍️ اكتشفي المنتجات
+                </button>
+
+                <button class="secondary-btn">
+                    🏪 افتحي متجرك
+                </button>
+
+            </div>
+
         </div>
 
-        <div class="product">
-            <div class="product-image">🛍️</div>
-            <h3>منتج جديد</h3>
-            <p>منتج من متجر جزائري</p>
-            <strong>2,500 دج</strong>
-            <button>أضيفي للسلة 🛒</button>
+    </section>
+
+
+    <section class="section">
+
+        <div class="section-title">
+
+            <div>
+                <h2>التصنيفات</h2>
+                <p>اختاري واش راكي تحوسي عليه</p>
+            </div>
+
+            <a href="#">عرض الكل ←</a>
+
         </div>
 
-        <div class="product">
-            <div class="product-image">🎁</div>
-            <h3>هدية مميزة</h3>
-            <p>اختيار مناسب للمناسبات</p>
-            <strong>3,000 دج</strong>
-            <button>أضيفي للسلة 🛒</button>
+
+        <div class="category-grid">
+
+            <div class="category-card">
+                <div class="category-icon">👗</div>
+                <h3>الأزياء</h3>
+                <p>ملابس وإكسسوارات</p>
+            </div>
+
+            <div class="category-card">
+                <div class="category-icon">📱</div>
+                <h3>الإلكترونيات</h3>
+                <p>هواتف وأجهزة</p>
+            </div>
+
+            <div class="category-card">
+                <div class="category-icon">🏠</div>
+                <h3>المنزل</h3>
+                <p>كل ما يخص دارك</p>
+            </div>
+
+            <div class="category-card">
+                <div class="category-icon">💄</div>
+                <h3>الجمال</h3>
+                <p>عناية وتجميل</p>
+            </div>
+
+            <div class="category-card">
+                <div class="category-icon">🎁</div>
+                <h3>الهدايا</h3>
+                <p>هدايا للمناسبات</p>
+            </div>
+
+            <div class="category-card">
+                <div class="category-icon">🍰</div>
+                <h3>المأكولات</h3>
+                <p>منتجات منزلية</p>
+            </div>
+
         </div>
+
+    </section>
+
+
+    <section class="smart-section">
+
+        <div class="smart-icon">
+            🤖
+        </div>
+
+        <div class="smart-content">
+
+            <span>مساعد DZ MARKET</span>
+
+            <h2>
+                ما عرفتيش واش تختاري؟
+            </h2>
+
+            <p>
+                جاوبي على بعض الأسئلة ونساعدوك تلقاي
+                المنتج المناسب لميزانيتك والمناسبة.
+            </p>
+
+        </div>
+
+        <button class="primary-btn">
+            ساعديني نختار ✨
+        </button>
+
+    </section>
+
+
+    <section class="section">
+
+        <div class="section-title">
+
+            <div>
+                <h2>منتجات مميزة</h2>
+                <p>اختيارات من المتاجر الجزائرية</p>
+            </div>
+
+            <a href="#">عرض الكل ←</a>
+
+        </div>
+
+
+        <div class="products-grid">
+
+            <article class="product-card">
+
+                <button class="favorite">
+                    ♡
+                </button>
+
+                <div class="product-image">
+                    👜
+                </div>
+
+                <div class="product-info">
+
+                    <small>
+                        متجر جزائري
+                    </small>
+
+                    <h3>
+                        حقيبة أنيقة
+                    </h3>
+
+                    <p>
+                        حقيبة عملية وأنيقة
+                    </p>
+
+                    <div class="product-bottom">
+
+                        <strong>
+                            2,500 دج
+                        </strong>
+
+                        <button class="cart-btn">
+                            🛒
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <article class="product-card">
+
+                <button class="favorite">
+                    ♡
+                </button>
+
+                <div class="product-image">
+                    👟
+                </div>
+
+                <div class="product-info">
+
+                    <small>
+                        متجر جزائري
+                    </small>
+
+                    <h3>
+                        حذاء رياضي
+                    </h3>
+
+                    <p>
+                        تصميم عصري ومريح
+                    </p>
+
+                    <div class="product-bottom">
+
+                        <strong>
+                            4,500 دج
+                        </strong>
+
+                        <button class="cart-btn">
+                            🛒
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <article class="product-card">
+
+                <button class="favorite">
+                    ♡
+                </button>
+
+                <div class="product-image">
+                    🎁
+                </div>
+
+                <div class="product-info">
+
+                    <small>
+                        مشروع جزائري
+                    </small>
+
+                    <h3>
+                        صندوق هدايا
+                    </h3>
+
+                    <p>
+                        مناسب للمناسبات
+                    </p>
+
+                    <div class="product-bottom">
+
+                        <strong>
+                            3,000 دج
+                        </strong>
+
+                        <button class="cart-btn">
+                            🛒
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <article class="product-card">
+
+                <button class="favorite">
+                    ♡
+                </button>
+
+                <div class="product-image">
+                    🍰
+                </div>
+
+                <div class="product-info">
+
+                    <small>
+                        مشروع منزلي
+                    </small>
+
+                    <h3>
+                        حلويات منزلية
+                    </h3>
+
+                    <p>
+                        مصنوعة بحب في الجزائر
+                    </p>
+
+                    <div class="product-bottom">
+
+                        <strong>
+                            1,800 دج
+                        </strong>
+
+                        <button class="cart-btn">
+                            🛒
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+        </div>
+
+    </section>
+
+
+    <section class="seller-section">
+
+        <div>
+
+            <span class="badge">
+                🚀 للبائعين
+            </span>
+
+            <h2>
+                عندك مشروع؟
+                <br>
+                خلي الجزائر تعرف بيه.
+            </h2>
+
+            <p>
+                افتحي متجرك في DZ MARKET،
+                وانشري منتجاتك ووصلي لزبائن من مختلف الولايات.
+            </p>
+
+            <button class="primary-btn">
+                ابدئي البيع الآن
+            </button>
+
+        </div>
+
+        <div class="seller-icon">
+            🏪
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer>
+
+    <div class="footer-logo">
+        DZ MARKET 🇩🇿
+    </div>
+
+    <p>
+        سوق إلكتروني جزائري يجمع الزبائن بالبائعين.
+    </p>
+
+    <div class="footer-links">
+
+        <a href="#">من نحن</a>
+        <a href="#">الشروط والأحكام</a>
+        <a href="#">الخصوصية</a>
+        <a href="#">مركز الشكاوى</a>
+        <a href="#">مساعدة</a>
 
     </div>
-</section>
 
-<section class="assistant">
-    <h2>🤖 ساعديني أختار</h2>
-    <p>قولي لنا ميزانيتك والمناسبة ونساعدوك تلقاي المنتج المناسب.</p>
-    <button>ابدئي الاختيار</button>
-</section>
+    <p class="copyright">
+        © 2026 DZ MARKET — جميع الحقوق محفوظة
+    </p>
 
-</main><footer>
-    <p>© 2026 DZ MARKET 🇩🇿 — سوق إلكتروني جزائري</p>
-</footer></body>
+</footer>
+
+
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+
+</body>
 </html>
