@@ -1,525 +1,487 @@
-:root {
-    --primary: #800020;
-    --primary-dark: #5c0017;
-    --background: #f7f4f5;
-    --surface: #ffffff;
-    --text: #241f20;
-    --muted: #777;
-    --border: #e7e1e3;
-    --shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
-}
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-body {
-    font-family: Arial, sans-serif;
-    background: var(--background);
-    color: var(--text);
-    line-height: 1.6;
-    transition: 0.3s;
-}
-
-button,
-input {
-    font-family: inherit;
-}
-
-button {
-    cursor: pointer;
-}
-
-a {
-    text-decoration: none;
-    color: inherit;
-}
-
-/* NAVBAR */
-
-.navbar {
-    background: var(--surface);
-    min-height: 75px;
-    padding: 15px 5%;
-    display: flex;
-    align-items: center;
-    gap: 25px;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    box-shadow: var(--shadow);
-}
-
-.logo {
-    font-size: 24px;
-    font-weight: 800;
-    white-space: nowrap;
-}
-
-.logo span {
-    color: var(--primary);
-}
-
-.search-box {
-    flex: 1;
-    max-width: 600px;
-    display: flex;
-}
-
-.search-box input {
-    width: 100%;
-    padding: 13px 16px;
-    border: 1px solid var(--border);
-    border-radius: 0 10px 10px 0;
-    outline: none;
-    background: var(--background);
-    color: var(--text);
-    font-size: 15px;
-}
-
-.search-box button {
-    width: 55px;
-    border: none;
-    border-radius: 10px 0 0 10px;
-    background: var(--primary);
-    color: white;
-    font-size: 18px;
-}
-
-.nav-actions {
-    display: flex;
-    gap: 8px;
-}
-
-.nav-actions button {
-    border: 1px solid var(--border);
-    background: var(--surface);
-    width: 42px;
-    height: 42px;
-    border-radius: 10px;
-    font-size: 17px;
-}
-
-/* CATEGORIES */
-
-.categories-bar {
-    background: var(--surface);
-    padding: 12px 5%;
-    display: flex;
-    gap: 25px;
-    overflow-x: auto;
-    border-bottom: 1px solid var(--border);
-}
-
-.categories-bar a {
-    white-space: nowrap;
-    font-size: 14px;
-    color: var(--muted);
-}
-
-.categories-bar a:first-child {
-    color: var(--primary);
-    font-weight: bold;
-}
-
-/* HERO */
-
-.hero {
-    margin: 35px 5%;
-    min-height: 430px;
-    border-radius: 25px;
-    background: linear-gradient(135deg, #800020, #4d0014);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 50px 25px;
-}
-
-.hero-content {
-    max-width: 750px;
-}
-
-.badge {
-    display: inline-block;
-    background: rgba(255, 255, 255, 0.15);
-    padding: 7px 15px;
-    border-radius: 30px;
-    margin-bottom: 18px;
-    font-size: 14px;
-}
-
-.hero h1 {
-    font-size: clamp(32px, 6vw, 58px);
-    line-height: 1.2;
-    margin-bottom: 20px;
-}
-
-.hero h1 span {
-    color: #ffd6df;
-}
-
-.hero p {
-    font-size: 18px;
-    opacity: 0.9;
-    margin-bottom: 30px;
-}
-
-.hero-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 12px;
-    flex-wrap: wrap;
-}
-
-.primary-btn,
-.secondary-btn {
-    border: none;
-    padding: 14px 25px;
-    border-radius: 10px;
-    font-weight: bold;
-    font-size: 15px;
-}
-
-.primary-btn {
-    background: var(--primary);
-    color: white;
-}
-
-.hero .primary-btn {
-    background: white;
-    color: var(--primary);
-}
-
-.secondary-btn {
-    background: transparent;
-    color: white;
-    border: 1px solid rgba(255,255,255,0.5);
-}
-
-/* SECTIONS */
-
-.section {
-    padding: 30px 5%;
-}
-
-.section-title {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-}
-
-.section-title h2 {
-    font-size: 28px;
-}
-
-.section-title p {
-    color: var(--muted);
-}
-
-.section-title a {
-    color: var(--primary);
-    font-weight: bold;
-}
-
-/* CATEGORIES */
-
-.category-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 15px;
-}
-
-.category-card {
-    background: var(--surface);
-    padding: 25px 15px;
-    text-align: center;
-    border-radius: 16px;
-    border: 1px solid var(--border);
-    transition: 0.2s;
-}
-
-.category-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow);
-}
-
-.category-icon {
-    font-size: 42px;
-    margin-bottom: 10px;
-}
-
-.category-card h3 {
-    margin-bottom: 5px;
-}
-
-.category-card p {
-    color: var(--muted);
-    font-size: 13px;
-}
-
-/* SMART ASSISTANT */
-
-.smart-section {
-    margin: 40px 5%;
-    padding: 30px;
-    border-radius: 20px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 25px;
-}
-
-.smart-icon {
-    font-size: 55px;
-}
-
-.smart-content {
-    flex: 1;
-}
-
-.smart-content span {
-    color: var(--primary);
-    font-weight: bold;
-}
-
-.smart-content h2 {
-    margin: 5px 0;
-}
-
-.smart-content p {
-    color: var(--muted);
-}
-
-/* PRODUCTS */
-
-.products-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-    gap: 20px;
-}
-
-.product-card {
-    position: relative;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 17px;
-    overflow: hidden;
-    transition: 0.2s;
-}
-
-.product-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow);
-}
-
-.favorite {
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    z-index: 2;
-    width: 38px;
-    height: 38px;
-    border: none;
-    border-radius: 50%;
-    background: white;
-    font-size: 22px;
-}
-
-.product-image {
-    height: 200px;
-    background: #eee7e9;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 65px;
-}
-
-.product-info {
-    padding: 18px;
-}
-
-.product-info small {
-    color: var(--primary);
-}
-
-.product-info h3 {
-    margin: 5px 0;
-}
-
-.product-info p {
-    color: var(--muted);
-    font-size: 14px;
-}
-
-.product-bottom {
-    margin-top: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.product-bottom strong {
-    color: var(--primary);
-    font-size: 18px;
-}
-
-.cart-btn {
-    border: none;
-    background: var(--primary);
-    color: white;
-    width: 42px;
-    height: 42px;
-    border-radius: 10px;
-}
-
-/* SELLER */
-
-.seller-section {
-    margin: 40px 5%;
-    padding: 45px;
-    border-radius: 22px;
-    background: var(--primary);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 30px;
-}
-
-.seller-section h2 {
-    font-size: 34px;
-    margin: 15px 0;
-}
-
-.seller-section p {
-    max-width: 650px;
-    opacity: 0.9;
-    margin-bottom: 20px;
-}
-
-.seller-section .primary-btn {
-    background: white;
-    color: var(--primary);
-}
-
-.seller-icon {
-    font-size: 100px;
-}
-
-/* FOOTER */
-
-footer {
-    background: #24191c;
-    color: white;
-    padding: 45px 5%;
-    text-align: center;
-    margin-top: 50px;
-}
-
-.footer-logo {
-    font-size: 25px;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
-
-footer p {
-    opacity: 0.75;
-}
-
-.footer-links {
-    display: flex;
-    justify-content: center;
-    gap: 25px;
-    flex-wrap: wrap;
-    margin: 25px 0;
-}
-
-.footer-links a:hover {
-    color: #ffd6df;
-}
-
-.copyright {
-    font-size: 13px;
-}
-
-/* DARK MODE */
-
-body.dark {
-    --background: #151113;
-    --surface: #21191c;
-    --text: #f5eef0;
-    --muted: #b7aaae;
-    --border: #382b2f;
-}
-
-body.dark .product-image {
-    background: #302428;
-}
-
-body.dark .favorite {
-    background: #21191c;
-    color: white;
-}
-
-/* MOBILE */
-
-@media (max-width: 750px) {
-
-    .navbar {
-        padding: 12px 4%;
-        flex-wrap: wrap;
-    }
-
-    .logo {
-        width: 100%;
-        text-align: center;
-    }
-
-    .search-box {
-        order: 2;
-        max-width: none;
-        width: 100%;
-    }
-
-    .nav-actions {
-        width: 100%;
-        justify-content: center;
-        order: 3;
-    }
-
-    .hero {
-        margin: 20px 4%;
-        min-height: 400px;
-    }
-
-    .section {
-        padding: 25px 4%;
-    }
-
-    .smart-section {
-        margin: 30px 4%;
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .seller-section {
-        margin: 30px 4%;
-        padding: 30px 20px;
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .seller-section h2 {
-        font-size: 28px;
-    }
-
-    .seller-icon {
-        font-size: 70px;
-    }
-}
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>DZ MARKET 🇩🇿</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <!-- =========================
+         TOP NAVBAR
+    ========================== -->
+
+    <header class="navbar">
+
+        <a href="{{ url_for('home') }}" class="logo">
+            DZ <span>MARKET</span> 🇩🇿
+        </a>
+
+        <div class="search-box">
+            <input
+                type="search"
+                placeholder="🔎 ابحثي عن منتج، متجر أو خدمة..."
+                aria-label="البحث"
+            >
+        </div>
+
+        <div class="nav-actions">
+            <button type="button" onclick="toggleDarkMode()" title="الوضع الليلي">
+                🌙
+            </button>
+
+            <a href="{{ url_for('auth.login') }}" title="تسجيل الدخول">
+                👤
+            </a>
+        </div>
+
+    </header>
+
+
+    <main>
+
+        <!-- =========================
+             HERO
+        ========================== -->
+
+        <section class="hero">
+
+            <h1>
+                سوقك الجزائري،
+                <br>
+                بطريقة جديدة 🇩🇿
+            </h1>
+
+            <p>
+                اكتشفي المنتجات الجزائرية، دعمي المشاريع الصغيرة،
+                واشتري بثقة من مكان واحد.
+            </p>
+
+            <div class="hero-buttons">
+
+                <a
+                    href="{{ url_for('auth.register') }}"
+                    class="btn btn-gold"
+                >
+                    ✨ إنشاء حساب
+                </a>
+
+                <a
+                    href="#products"
+                    class="btn btn-light"
+                >
+                    🛍️ اكتشفي المنتجات
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             CATEGORIES
+        ========================== -->
+
+        <section class="section">
+
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">استكشفي حسب الفئة</h2>
+                    <p class="section-subtitle">
+                        كل ما تحتاجينه في مكان واحد
+                    </p>
+                </div>
+            </div>
+
+            <div class="categories">
+
+                <a href="#products" class="category-card">
+                    <div class="category-icon">👗</div>
+                    <strong>أزياء</strong>
+                </a>
+
+                <a href="#products" class="category-card">
+                    <div class="category-icon">💄</div>
+                    <strong>جمال</strong>
+                </a>
+
+                <a href="#products" class="category-card">
+                    <div class="category-icon">🏠</div>
+                    <strong>منزل</strong>
+                </a>
+
+                <a href="#products" class="category-card">
+                    <div class="category-icon">📱</div>
+                    <strong>إلكترونيات</strong>
+                </a>
+
+                <a href="#products" class="category-card">
+                    <div class="category-icon">🎁</div>
+                    <strong>هدايا</strong>
+                </a>
+
+                <a href="#products" class="category-card">
+                    <div class="category-icon">🍰</div>
+                    <strong>مأكولات</strong>
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             AI ASSISTANT
+        ========================== -->
+
+        <section class="section">
+
+            <div class="ai-section">
+
+                <h2>🤖 ساعديني نختار</h2>
+
+                <p>
+                    محتارة واش تشري؟ المساعد الذكي يساعدك
+                    تختاري حسب الميزانية والمناسبة والولاية.
+                </p>
+
+                <br>
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    onclick="openAssistant()"
+                >
+                    ✨ ابدئي المساعدة
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             PRODUCTS
+        ========================== -->
+
+        <section class="section" id="products">
+
+            <div class="section-header">
+
+                <div>
+                    <h2 class="section-title">
+                        منتجات مميزة
+                    </h2>
+
+                    <p class="section-subtitle">
+                        اكتشفي بعض المنتجات المعروضة
+                    </p>
+                </div>
+
+                <a href="#products" class="btn btn-primary">
+                    الكل
+                </a>
+
+            </div>
+
+
+            <div class="products-grid">
+
+                <article class="product-card">
+
+                    <div class="product-image">
+                        👜
+                    </div>
+
+                    <div class="product-info">
+
+                        <h3 class="product-title">
+                            حقيبة جزائرية أنيقة
+                        </h3>
+
+                        <div class="product-price">
+                            3,500 دج
+                        </div>
+
+                        <div class="product-meta">
+
+                            <span class="stars">
+                                ★★★★★
+                            </span>
+
+                            <span class="trust">
+                                ✓ موثوق
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <article class="product-card">
+
+                    <div class="product-image">
+                        👟
+                    </div>
+
+                    <div class="product-info">
+
+                        <h3 class="product-title">
+                            حذاء عصري
+                        </h3>
+
+                        <div class="product-price">
+                            4,800 دج
+                        </div>
+
+                        <div class="product-meta">
+
+                            <span class="stars">
+                                ★★★★☆
+                            </span>
+
+                            <span class="trust">
+                                ✓ موثوق
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <article class="product-card">
+
+                    <div class="product-image">
+                        🕯️
+                    </div>
+
+                    <div class="product-info">
+
+                        <h3 class="product-title">
+                            شموع ديكور يدوية
+                        </h3>
+
+                        <div class="product-price">
+                            1,200 دج
+                        </div>
+
+                        <div class="product-meta">
+
+                            <span class="stars">
+                                ★★★★★
+                            </span>
+
+                            <span class="trust">
+                                ✓ موثوق
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <article class="product-card">
+
+                    <div class="product-image">
+                        🎁
+                    </div>
+
+                    <div class="product-info">
+
+                        <h3 class="product-title">
+                            صندوق هدايا
+                        </h3>
+
+                        <div class="product-price">
+                            2,500 دج
+                        </div>
+
+                        <div class="product-meta">
+
+                            <span class="stars">
+                                ★★★★★
+                            </span>
+
+                            <span class="trust">
+                                ✓ موثوق
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             SELLER SECTION
+        ========================== -->
+
+        <section class="section">
+
+            <div class="seller-section">
+
+                <div>
+
+                    <h2>
+                        عندك مشروع صغير؟ 🚀
+                    </h2>
+
+                    <p>
+                        افتحي متجرك في DZ MARKET ووصل منتجاتك
+                        للزبائن من مختلف ولايات الجزائر.
+                    </p>
+
+                    <a
+                        href="{{ url_for('auth.register') }}"
+                        class="btn btn-primary"
+                    >
+                        🏪 افتحي متجرك
+                    </a>
+
+                </div>
+
+                <div class="seller-icon">
+                    🏪
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================
+         FLOATING AI BUTTON
+    ========================== -->
+
+    <button
+        class="ai-button"
+        type="button"
+        onclick="openAssistant()"
+        title="المساعد الذكي"
+    >
+        🤖
+    </button>
+
+
+    <!-- =========================
+         MOBILE BOTTOM NAVIGATION
+    ========================== -->
+
+    <nav class="bottom-nav" aria-label="التنقل الرئيسي">
+
+        <a
+            href="{{ url_for('home') }}"
+            class="active"
+        >
+            <span>⌂</span>
+            <small>الرئيسية</small>
+        </a>
+
+        <a href="#products">
+            <span>◈</span>
+            <small>استكشاف</small>
+        </a>
+
+        <a href="#cart">
+            <span>🛒</span>
+            <small>السلة</small>
+        </a>
+
+        <a href="#messages">
+            <span>💬</span>
+            <small>الرسائل</small>
+        </a>
+
+        <a href="{{ url_for('auth.login') }}">
+            <span>👤</span>
+            <small>حسابي</small>
+        </a>
+
+    </nav>
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer>
+
+        <strong>DZ MARKET 🇩🇿</strong>
+
+        <p>
+            سوق جزائري يجمع المشاريع والزبائن في مكان واحد.
+        </p>
+
+        <p>
+            © 2026 DZ MARKET
+        </p>
+
+    </footer>
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
+
+    <script>
+
+        function toggleDarkMode() {
+
+            document.body.classList.toggle("dark-mode");
+
+            const enabled =
+                document.body.classList.contains("dark-mode");
+
+            localStorage.setItem(
+                "dzmarket-dark-mode",
+                enabled ? "on" : "off"
+            );
+        }
+
+
+        function loadDarkMode() {
+
+            const mode =
+                localStorage.getItem("dzmarket-dark-mode");
+
+            if (mode === "on") {
+                document.body.classList.add("dark-mode");
+            }
+        }
+
+
+        function openAssistant() {
+
+            alert(
+                "🤖 المساعد الذكي DZ MARKET\n\n" +
+                "قريباً نربطوه بالذكاء الاصطناعي الحقيقي ✨"
+            );
+        }
+
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            loadDarkMode
+        );
+
+    </script>
+
+</body>
+</html>
