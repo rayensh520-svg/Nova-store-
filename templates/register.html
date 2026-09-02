@@ -4,101 +4,83 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>إنشاء حساب - DZ MARKET 🇩🇿</title>
-
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
 
-    <nav class="navbar">
-        <div class="container">
-            <a href="{{ url_for('home') }}" class="logo">
-                DZ MARKET 🇩🇿
-            </a>
+    <div style="max-width:500px;margin:50px auto;padding:30px;font-family:Arial,sans-serif;">
 
-            <div class="nav-links">
-                <a href="{{ url_for('home') }}">الرئيسية</a>
-                <a href="{{ url_for('auth.login') }}">تسجيل الدخول</a>
-            </div>
-        </div>
-    </nav>
+        <h1>إنشاء حساب 🇩🇿</h1>
+        <p>انضم إلى DZ MARKET</p>
 
-    <main class="auth-page">
-        <div class="auth-card">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
 
-            <h1>إنشاء حساب 🎉</h1>
-            <p>انضم إلى DZ MARKET وابدأ رحلتك معنا</p>
+        <form method="POST" action="{{ url_for('auth.register') }}">
 
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    <div class="flash-messages">
-                        {% for category, message in messages %}
-                            <div class="flash {{ category }}">
-                                {{ message }}
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            {% endwith %}
-
-            <form method="POST" action="{{ url_for('auth.register') }}">
-
-                <div class="form-group">
-                    <label for="full_name">الاسم الكامل</label>
-                    <input
-                        type="text"
-                        id="full_name"
-                        name="full_name"
-                        placeholder="أدخل اسمك الكامل"
-                        required
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="email">البريد الإلكتروني</label>
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        placeholder="example@email.com"
-                        required
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="password">كلمة المرور</label>
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        placeholder="أدخل كلمة المرور"
-                        required
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="role">نوع الحساب</label>
-                    <select id="role" name="role">
-                        <option value="buyer">مشتري 🛍️</option>
-                        <option value="seller">بائع 🏪</option>
-                    </select>
-                </div>
-
-                <button type="submit" class="btn-primary">
-                    إنشاء الحساب
-                </button>
-
-            </form>
-
-            <p class="auth-footer">
-                لديك حساب بالفعل؟
-                <a href="{{ url_for('auth.login') }}">
-                    تسجيل الدخول
-                </a>
+            <p>
+                <label for="full_name">الاسم الكامل</label><br>
+                <input
+                    type="text"
+                    id="full_name"
+                    name="full_name"
+                    required
+                >
             </p>
 
-        </div>
-    </main>
+            <p>
+                <label for="email">البريد الإلكتروني</label><br>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    required
+                >
+            </p>
+
+            <p>
+                <label for="password">كلمة المرور</label><br>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    required
+                >
+            </p>
+
+            <p>
+                <label for="role">نوع الحساب</label><br>
+                <select id="role" name="role">
+                    <option value="buyer">مشتري 🛍️</option>
+                    <option value="seller">بائع 🏪</option>
+                </select>
+            </p>
+
+            <button type="submit">
+                إنشاء الحساب
+            </button>
+
+        </form>
+
+        <p>
+            لديك حساب بالفعل؟
+            <a href="{{ url_for('auth.login') }}">
+                تسجيل الدخول
+            </a>
+        </p>
+
+        <p>
+            <a href="{{ url_for('home') }}">
+                العودة للرئيسية
+            </a>
+        </p>
+
+    </div>
 
 </body>
 </html>
