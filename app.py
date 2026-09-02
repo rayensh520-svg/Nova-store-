@@ -1,10 +1,17 @@
 from flask import Flask, render_template
 from database import init_database
+from routes import auth
 
 app = Flask(__name__)
 
-# تهيئة قاعدة البيانات عند تشغيل التطبيق
+# مفتاح سري للجلسات والرسائل
+app.secret_key = "dz-market-secret-key-change-this-later"
+
+# تهيئة قاعدة البيانات
 init_database()
+
+# تسجيل مسارات الحسابات
+app.register_blueprint(auth)
 
 
 @app.route("/")
