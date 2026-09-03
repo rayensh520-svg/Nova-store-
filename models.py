@@ -295,3 +295,125 @@ class Store:
             if value is not None:
                 fields.append(f"{field} = ?")
                 values.append(value)
+# ============================================================
+# DZ MARKET - CHAT SETTINGS
+# ============================================================
+
+class ChatSettings:
+
+    @staticmethod
+    def get(user_id):
+        connection = get_connection()
+
+        row = connection.execute(
+            """
+            SELECT *
+            FROM chat_settings
+            WHERE user_id = ?
+            """,
+            (user_id,)
+        ).fetchone()
+
+        if row is None:
+            connection.execute(
+                """
+                INSERT INTO chat_settings
+                (user_id, voice_type, voice_enabled, language, style)
+                VALUES (?, 'female', 1, 'ar', 'friendly')
+                """,
+                (user_id,)
+            )
+
+            connection.commit()
+
+            row = connection.execute(
+                """
+                SELECT *
+                FROM chat_settings
+                WHERE user_id = ?
+                """,
+                (user_id,)
+            ).fetchone()
+
+        connection.close()
+
+        return row
+
+
+    @staticmethod
+    def update(
+        user_id,
+        voice_type=None,
+        voice_enabled=None,
+        language=None,
+        style=None
+    ):
+        current = ChatSettings.get(user_id)
+
+        new_voice_type = (
+            voice_type
+            if voice_type in ("female", "male")
+            else current["voice_type"]
+        )
+
+        new_voice_enabled = (
+            int(bool(voice_enabled))
+            if voice_enabled is not None
+            else current["voice_enabled"]
+        )
+
+        new_language = (
+            language
+            if language in ("ar", "fr", "en")
+            else current["language"]
+        )
+
+        allowed_styles = (
+            "friendly",
+            "youthful",
+            "funny",
+            "professional",
+            "darija"
+        )
+
+        new_style = (
+            style
+            if style in allowed_styles
+            else current["style"]
+        )
+
+        connection = get_connection()
+
+        connection.execute(
+            """
+            UPDATE chat_settings
+            SET
+                voice_type = ?,
+                voice_enabled = ?,
+                language = ?,
+                style = ?
+            WHERE user_id = ?
+            """,
+            (
+                new_voice_type,
+                new_voice_enabled,
+                new_language,
+                new_style,
+                user_id
+            )
+        )
+
+        connection.commit()
+
+        row = connection.execute(
+            """
+            SELECT *
+            FROM chat_settings
+            WHERE user_id = ?
+            """,
+            (user_id,)
+        ).fetchone()
+
+        connection.close()
+
+        return row
