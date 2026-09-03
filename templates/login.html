@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>تسجيل الدخول | DZ MARKET</title>
+
+    <style>
+        :root {
+            --burgundy: #65152d;
+            --burgundy-dark: #3f0b1c;
+            --gold: #c9a227;
+            --cream: #fffaf3;
+            --text: #241820;
+            --muted: #756b70;
+            --border: #eadfe2;
+            --white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background:
+                radial-gradient(circle at top right, rgba(201,162,39,.13), transparent 35%),
+                linear-gradient(135deg, #fffaf3, #f7eef1);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-wrapper {
+            width: 100%;
+            max-width: 420px;
+        }
+
+        .brand {
+            text-align: center;
+            margin-bottom: 18px;
+        }
+
+        .brand-logo {
+            width: 58px;
+            height: 58px;
+            margin: auto;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--burgundy), var(--burgundy-dark));
+            color: var(--gold);
+            font-size: 25px;
+            font-weight: 900;
+            box-shadow: 0 12px 30px rgba(101,21,45,.20);
+        }
+
+        .brand h1 {
+            margin: 10px 0 3px;
+            font-size: 24px;
+            color: var(--burgundy);
+        }
+
+        .brand p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .login-card {
+            background: rgba(255,255,255,.90);
+            border: 1px solid rgba(255,255,255,.8);
+            border-radius: 25px;
+            padding: 27px 23px;
+            box-shadow: 0 20px 55px rgba(63,11,28,.12);
+            backdrop-filter: blur(12px);
+        }
+
+        .login-card h2 {
+            margin: 0 0 7px;
+            font-size: 21px;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            font-size: 13px;
+            margin-bottom: 22px;
+        }
+
+        .flash {
+            padding: 11px 13px;
+            border-radius: 12px;
+            margin-bottom: 14px;
+            font-size: 13px;
+            background: #fff0f0;
+            color: #8d1c2e;
+            border: 1px solid #f1cdd3;
+        }
+
+        .field {
+            margin-bottom: 16px;
+        }
+
+        .field label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-wrap input {
+            width: 100%;
+            height: 49px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 0 14px;
+            font-size: 14px;
+            outline: none;
+            background: #fff;
+            transition: .2s;
+        }
+
+        .input-wrap input:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(201,162,39,.10);
+        }
+
+        .password-input {
+            padding-left: 48px !important;
+        }
+
+        .toggle-password {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 0;
+            background: transparent;
+            cursor: pointer;
+            font-size: 18px;
+            color: #766c70;
+        }
+
+        .options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin: 4px 0 20px;
+            font-size: 12px;
+        }
+
+        .remember {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--muted);
+        }
+
+        .remember input {
+            accent-color: var(--burgundy);
+        }
+
+        .forgot {
+            color: var(--burgundy);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .login-btn {
+            width: 100%;
+            height: 50px;
+            border: 0;
+            border-radius: 15px;
+            background: linear-gradient(135deg, var(--burgundy), var(--burgundy-dark));
+            color: white;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 12px 25px rgba(101,21,45,.22);
+            transition: .2s;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 22px 0;
+            color: #a49a9e;
+            font-size: 11px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .register {
+            text-align: center;
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .register a {
+            color: var(--burgundy);
+            font-weight: 800;
+            text-decoration: none;
+        }
+
+        .back-home {
+            display: block;
+            text-align: center;
+            margin-top: 17px;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 12px;
+        }
+
+        .back-home:hover {
+            color: var(--burgundy);
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 14px;
+            }
+
+            .login-card {
+                padding: 23px 18px;
+                border-radius: 21px;
+            }
+
+            .brand-logo {
+                width: 52px;
+                height: 52px;
+                border-radius: 16px;
+            }
+
+            .brand h1 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="login-wrapper">
+
+    <div class="brand">
+        <div class="brand-logo">DZ</div>
+        <h1>DZ MARKET</h1>
+        <p>السوق الجزائري بين يديك 🇩🇿</p>
+    </div>
+
+    <div class="login-card">
+
+        <h2>مرحبًا بعودتك 👋</h2>
+        <div class="subtitle">
+            سجّل الدخول للوصول إلى حسابك ومتجرك وطلباتك.
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('auth.login') }}">
+
+            <div class="field">
+                <label for="email">البريد الإلكتروني</label>
+
+                <div class="input-wrap">
+                    <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        placeholder="example@email.com"
+                        autocomplete="email"
+                        required
+                    >
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="password">كلمة المرور</label>
+
+                <div class="input-wrap">
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        class="password-input"
+                        placeholder="أدخل كلمة المرور"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="toggle-password"
+                        onclick="togglePassword()"
+                        aria-label="إظهار كلمة المرور"
+                    >
+                        👁️
+                    </button>
+                </div>
+            </div>
+
+            <div class="options">
+
+                <label class="remember">
+                    <input type="checkbox" name="remember">
+                    تذكرني
+                </label>
+
+                <a href="#" class="forgot" onclick="comingSoon(event)">
+                    نسيت كلمة المرور؟
+                </a>
+
+            </div>
+
+            <button type="submit" class="login-btn">
+                تسجيل الدخول
+            </button>
+
+        </form>
+
+        <div class="divider">
+            أو
+        </div>
+
+        <div class="register">
+            ليس لديك حساب؟
+            <a href="{{ url_for('auth.register') }}">
+                إنشاء حساب جديد
+            </a>
+        </div>
+
+    </div>
+
+    <a href="{{ url_for('home') }}" class="back-home">
+        ← العودة إلى الرئيسية
+    </a>
+
+</div>
+
+<script>
+    function togglePassword() {
+        const password = document.getElementById("password");
+
+        if (password.type === "password") {
+            password.type = "text";
+        } else {
+            password.type = "password";
+        }
+    }
+
+    function comingSoon(event) {
+        event.preventDefault();
+        alert("ميزة استعادة كلمة المرور سنربطها لاحقًا مع التحقق بالهاتف 📱");
+    }
+</script>
+
+</body>
+                  </html>
