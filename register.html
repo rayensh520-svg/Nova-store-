@@ -1,122 +1,105 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>إنشاء حساب | DZ MARKET</title>
+    <title>إنشاء حساب | DZ MARKET 🇩🇿</title>
 
     <style>
-        :root {
-            --burgundy: #64152d;
-            --burgundy-dark: #3b0b1b;
-            --gold: #c9a45c;
-            --cream: #fffaf3;
-            --text: #241a1d;
-            --muted: #81757a;
-            --border: #eadfe2;
-            --danger: #b42318;
-            --success: #16794c;
-        }
-
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            margin: 0;
+            font-family: Arial, sans-serif;
             min-height: 100vh;
-            font-family: Arial, "Tahoma", sans-serif;
             background:
-                radial-gradient(circle at top right, rgba(201, 164, 92, 0.16), transparent 35%),
-                linear-gradient(145deg, #fffaf3, #f8eef1);
-            color: var(--text);
+                radial-gradient(circle at top right, #7b1830 0%, transparent 35%),
+                linear-gradient(135deg, #210711, #4b1021, #16050b);
+            color: #fff;
+            padding: 25px 15px;
         }
 
-        .page {
-            width: min(100%, 560px);
+        .container {
+            width: 100%;
+            max-width: 620px;
             margin: auto;
-            padding: 25px 18px 45px;
         }
 
-        /* LOGO */
-
-        .brand {
+        .logo {
             text-align: center;
-            margin-bottom: 22px;
+            margin-bottom: 20px;
         }
 
-        .brand-mark {
-            width: 62px;
-            height: 62px;
-            margin: auto;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            background: linear-gradient(
-                145deg,
-                var(--burgundy),
-                var(--burgundy-dark)
-            );
-
-            color: var(--gold);
-            font-size: 27px;
-            font-weight: 900;
-
-            box-shadow:
-                0 12px 30px rgba(59, 11, 27, 0.22);
+        .logo h1 {
+            color: #d8ad55;
+            font-size: 32px;
+            margin-bottom: 5px;
         }
 
-        .brand h1 {
-            margin: 12px 0 4px;
-            font-size: 26px;
-            color: var(--burgundy);
-        }
-
-        .brand p {
-            margin: 0;
-            color: var(--muted);
+        .logo p {
+            color: #f4e7d0;
             font-size: 14px;
         }
 
-        /* CARD */
-
         .card {
-            background: rgba(255, 255, 255, 0.88);
-            border: 1px solid rgba(234, 223, 226, 0.9);
-            border-radius: 26px;
-            padding: 23px 19px;
-
-            box-shadow:
-                0 20px 55px rgba(59, 11, 27, 0.10);
-
-            backdrop-filter: blur(14px);
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(216,173,85,0.3);
+            backdrop-filter: blur(15px);
+            border-radius: 24px;
+            padding: 25px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.35);
         }
 
-        .card-title {
-            margin: 0 0 5px;
-            font-size: 21px;
-            color: var(--burgundy);
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #fff;
         }
 
-        .card-subtitle {
-            margin: 0 0 22px;
-            color: var(--muted);
-            font-size: 13px;
+        .field {
+            margin-bottom: 16px;
         }
 
-        /* ROLE */
-
-        .role-title {
-            font-size: 13px;
-            font-weight: bold;
-            margin-bottom: 9px;
+        label {
+            display: block;
+            margin-bottom: 7px;
+            color: #f7ead5;
+            font-size: 14px;
         }
 
-        .roles {
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 13px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(0,0,0,0.2);
+            color: white;
+            outline: none;
+            font-size: 15px;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #d8ad55;
+        }
+
+        select option {
+            color: #111;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .role-box {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
@@ -130,23 +113,316 @@
         .role-option input {
             position: absolute;
             opacity: 0;
-            pointer-events: none;
         }
 
         .role-option label {
-            display: block;
-            padding: 15px 10px;
-            text-align: center;
-
-            border: 1px solid var(--border);
-            border-radius: 17px;
-
-            background: #fff;
             cursor: pointer;
-
-            transition: 0.2s ease;
+            text-align: center;
+            padding: 15px 10px;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 14px;
+            background: rgba(0,0,0,0.15);
+            transition: 0.2s;
         }
 
-        .role-icon {
-            display: block;
-            font-size: 24
+        .role-option input:checked + label {
+            border-color: #d8ad55;
+            background: rgba(216,173,85,0.15);
+            color: #d8ad55;
+        }
+
+        .seller-section {
+            display: none;
+            margin-top: 10px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.12);
+        }
+
+        .seller-title {
+            color: #d8ad55;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .terms {
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+            margin: 18px 0;
+            font-size: 13px;
+            color: #ddd;
+        }
+
+        .terms input {
+            width: auto;
+            margin-top: 3px;
+            accent-color: #d8ad55;
+        }
+
+        .terms a {
+            color: #d8ad55;
+            text-decoration: none;
+        }
+
+        button {
+            width: 100%;
+            border: none;
+            padding: 15px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #d8ad55, #a87925);
+            color: #210711;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        .links {
+            text-align: center;
+            margin-top: 20px;
+            line-height: 2;
+        }
+
+        .links a {
+            color: #d8ad55;
+            text-decoration: none;
+        }
+
+        .flash {
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            text-align: center;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 20px 16px;
+            }
+
+            .role-box {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="logo">
+        <h1>DZ MARKET 🇩🇿</h1>
+        <p>السوق الجزائري في مكان واحد</p>
+    </div>
+
+    <div class="card">
+
+        <h2>إنشاء حساب جديد ✨</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+
+            <div class="field">
+                <label>الاسم الكامل</label>
+                <input
+                    type="text"
+                    name="full_name"
+                    placeholder="أدخل اسمك الكامل"
+                    required
+                >
+            </div>
+
+            <div class="field">
+                <label>البريد الإلكتروني</label>
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="example@email.com"
+                    required
+                >
+            </div>
+
+            <div class="field">
+                <label>رقم الهاتف</label>
+                <input
+                    type="tel"
+                    name="phone"
+                    placeholder="05 / 06 / 07 ..."
+                    required
+                >
+            </div>
+
+            <div class="field">
+                <label>كلمة المرور</label>
+                <input
+                    type="password"
+                    name="password"
+                    placeholder="8 أحرف على الأقل + رقم"
+                    required
+                >
+            </div>
+
+            <div class="field">
+                <label>تأكيد كلمة المرور</label>
+                <input
+                    type="password"
+                    name="confirm_password"
+                    placeholder="أعد كتابة كلمة المرور"
+                    required
+                >
+            </div>
+
+            <label>نوع الحساب</label>
+
+            <div class="role-box">
+
+                <div class="role-option">
+                    <input
+                        type="radio"
+                        id="buyer"
+                        name="role"
+                        value="buyer"
+                        checked
+                    >
+                    <label for="buyer">
+                        🛍️ مشتري
+                    </label>
+                </div>
+
+                <div class="role-option">
+                    <input
+                        type="radio"
+                        id="seller"
+                        name="role"
+                        value="seller"
+                    >
+                    <label for="seller">
+                        🏪 بائع
+                    </label>
+                </div>
+
+            </div>
+
+            <div id="sellerSection" class="seller-section">
+
+                <div class="seller-title">
+                    🏪 معلومات المتجر
+                </div>
+
+                <div class="field">
+                    <label>اسم المتجر</label>
+                    <input
+                        type="text"
+                        name="store_name"
+                        placeholder="اسم مشروعك أو متجرك"
+                    >
+                </div>
+
+                <div class="field">
+                    <label>نوع النشاط</label>
+                    <input
+                        type="text"
+                        name="activity_type"
+                        placeholder="ملابس، حلويات، إكسسوارات..."
+                    >
+                </div>
+
+                <div class="field">
+                    <label>الولاية</label>
+                    <input
+                        type="text"
+                        name="wilaya"
+                        placeholder="مثال: وهران"
+                    >
+                </div>
+
+                <div class="field">
+                    <label>البلدية</label>
+                    <input
+                        type="text"
+                        name="municipality"
+                        placeholder="اسم البلدية"
+                    >
+                </div>
+
+                <div class="field">
+                    <label>معلومات إضافية للتحقق</label>
+                    <textarea
+                        name="verification_note"
+                        placeholder="عرّفنا أكثر بنشاطك..."
+                    ></textarea>
+                </div>
+
+            </div>
+
+            <div class="terms">
+                <input
+                    type="checkbox"
+                    id="terms"
+                    name="accept_terms"
+                    required
+                >
+
+                <label for="terms">
+                    أوافق على شروط الاستخدام وسياسة الخصوصية الخاصة بـ
+                    <a href="#">DZ MARKET</a>
+                </label>
+            </div>
+
+            <button type="submit">
+                إنشاء الحساب 🚀
+            </button>
+
+        </form>
+
+        <div class="links">
+            لديك حساب بالفعل؟
+            <a href="{{ url_for('auth.login') }}">
+                تسجيل الدخول
+            </a>
+            <br>
+
+            <a href="{{ url_for('home') }}">
+                ← العودة للرئيسية
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    const buyer = document.getElementById("buyer");
+    const seller = document.getElementById("seller");
+    const sellerSection = document.getElementById("sellerSection");
+
+    function updateSellerSection() {
+        if (seller.checked) {
+            sellerSection.style.display = "block";
+        } else {
+            sellerSection.style.display = "none";
+        }
+    }
+
+    buyer.addEventListener("change", updateSellerSection);
+    seller.addEventListener("change", updateSellerSection);
+
+    updateSellerSection();
+</script>
+
+</body>
+                                      </html>
