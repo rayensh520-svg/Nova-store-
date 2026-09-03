@@ -1227,4 +1227,59 @@ def api_status():
         "status": "ok",
         "app": "DZ MARKET",
         "version": "1.0"
-    })
+   @auth.route("/checkout", methods=["POST"])
+def checkout():
+    if not login_required():
+        return jsonify({
+            "success": False,
+            "message": "يجب تسجيل الدخول أولاً."
+        }), 401
+
+    user = current_user()
+    items = Cart.get_items(user["id"])
+
+    if not items:
+        return jsonify({
+            "success": False,
+            "message": "السلة فارغة."
+        }), 400
+
+    total = calculate_cart_total(items)
+
+    try:
+        order_id = Order.create(
+            user_id=user["id"],
+            total_amount=total,
+            delivery_wilaya=user.get("wilaya"),
+            delivery_municipality=user.get("municipality")
+        )
+
+        for item in items:
+            OrderItem.create(
+                order_id=order_id,
+                product_id=item["product_id"],
+                quantity=item["quantity"],
+                price=item["price"],
+                store_id=item.get("store_id")
+            )
+
+        Cart.clear(user["id"])
+
+        Notification.create(
+            user_id=user["id"],
+            title="تم إنشاء طلبك 🎉",
+            message=f"تم تسجيل طلبك رقم #{order_id} بنجاح.",
+            notification_type="order"
+        )
+
+        return jsonify({
+            "success": True,
+            "message": "تم إنشاء الطلب بنجاح.",
+            "order_id": order_id
+        })
+
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "message": "تعذر إنشاء الطلب حالياً."
+        }), 500 })
