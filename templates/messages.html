@@ -1,1 +1,290 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الرسائل | DZ MARKET 🇩🇿</title>
 
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at top right, #7b1830 0%, transparent 35%),
+                linear-gradient(135deg, #210711, #4b1021, #16050b);
+            color: #fff;
+            padding-bottom: 90px;
+        }
+
+        .header {
+            padding: 22px 18px;
+            text-align: center;
+            border-bottom: 1px solid rgba(216,173,85,.2);
+        }
+
+        .header h1 {
+            color: #d8ad55;
+            font-size: 26px;
+        }
+
+        .header p {
+            color: #ddd;
+            margin-top: 5px;
+            font-size: 13px;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: auto;
+            padding: 18px;
+        }
+
+        .search {
+            width: 100%;
+            padding: 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,.15);
+            background: rgba(255,255,255,.08);
+            color: white;
+            outline: none;
+            margin-bottom: 18px;
+        }
+
+        .search:focus {
+            border-color: #d8ad55;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 60px 20px;
+            background: rgba(255,255,255,.06);
+            border-radius: 20px;
+            border: 1px solid rgba(216,173,85,.15);
+        }
+
+        .empty .icon {
+            font-size: 55px;
+            margin-bottom: 15px;
+        }
+
+        .empty h2 {
+            margin-bottom: 8px;
+        }
+
+        .empty p {
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        .conversation {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 17px;
+            background: rgba(255,255,255,.07);
+            border: 1px solid rgba(255,255,255,.1);
+        }
+
+        .avatar {
+            width: 50px;
+            height: 50px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg,#d8ad55,#8d6320);
+            color: #24100f;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .conversation-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .conversation-info strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .conversation-info span {
+            display: block;
+            color: #bbb;
+            font-size: 13px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .date {
+            color: #999;
+            font-size: 11px;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            height: 72px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: rgba(25,5,12,.96);
+            border-top: 1px solid rgba(216,173,85,.2);
+            z-index: 10;
+        }
+
+        .bottom-nav a {
+            color: #aaa;
+            text-decoration: none;
+            text-align: center;
+            font-size: 11px;
+        }
+
+        .bottom-nav a div {
+            font-size: 21px;
+            margin-bottom: 3px;
+        }
+
+        .bottom-nav a.active {
+            color: #d8ad55;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+    <h1>💬 الرسائل</h1>
+    <p>تواصل مع البائعين والمشترين بسهولة</p>
+</header>
+
+<main class="container">
+
+    <input
+        type="text"
+        id="searchInput"
+        class="search"
+        placeholder="🔎 ابحث في الرسائل..."
+        oninput="searchChats()"
+    >
+
+    {% if conversations %}
+
+        <div id="conversationList">
+
+            {% for message in conversations %}
+
+                <div class="conversation"
+                     data-name="{{ message.other_name or '' }}">
+
+                    <div class="avatar">
+                        {{ (message.other_name or "?")[0] }}
+                    </div>
+
+                    <div class="conversation-info">
+                        <strong>
+                            {{ message.other_name or "مستخدم DZ MARKET" }}
+                        </strong>
+
+                        <span>
+                            {{ message.body or "رسالة جديدة" }}
+                        </span>
+                    </div>
+
+                    <div class="date">
+                        {{ message.created_at or "" }}
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="empty">
+            <div class="icon">💬</div>
+            <h2>ما عندك حتى محادثة</h2>
+            <p>
+                كي تبدأ تتواصل مع بائع أو مشتري، المحادثات تاعك راح تظهر هنا.
+            </p>
+        </div>
+
+    {% endif %}
+
+</main>
+
+<nav class="bottom-nav">
+
+    <a href="{{ url_for('home') }}">
+        <div>🏠</div>
+        الرئيسية
+    </a>
+
+    <a href="{{ url_for('home') }}">
+        <div>◈</div>
+        استكشاف
+    </a>
+
+    <a href="#">
+        <div>🛒</div>
+        السلة
+    </a>
+
+    <a href="{{ url_for('auth.messages') }}" class="active">
+        <div>💬</div>
+        الرسائل
+    </a>
+
+    <a href="{{ url_for('auth.login') }}">
+        <div>👤</div>
+        حسابي
+    </a>
+
+</nav>
+
+<script>
+    function searchChats() {
+
+        const search =
+            document.getElementById("searchInput")
+                .value
+                .toLowerCase();
+
+        const chats =
+            document.querySelectorAll(".conversation");
+
+        chats.forEach(chat => {
+
+            const name =
+                chat.dataset.name.toLowerCase();
+
+            chat.style.display =
+                name.includes(search)
+                    ? "flex"
+                    : "none";
+        });
+    }
+</script>
+
+</body>
+</html>
