@@ -29,9 +29,10 @@ def init_database():
     connection = get_connection()
 
     connection.executescript("""
-        =========================================================
-        USERS
-        =========================================================
+        -- =====================================================
+        -- USERS
+        -- =====================================================
+
         CREATE TABLE IF NOT EXISTS users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             full_name TEXT NOT NULL,
@@ -41,7 +42,6 @@ def init_database():
 
             phone TEXT DEFAULT '',
             profile_image TEXT DEFAULT '',
-
             phone_verified INTEGER NOT NULL DEFAULT 0,
 
             language TEXT NOT NULL DEFAULT 'ar',
@@ -57,9 +57,10 @@ def init_database():
         );
 
 
-        =========================================================
-        STORES
-        =========================================================
+        -- =====================================================
+        -- STORES
+        -- =====================================================
+
         CREATE TABLE IF NOT EXISTS stores (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id INTEGER NOT NULL UNIQUE,
@@ -73,12 +74,10 @@ def init_database():
 
             logo TEXT DEFAULT '',
             cover_image TEXT DEFAULT '',
-
             opening_hours TEXT DEFAULT '',
 
             followers_count INTEGER NOT NULL DEFAULT 0,
             sales_count INTEGER NOT NULL DEFAULT 0,
-
             trust_score REAL NOT NULL DEFAULT 0,
 
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -88,9 +87,10 @@ def init_database():
         );
 
 
-        =========================================================
-        PRODUCTS
-        =========================================================
+        -- =====================================================
+        -- PRODUCTS
+        -- =====================================================
+
         CREATE TABLE IF NOT EXISTS products (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
 
@@ -129,9 +129,10 @@ def init_database():
         );
 
 
-        =========================================================
-        FAVORITES
-        =========================================================
+        -- =====================================================
+        -- FAVORITES
+        -- =====================================================
+
         CREATE TABLE IF NOT EXISTS favorites (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
 
@@ -150,9 +151,10 @@ def init_database():
         );
 
 
-        =========================================================
-        CART
-        =========================================================
+        -- =====================================================
+        -- CART
+        -- =====================================================
+
         CREATE TABLE IF NOT EXISTS cart_items (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
 
@@ -173,9 +175,10 @@ def init_database():
         );
 
 
-        =========================================================
-        ORDERS
-        =========================================================
+        -- =====================================================
+        -- ORDERS
+        -- =====================================================
+
         CREATE TABLE IF NOT EXISTS orders (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
 
@@ -199,9 +202,10 @@ def init_database():
         );
 
 
-        =========================================================
-        ORDER ITEMS
-        =========================================================
+        -- =====================================================
+        -- ORDER ITEMS
+        -- =====================================================
+
         CREATE TABLE IF NOT EXISTS order_items (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
 
@@ -221,9 +225,10 @@ def init_database():
         );
 
 
-        =========================================================
-        REVIEWS
-        =========================================================
+        -- =====================================================
+        -- REVIEWS
+        -- =====================================================
+
         CREATE TABLE IF NOT EXISTS reviews (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
 
@@ -252,9 +257,10 @@ def init_database():
         );
 
 
-        =========================================================
-        STORE FOLLOWS
-        =========================================================
+        -- =====================================================
+        -- STORE FOLLOWERS
+        -- =====================================================
+
         CREATE TABLE IF NOT EXISTS store_followers (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
 
@@ -273,9 +279,10 @@ def init_database():
         );
 
 
-        =========================================================
-        BLOCKED USERS
-        =========================================================
+        -- =====================================================
+        -- BLOCKED USERS
+        -- =====================================================
+
         CREATE TABLE IF NOT EXISTS blocked_users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
 
@@ -294,9 +301,10 @@ def init_database():
         );
 
 
-        =========================================================
-        REPORTS
-        =========================================================
+        -- =====================================================
+        -- REPORTS
+        -- =====================================================
+
         CREATE TABLE IF NOT EXISTS reports (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
 
@@ -317,14 +325,14 @@ def init_database():
         );
 
 
-        =========================================================
-        COMPLAINTS
-        =========================================================
+        -- =====================================================
+        -- COMPLAINTS
+        -- =====================================================
+
         CREATE TABLE IF NOT EXISTS complaints (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
 
             user_id INTEGER,
-
             order_id INTEGER,
 
             subject TEXT NOT NULL,
@@ -332,12 +340,346 @@ def init_database():
 
             status TEXT NOT NULL DEFAULT 'open',
 
-            created_at TIMESTAMP DEFAULT CURRENT         CREATE TABLE IF NOT EXISTS chat_settings (
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+            FOREIGN KEY (user_id) REFERENCES users(id)
+                ON DELETE CASCADE,
+
+            FOREIGN KEY (order_id) REFERENCES orders(id)
+                ON DELETE SET NULL
+        );
+
+
+        -- =====================================================
+        -- MESSAGES
+        -- =====================================================
+
+        CREATE TABLE IF NOT EXISTS messages (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            sender_id INTEGER NOT NULL,
+            receiver_id INTEGER NOT NULL,
+
+            body TEXT NOT NULL,
+
+            is_read INTEGER NOT NULL DEFAULT 0,
+
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+            FOREIGN KEY (sender_id) REFERENCES users(id)
+                ON DELETE CASCADE,
+
+            FOREIGN KEY (receiver_id) REFERENCES users(id)
+                ON DELETE CASCADE
+        );
+
+
+        -- =====================================================
+        -- CHAT SETTINGS
+        -- =====================================================
+
+        CREATE TABLE IF NOT EXISTS chat_settings (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
             user_id INTEGER NOT NULL UNIQUE,
+
             voice_type TEXT NOT NULL DEFAULT 'female',
             voice_enabled INTEGER NOT NULL DEFAULT 1,
+
             language TEXT NOT NULL DEFAULT 'ar',
             style TEXT NOT NULL DEFAULT 'friendly',
+
             FOREIGN KEY (user_id) REFERENCES users(id)
+                ON DELETE CASCADE
         );
+
+
+        -- =====================================================
+        -- NOTIFICATIONS
+        -- =====================================================
+
+        CREATE TABLE IF NOT EXISTS notifications (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            user_id INTEGER NOT NULL,
+
+            title TEXT NOT NULL,
+            message TEXT NOT NULL,
+
+            is_read INTEGER NOT NULL DEFAULT 0,
+
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+            FOREIGN KEY (user_id) REFERENCES users(id)
+                ON DELETE CASCADE
+        );
+
+
+        -- =====================================================
+        -- DISCOUNT CODES
+        -- =====================================================
+
+        CREATE TABLE IF NOT EXISTS discount_codes (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            store_id INTEGER,
+
+            code TEXT NOT NULL UNIQUE,
+
+            discount_percent REAL NOT NULL DEFAULT 0,
+
+            max_uses INTEGER DEFAULT 0,
+            used_count INTEGER NOT NULL DEFAULT 0,
+
+            expires_at TIMESTAMP,
+
+            is_active INTEGER NOT NULL DEFAULT 1,
+
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+            FOREIGN KEY (store_id) REFERENCES stores(id)
+                ON DELETE CASCADE
+        );
+
+
+        -- =====================================================
+        -- PRICE ALERTS
+        -- =====================================================
+
+        CREATE TABLE IF NOT EXISTS price_alerts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            user_id INTEGER NOT NULL,
+            product_id INTEGER NOT NULL,
+
+            target_price REAL NOT NULL,
+
+            is_active INTEGER NOT NULL DEFAULT 1,
+
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+            UNIQUE(user_id, product_id),
+
+            FOREIGN KEY (user_id) REFERENCES users(id)
+                ON DELETE CASCADE,
+
+            FOREIGN KEY (product_id) REFERENCES products(id)
+                ON DELETE CASCADE
+        );
+
+
+        -- =====================================================
+        -- PRODUCT VIEWS
+        -- =====================================================
+
+        CREATE TABLE IF NOT EXISTS product_views (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            product_id INTEGER NOT NULL,
+            user_id INTEGER,
+
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+            FOREIGN KEY (product_id) REFERENCES products(id)
+                ON DELETE CASCADE,
+
+            FOREIGN KEY (user_id) REFERENCES users(id)
+                ON DELETE SET NULL
+        );
+
+
+        -- =====================================================
+        -- INDEXES
+        -- =====================================================
+
+        CREATE INDEX IF NOT EXISTS idx_products_store
+        ON products(store_id);
+
+        CREATE INDEX IF NOT EXISTS idx_products_category
+        ON products(category);
+
+        CREATE INDEX IF NOT EXISTS idx_messages_sender
+        ON messages(sender_id);
+
+        CREATE INDEX IF NOT EXISTS idx_messages_receiver
+        ON messages(receiver_id);
+
+        CREATE INDEX IF NOT EXISTS idx_notifications_user
+        ON notifications(user_id);
+
+        CREATE INDEX IF NOT EXISTS idx_orders_user
+        ON orders(user_id);
+
+        CREATE INDEX IF NOT EXISTS idx_reviews_product
+        ON reviews(product_id);
+    """)
+
+
+    # =========================================================
+    # MIGRATION FOR OLD DATABASE
+    # =========================================================
+
+    add_column_if_missing(
+        connection, "users", "phone", "TEXT DEFAULT ''"
+    )
+
+    add_column_if_missing(
+        connection, "users", "profile_image", "TEXT DEFAULT ''"
+    )
+
+    add_column_if_missing(
+        connection, "users", "phone_verified",
+        "INTEGER NOT NULL DEFAULT 0"
+    )
+
+    add_column_if_missing(
+        connection, "users", "language",
+        "TEXT NOT NULL DEFAULT 'ar'"
+    )
+
+    add_column_if_missing(
+        connection, "users", "dark_mode",
+        "INTEGER NOT NULL DEFAULT 0"
+    )
+
+    add_column_if_missing(
+        connection, "users", "notifications_enabled",
+        "INTEGER NOT NULL DEFAULT 1"
+    )
+
+    add_column_if_missing(
+        connection, "users", "seller_verification_status",
+        "TEXT NOT NULL DEFAULT 'none'"
+    )
+
+    add_column_if_missing(
+        connection, "users", "seller_activity_type",
+        "TEXT DEFAULT ''"
+    )
+
+    add_column_if_missing(
+        connection, "users", "seller_verification_note",
+        "TEXT DEFAULT ''"
+    )
+
+    add_column_if_missing(
+        connection, "users", "seller_verified_at",
+        "TIMESTAMP"
+    )
+
+
+    add_column_if_missing(
+        connection, "stores", "municipality",
+        "TEXT DEFAULT ''"
+    )
+
+    add_column_if_missing(
+        connection, "stores", "logo",
+        "TEXT DEFAULT ''"
+    )
+
+    add_column_if_missing(
+        connection, "stores", "cover_image",
+        "TEXT DEFAULT ''"
+    )
+
+    add_column_if_missing(
+        connection, "stores", "opening_hours",
+        "TEXT DEFAULT ''"
+    )
+
+    add_column_if_missing(
+        connection, "stores", "followers_count",
+        "INTEGER NOT NULL DEFAULT 0"
+    )
+
+    add_column_if_missing(
+        connection, "stores", "sales_count",
+        "INTEGER NOT NULL DEFAULT 0"
+    )
+
+    add_column_if_missing(
+        connection, "stores", "trust_score",
+        "REAL NOT NULL DEFAULT 0"
+    )
+
+
+    add_column_if_missing(
+        connection, "products", "brand_name",
+        "TEXT DEFAULT ''"
+    )
+
+    add_column_if_missing(
+        connection, "products", "brand_logo",
+        "TEXT DEFAULT ''"
+    )
+
+    add_column_if_missing(
+        connection, "products", "old_price",
+        "REAL DEFAULT 0"
+    )
+
+    add_column_if_missing(
+        connection, "products", "discount_percent",
+        "REAL NOT NULL DEFAULT 0"
+    )
+
+    add_column_if_missing(
+        connection, "products", "video",
+        "TEXT DEFAULT ''"
+    )
+
+    add_column_if_missing(
+        connection, "products", "is_algerian",
+        "INTEGER NOT NULL DEFAULT 0"
+    )
+
+    add_column_if_missing(
+        connection, "products", "delivery_wilayas",
+        "TEXT DEFAULT ''"
+    )
+
+    add_column_if_missing(
+        connection, "products", "rating",
+        "REAL NOT NULL DEFAULT 0"
+    )
+
+    add_column_if_missing(
+        connection, "products", "reviews_count",
+        "INTEGER NOT NULL DEFAULT 0"
+    )
+
+    add_column_if_missing(
+        connection, "products", "is_active",
+        "INTEGER NOT NULL DEFAULT 1"
+    )
+
+
+    add_column_if_missing(
+        connection, "orders", "delivery_wilaya",
+        "TEXT DEFAULT ''"
+    )
+
+    add_column_if_missing(
+        connection, "orders", "delivery_municipality",
+        "TEXT DEFAULT ''"
+    )
+
+    add_column_if_missing(
+        connection, "orders", "delivery_phone",
+        "TEXT DEFAULT ''"
+    )
+
+    add_column_if_missing(
+        connection, "orders", "buyer_confirmed",
+        "INTEGER NOT NULL DEFAULT 0"
+    )
+
+
+    connection.commit()
+    connection.close()
+
+
+if __name__ == "__main__":
+    init_database()
+    print("DZ MARKET database initialized successfully.")
