@@ -1,46 +1,123 @@
-import sqlite3
-from pathlib import Path
-from werkzeug.security import generate_password_hash
+# database.py
+# ============================================================
+# DZ MARKET 🇩🇿
+# Database Layer
+# SQLite foundation - structured for future PostgreSQL migration
+# ============================================================
+
+import os
 import secrets
 import string
+import sqlite3
+from pathlib import Path
+
+from werkzeug.security import generate_password_hash
 
 
-# =========================================================
-# DZ MARKET 🇩🇿
-# DATABASE CONFIGURATION
-# Production-ready SQLite foundation
-# =========================================================
+# ============================================================
+# CONFIGURATION
+# ============================================================
 
 BASE_DIR = Path(__file__).resolve().parent
-DATABASE_PATH = BASE_DIR / "dzmarket.db"
+
+DATABASE_PATH = Path(
+    os.getenv("DZMARKET_DATABASE", BASE_DIR / "dzmarket.db")
+)
 
 
-# =========================================================
+# ============================================================
 # HELPERS
-# =========================================================
+# ============================================================
 
 def generate_code(prefix="DZ"):
+    """Generate a unique-looking public code."""
     alphabet = string.ascii_uppercase + string.digits
-    return prefix + "-" + "".join(
-        secrets.choice(alphabet) for _ in range(8)
-    )
+    random_part = "".join(secrets.choice(alphabet) for _ in range(8))
+    return f"{prefix}-{random_part}"
 
 
 def get_connection():
+    """
+    Create a SQLite connection configured for the application.
+    """
+
     connection = sqlite3.connect(
         DATABASE_PATH,
-        timeout=30
+        timeout=30,
+        check_same_thread=False
     )
 
     connection.row_factory = sqlite3.Row
 
+    # Foreign keys
     connection.execute("PRAGMA foreign_keys = ON")
+
+    # Better concurrent-read behavior
     connection.execute("PRAGMA journal_mode = WAL")
+
+    # Balanced durability/performance
     connection.execute("PRAGMA synchronous = NORMAL")
+
+    # Wait when database is temporarily locked
     connection.execute("PRAGMA busy_timeout = 30000")
 
     return connection
 
+
+# ============================================================
+# FLASK DATABASE HELPER
+# ============================================================
+
+def get_db():
+    """
+    Request-safe database connection.
+
+    models.py and routes.py can use this function.
+    A new connection is created per request/thread.
+    """
+
+    try:
+        from flask import g
+
+        if "db" not in g:
+            g.db = get_connection()
+
+        return g.db
+
+    except RuntimeError:
+        # Allows models/database utilities to work outside
+        # an active Flask request when necessary.
+        return get_connection()
+
+
+def close_db(exception=None):
+    """
+    Close the Flask database connection after the request.
+    """
+
+    try:
+        from flask import g
+
+        db = g.pop("db", None)
+
+        if db is not None:
+            db.close()
+
+    except RuntimeError:
+        pass
+
+
+def init_app(app):
+    """
+    Register database lifecycle hooks with Flask.
+    """
+
+    app.teardown_appcontext(close_db)
+
+
+# ============================================================
+# MIGRATION HELPERS
+# ============================================================
 
 def add_column_if_missing(
     connection,
@@ -48,6 +125,10 @@ def add_column_if_missing(
     column_name,
     column_definition
 ):
+    """
+    Safely add a column when an older database already exists.
+    """
+
     columns = connection.execute(
         f"PRAGMA table_info({table_name})"
     ).fetchall()
@@ -59,27 +140,41 @@ def add_column_if_missing(
 
     if column_name not in existing_columns:
         connection.execute(
-            f"""
-            ALTER TABLE {table_name}
-            ADD COLUMN {column_name}
-            {column_definition}
-            """
+            f"ALTER TABLE {table_name} "
+            f"ADD COLUMN {column_name} {column_definition}"
         )
 
 
-# =========================================================
+def table_exists(connection, table_name):
+    result = connection.execute(
+        """
+        SELECT name
+        FROM sqlite_master
+        WHERE type = 'table'
+          AND name = ?
+        """,
+        (table_name,)
+    ).fetchone()
+
+    return result is not None
+
+
+# ============================================================
 # DATABASE INITIALIZATION
-# =========================================================
+# ============================================================
 
 def init_database():
+    """
+    Create all DZ MARKET tables and apply lightweight migrations.
+    """
 
     connection = get_connection()
 
     try:
 
-        # =================================================
+        # ====================================================
         # USERS
-        # =================================================
+        # ====================================================
 
         connection.execute(
             """
@@ -90,60 +185,54 @@ def init_database():
 
                 email TEXT NOT NULL UNIQUE,
 
-                phone TEXT DEFAULT '',
+                phone TEXT,
 
                 password TEXT NOT NULL,
 
                 role TEXT NOT NULL DEFAULT 'buyer'
-                    CHECK (
-                        role IN (
-                            'buyer',
-                            'seller',
-                            'admin'
-                        )
+                    CHECK(role IN ('buyer', 'seller', 'admin')),
+
+                avatar TEXT,
+
+                bio TEXT,
+
+                wilaya TEXT,
+
+                municipality TEXT,
+
+                phone_verified INTEGER NOT NULL DEFAULT 0,
+
+                language TEXT NOT NULL DEFAULT 'ar',
+
+                seller_verification_status TEXT
+                    NOT NULL DEFAULT 'pending'
+                    CHECK(
+                        seller_verification_status
+                        IN ('pending', 'approved', 'rejected')
                     ),
 
-                avatar TEXT DEFAULT '',
+                seller_activity_type TEXT,
 
-                bio TEXT DEFAULT '',
-
-                wilaya TEXT DEFAULT '',
-
-                municipality TEXT DEFAULT '',
-
-                phone_verified INTEGER DEFAULT 0,
-
-                language TEXT DEFAULT 'ar',
-
-                seller_verification_status
-                    TEXT DEFAULT 'pending',
-
-                seller_activity_type
-                    TEXT DEFAULT '',
-
-                seller_verification_note
-                    TEXT DEFAULT '',
+                seller_verification_note TEXT,
 
                 referral_code TEXT UNIQUE,
 
                 referred_by INTEGER,
 
-                created_at
-                    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                is_active INTEGER NOT NULL DEFAULT 1,
 
-                FOREIGN KEY (
-                    referred_by
-                )
-                REFERENCES users(id)
-                ON DELETE SET NULL
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+                FOREIGN KEY(referred_by)
+                    REFERENCES users(id)
+                    ON DELETE SET NULL
             )
             """
         )
 
-
-        # =================================================
+        # ====================================================
         # STORES
-        # =================================================
+        # ====================================================
 
         connection.execute(
             """
@@ -154,41 +243,43 @@ def init_database():
 
                 name TEXT NOT NULL,
 
-                description TEXT DEFAULT '',
+                description TEXT,
 
-                phone TEXT DEFAULT '',
+                phone TEXT,
 
-                wilaya TEXT DEFAULT '',
+                wilaya TEXT,
 
-                municipality TEXT DEFAULT '',
+                municipality TEXT,
 
-                logo TEXT DEFAULT '',
+                logo TEXT,
 
-                cover_image TEXT DEFAULT '',
+                cover_image TEXT,
 
-                verification_status
-                    TEXT DEFAULT 'pending',
+                verification_status TEXT
+                    NOT NULL DEFAULT 'pending'
+                    CHECK(
+                        verification_status
+                        IN ('pending', 'approved', 'rejected')
+                    ),
 
-                trust_score REAL DEFAULT 0,
+                verification_note TEXT,
 
-                total_sales INTEGER DEFAULT 0,
+                trust_score REAL NOT NULL DEFAULT 0,
 
-                created_at
-                    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                total_sales INTEGER NOT NULL DEFAULT 0,
 
-                FOREIGN KEY (
-                    user_id
-                )
-                REFERENCES users(id)
-                ON DELETE CASCADE
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+                FOREIGN KEY(user_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE
             )
             """
         )
 
-
-        # =================================================
+        # ====================================================
         # PRODUCTS
-        # =================================================
+        # ====================================================
 
         connection.execute(
             """
@@ -199,48 +290,80 @@ def init_database():
 
                 name TEXT NOT NULL,
 
-                description TEXT DEFAULT '',
+                description TEXT,
 
                 price REAL NOT NULL DEFAULT 0,
 
-                discount REAL DEFAULT 0,
+                discount REAL NOT NULL DEFAULT 0,
 
-                quantity INTEGER DEFAULT 0,
+                quantity INTEGER NOT NULL DEFAULT 0,
 
-                category TEXT DEFAULT '',
+                category TEXT,
 
-                brand TEXT DEFAULT '',
+                brand TEXT,
 
-                images TEXT DEFAULT '',
+                images TEXT,
 
-                video TEXT DEFAULT '',
+                video TEXT,
 
-                delivery_wilayas TEXT DEFAULT '',
+                delivery_wilayas TEXT,
 
-                rating REAL DEFAULT 0,
+                rating REAL NOT NULL DEFAULT 0,
 
-                reviews_count INTEGER DEFAULT 0,
+                reviews_count INTEGER NOT NULL DEFAULT 0,
 
-                views INTEGER DEFAULT 0,
+                views INTEGER NOT NULL DEFAULT 0,
 
-                active INTEGER DEFAULT 1,
+                active INTEGER NOT NULL DEFAULT 1,
 
-                created_at
-                    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-                FOREIGN KEY (
-                    store_id
-                )
-                REFERENCES stores(id)
-                ON DELETE CASCADE
+                FOREIGN KEY(store_id)
+                    REFERENCES stores(id)
+                    ON DELETE CASCADE
             )
             """
         )
 
+        # ====================================================
+        # PRODUCT AVAILABILITY
+        #
+        # available_now  = ready stock
+        # made_to_order  = prepared after order
+        # both           = ready stock + made to order
+        # ====================================================
 
-        # =================================================
+        add_column_if_missing(
+            connection,
+            "products",
+            "availability_type",
+            "TEXT NOT NULL DEFAULT 'available_now'"
+        )
+
+        add_column_if_missing(
+            connection,
+            "products",
+            "preparation_time_minutes",
+            "INTEGER NOT NULL DEFAULT 0"
+        )
+
+        add_column_if_missing(
+            connection,
+            "products",
+            "colors",
+            "TEXT"
+        )
+
+        add_column_if_missing(
+            connection,
+            "products",
+            "sizes",
+            "TEXT"
+        )
+
+        # ====================================================
         # FAVORITES
-        # =================================================
+        # ====================================================
 
         connection.execute(
             """
@@ -251,33 +374,24 @@ def init_database():
 
                 product_id INTEGER NOT NULL,
 
-                created_at
-                    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-                UNIQUE (
-                    user_id,
-                    product_id
-                ),
+                UNIQUE(user_id, product_id),
 
-                FOREIGN KEY (
-                    user_id
-                )
-                REFERENCES users(id)
-                ON DELETE CASCADE,
+                FOREIGN KEY(user_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE,
 
-                FOREIGN KEY (
-                    product_id
-                )
-                REFERENCES products(id)
-                ON DELETE CASCADE
+                FOREIGN KEY(product_id)
+                    REFERENCES products(id)
+                    ON DELETE CASCADE
             )
             """
         )
 
-
-        # =================================================
+        # ====================================================
         # CART
-        # =================================================
+        # ====================================================
 
         connection.execute(
             """
@@ -290,33 +404,37 @@ def init_database():
 
                 quantity INTEGER NOT NULL DEFAULT 1,
 
-                created_at
-                    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                purchase_mode TEXT NOT NULL DEFAULT 'ready_stock'
+                    CHECK(
+                        purchase_mode
+                        IN ('ready_stock', 'made_to_order')
+                    ),
 
-                UNIQUE (
-                    user_id,
-                    product_id
-                ),
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-                FOREIGN KEY (
-                    user_id
-                )
-                REFERENCES users(id)
-                ON DELETE CASCADE,
+                UNIQUE(user_id, product_id, purchase_mode),
 
-                FOREIGN KEY (
-                    product_id
-                )
-                REFERENCES products(id)
-                ON DELETE CASCADE
+                FOREIGN KEY(user_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE,
+
+                FOREIGN KEY(product_id)
+                    REFERENCES products(id)
+                    ON DELETE CASCADE
             )
             """
         )
 
+        add_column_if_missing(
+            connection,
+            "cart_items",
+            "purchase_mode",
+            "TEXT NOT NULL DEFAULT 'ready_stock'"
+        )
 
-        # =================================================
+        # ====================================================
         # ORDERS
-        # =================================================
+        # ====================================================
 
         connection.execute(
             """
@@ -325,35 +443,42 @@ def init_database():
 
                 user_id INTEGER NOT NULL,
 
-                total_amount REAL DEFAULT 0,
+                total_amount REAL NOT NULL DEFAULT 0,
 
-                delivery_address TEXT DEFAULT '',
+                delivery_address TEXT NOT NULL,
 
-                delivery_wilaya TEXT DEFAULT '',
+                delivery_wilaya TEXT NOT NULL,
 
-                delivery_phone TEXT DEFAULT '',
+                delivery_phone TEXT NOT NULL,
 
-                status TEXT DEFAULT 'pending',
+                status TEXT NOT NULL DEFAULT 'pending'
+                    CHECK(
+                        status IN (
+                            'pending',
+                            'confirmed',
+                            'preparing',
+                            'shipped',
+                            'in_transit',
+                            'delivered',
+                            'cancelled',
+                            'returned'
+                        )
+                    ),
 
-                created_at
-                    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-                updated_at
-                    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-                FOREIGN KEY (
-                    user_id
-                )
-                REFERENCES users(id)
-                ON DELETE CASCADE
+                FOREIGN KEY(user_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE
             )
             """
         )
 
-
-        # =================================================
+        # ====================================================
         # ORDER ITEMS
-        # =================================================
+        # ====================================================
 
         connection.execute(
             """
@@ -364,36 +489,52 @@ def init_database():
 
                 product_id INTEGER NOT NULL,
 
-                store_id INTEGER,
+                store_id INTEGER NOT NULL,
 
-                quantity INTEGER NOT NULL DEFAULT 1,
+                quantity INTEGER NOT NULL,
 
-                price REAL NOT NULL DEFAULT 0,
+                price REAL NOT NULL,
 
-                FOREIGN KEY (
-                    order_id
-                )
-                REFERENCES orders(id)
-                ON DELETE CASCADE,
+                purchase_mode TEXT NOT NULL DEFAULT 'ready_stock'
+                    CHECK(
+                        purchase_mode
+                        IN ('ready_stock', 'made_to_order')
+                    ),
 
-                FOREIGN KEY (
-                    product_id
-                )
-                REFERENCES products(id),
+                preparation_time_minutes INTEGER NOT NULL DEFAULT 0,
 
-                FOREIGN KEY (
-                    store_id
-                )
-                REFERENCES stores(id)
-                ON DELETE SET NULL
+                FOREIGN KEY(order_id)
+                    REFERENCES orders(id)
+                    ON DELETE CASCADE,
+
+                FOREIGN KEY(product_id)
+                    REFERENCES products(id)
+                    ON DELETE RESTRICT,
+
+                FOREIGN KEY(store_id)
+                    REFERENCES stores(id)
+                    ON DELETE RESTRICT
             )
             """
         )
 
+        add_column_if_missing(
+            connection,
+            "order_items",
+            "purchase_mode",
+            "TEXT NOT NULL DEFAULT 'ready_stock'"
+        )
 
-        # =================================================
+        add_column_if_missing(
+            connection,
+            "order_items",
+            "preparation_time_minutes",
+            "INTEGER NOT NULL DEFAULT 0"
+        )
+
+        # ====================================================
         # REVIEWS
-        # =================================================
+        # ====================================================
 
         connection.execute(
             """
@@ -404,48 +545,41 @@ def init_database():
 
                 product_id INTEGER NOT NULL,
 
-                order_id INTEGER,
+                order_id INTEGER NOT NULL,
 
                 order_item_id INTEGER,
 
-                rating INTEGER NOT NULL,
+                rating INTEGER NOT NULL
+                    CHECK(rating BETWEEN 1 AND 5),
 
-                comment TEXT DEFAULT '',
+                comment TEXT,
 
-                created_at
-                    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-                UNIQUE (
-                    user_id,
-                    product_id,
-                    order_id
-                ),
+                UNIQUE(user_id, product_id, order_id),
 
-                FOREIGN KEY (
-                    user_id
-                )
-                REFERENCES users(id)
-                ON DELETE CASCADE,
+                FOREIGN KEY(user_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE,
 
-                FOREIGN KEY (
-                    product_id
-                )
-                REFERENCES products(id)
-                ON DELETE CASCADE,
+                FOREIGN KEY(product_id)
+                    REFERENCES products(id)
+                    ON DELETE CASCADE,
 
-                FOREIGN KEY (
-                    order_id
-                )
-                REFERENCES orders(id)
-                ON DELETE SET NULL
+                FOREIGN KEY(order_id)
+                    REFERENCES orders(id)
+                    ON DELETE CASCADE,
+
+                FOREIGN KEY(order_item_id)
+                    REFERENCES order_items(id)
+                    ON DELETE SET NULL
             )
             """
         )
 
-
-        # =================================================
+        # ====================================================
         # STORE FOLLOWERS
-        # =================================================
+        # ====================================================
 
         connection.execute(
             """
@@ -456,33 +590,24 @@ def init_database():
 
                 store_id INTEGER NOT NULL,
 
-                created_at
-                    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-                UNIQUE (
-                    user_id,
-                    store_id
-                ),
+                UNIQUE(user_id, store_id),
 
-                FOREIGN KEY (
-                    user_id
-                )
-                REFERENCES users(id)
-                ON DELETE CASCADE,
+                FOREIGN KEY(user_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE,
 
-                FOREIGN KEY (
-                    store_id
-                )
-                REFERENCES stores(id)
-                ON DELETE CASCADE
+                FOREIGN KEY(store_id)
+                    REFERENCES stores(id)
+                    ON DELETE CASCADE
             )
             """
         )
 
-
-        # =================================================
+        # ====================================================
         # MESSAGES
-        # =================================================
+        # ====================================================
 
         connection.execute(
             """
@@ -493,32 +618,39 @@ def init_database():
 
                 receiver_id INTEGER NOT NULL,
 
+                product_id INTEGER,
+
                 body TEXT NOT NULL,
 
-                is_read INTEGER DEFAULT 0,
+                is_read INTEGER NOT NULL DEFAULT 0,
 
-                created_at
-                    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-                FOREIGN KEY (
-                    sender_id
-                )
-                REFERENCES users(id)
-                ON DELETE CASCADE,
+                FOREIGN KEY(sender_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE,
 
-                FOREIGN KEY (
-                    receiver_id
-                )
-                REFERENCES users(id)
-                ON DELETE CASCADE
+                FOREIGN KEY(receiver_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE,
+
+                FOREIGN KEY(product_id)
+                    REFERENCES products(id)
+                    ON DELETE SET NULL
             )
             """
         )
 
+        add_column_if_missing(
+            connection,
+            "messages",
+            "product_id",
+            "INTEGER"
+        )
 
-        # =================================================
+        # ====================================================
         # NOTIFICATIONS
-        # =================================================
+        # ====================================================
 
         connection.execute(
             """
@@ -531,24 +663,20 @@ def init_database():
 
                 message TEXT NOT NULL,
 
-                is_read INTEGER DEFAULT 0,
+                is_read INTEGER NOT NULL DEFAULT 0,
 
-                created_at
-                    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-                FOREIGN KEY (
-                    user_id
-                )
-                REFERENCES users(id)
-                ON DELETE CASCADE
+                FOREIGN KEY(user_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE
             )
             """
         )
 
-
-        # =================================================
+        # ====================================================
         # COMPLAINTS
-        # =================================================
+        # ====================================================
 
         connection.execute(
             """
@@ -559,141 +687,147 @@ def init_database():
 
                 order_id INTEGER,
 
-                subject TEXT DEFAULT '',
+                subject TEXT NOT NULL,
 
                 message TEXT NOT NULL,
 
-                status TEXT DEFAULT 'open',
+                status TEXT NOT NULL DEFAULT 'open'
+                    CHECK(
+                        status IN (
+                            'open',
+                            'in_review',
+                            'resolved',
+                            'closed'
+                        )
+                    ),
 
-                created_at
-                    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-                FOREIGN KEY (
-                    user_id
-                )
-                REFERENCES users(id)
-                ON DELETE CASCADE,
+                FOREIGN KEY(user_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE,
 
-                FOREIGN KEY (
-                    order_id
-                )
-                REFERENCES orders(id)
-                ON DELETE SET NULL
+                FOREIGN KEY(order_id)
+                    REFERENCES orders(id)
+                    ON DELETE SET NULL
             )
             """
         )
 
-
-        # =================================================
+        # ====================================================
         # REPORTS
-        # =================================================
+        # ====================================================
 
         connection.execute(
             """
             CREATE TABLE IF NOT EXISTS reports (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-                user_id INTEGER NOT NULL,
+                reporter_id INTEGER NOT NULL,
 
-                target_type TEXT NOT NULL,
+                reported_user_id INTEGER,
 
-                target_id INTEGER NOT NULL,
+                product_id INTEGER,
+
+                store_id INTEGER,
 
                 reason TEXT NOT NULL,
 
-                message TEXT DEFAULT '',
+                details TEXT,
 
-                status TEXT DEFAULT 'open',
+                status TEXT NOT NULL DEFAULT 'open'
+                    CHECK(
+                        status IN (
+                            'open',
+                            'in_review',
+                            'resolved',
+                            'closed'
+                        )
+                    ),
 
-                created_at
-                    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-                FOREIGN KEY (
-                    user_id
-                )
-                REFERENCES users(id)
-                ON DELETE CASCADE
+                FOREIGN KEY(reporter_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE,
+
+                FOREIGN KEY(reported_user_id)
+                    REFERENCES users(id)
+                    ON DELETE SET NULL,
+
+                FOREIGN KEY(product_id)
+                    REFERENCES products(id)
+                    ON DELETE SET NULL,
+
+                FOREIGN KEY(store_id)
+                    REFERENCES stores(id)
+                    ON DELETE SET NULL
             )
             """
         )
 
-
-        # =================================================
+        # ====================================================
         # BLOCKED USERS
-        # =================================================
+        # ====================================================
 
         connection.execute(
             """
             CREATE TABLE IF NOT EXISTS blocked_users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-                blocker_id INTEGER NOT NULL,
+                user_id INTEGER NOT NULL,
 
-                blocked_id INTEGER NOT NULL,
+                blocked_user_id INTEGER NOT NULL,
 
-                created_at
-                    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-                UNIQUE (
-                    blocker_id,
-                    blocked_id
-                ),
+                UNIQUE(user_id, blocked_user_id),
 
-                FOREIGN KEY (
-                    blocker_id
-                )
-                REFERENCES users(id)
-                ON DELETE CASCADE,
+                FOREIGN KEY(user_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE,
 
-                FOREIGN KEY (
-                    blocked_id
-                )
-                REFERENCES users(id)
-                ON DELETE CASCADE
+                FOREIGN KEY(blocked_user_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE
             )
             """
         )
 
-
-        # =================================================
+        # ====================================================
         # DISCOUNT CODES
-        # =================================================
+        # ====================================================
 
         connection.execute(
             """
             CREATE TABLE IF NOT EXISTS discount_codes (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-                store_id INTEGER NOT NULL,
-
                 code TEXT NOT NULL UNIQUE,
 
-                discount_percent REAL DEFAULT 0,
+                discount_type TEXT NOT NULL DEFAULT 'fixed'
+                    CHECK(
+                        discount_type IN ('fixed', 'percentage')
+                    ),
 
-                max_uses INTEGER DEFAULT 0,
+                value REAL NOT NULL DEFAULT 0,
 
-                used_count INTEGER DEFAULT 0,
+                max_uses INTEGER,
+
+                used_count INTEGER NOT NULL DEFAULT 0,
 
                 expires_at TEXT,
 
-                active INTEGER DEFAULT 1,
+                active INTEGER NOT NULL DEFAULT 1,
 
-                created_at
-                    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-                FOREIGN KEY (
-                    store_id
-                )
-                REFERENCES stores(id)
-                ON DELETE CASCADE
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
             )
             """
         )
 
-
-        # =================================================
+        # ====================================================
         # REWARD CARDS
-        # =================================================
+        # ====================================================
 
         connection.execute(
             """
@@ -704,38 +838,26 @@ def init_database():
 
                 code TEXT NOT NULL UNIQUE,
 
-                title TEXT NOT NULL,
+                reward_type TEXT NOT NULL,
 
-                description TEXT DEFAULT '',
+                reward_value REAL NOT NULL DEFAULT 0,
 
-                discount_percent REAL DEFAULT 0,
-
-                reward_type TEXT DEFAULT 'discount',
-
-                source TEXT DEFAULT 'order',
+                used INTEGER NOT NULL DEFAULT 0,
 
                 expires_at TEXT,
 
-                used INTEGER DEFAULT 0,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-                active INTEGER DEFAULT 1,
-
-                created_at
-                    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-                FOREIGN KEY (
-                    user_id
-                )
-                REFERENCES users(id)
-                ON DELETE CASCADE
+                FOREIGN KEY(user_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE
             )
             """
         )
 
-
-        # =================================================
+        # ====================================================
         # REFERRALS
-        # =================================================
+        # ====================================================
 
         connection.execute(
             """
@@ -746,36 +868,33 @@ def init_database():
 
                 invited_user_id INTEGER NOT NULL UNIQUE,
 
-                referral_code TEXT NOT NULL,
+                status TEXT NOT NULL DEFAULT 'pending'
+                    CHECK(
+                        status IN (
+                            'pending',
+                            'completed',
+                            'cancelled'
+                        )
+                    ),
 
-                status TEXT DEFAULT 'registered',
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-                reward_granted INTEGER DEFAULT 0,
+                completed_at TEXT,
 
-                created_at
-                    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY(inviter_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE,
 
-                completed_at TIMESTAMP,
-
-                FOREIGN KEY (
-                    inviter_id
-                )
-                REFERENCES users(id)
-                ON DELETE CASCADE,
-
-                FOREIGN KEY (
-                    invited_user_id
-                )
-                REFERENCES users(id)
-                ON DELETE CASCADE
+                FOREIGN KEY(invited_user_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE
             )
             """
         )
 
-
-        # =================================================
+        # ====================================================
         # REWARD MILESTONES
-        # =================================================
+        # ====================================================
 
         connection.execute(
             """
@@ -784,37 +903,26 @@ def init_database():
 
                 user_id INTEGER NOT NULL,
 
-                milestone INTEGER NOT NULL,
+                milestone_type TEXT NOT NULL,
 
-                reward_card_id INTEGER,
+                milestone_value INTEGER NOT NULL,
 
-                achieved_at
-                    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                achieved INTEGER NOT NULL DEFAULT 0,
 
-                UNIQUE (
-                    user_id,
-                    milestone
-                ),
+                achieved_at TEXT,
 
-                FOREIGN KEY (
-                    user_id
-                )
-                REFERENCES users(id)
-                ON DELETE CASCADE,
+                UNIQUE(user_id, milestone_type, milestone_value),
 
-                FOREIGN KEY (
-                    reward_card_id
-                )
-                REFERENCES reward_cards(id)
-                ON DELETE SET NULL
+                FOREIGN KEY(user_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE
             )
             """
         )
 
-
-        # =================================================
+        # ====================================================
         # PRICE ALERTS
-        # =================================================
+        # ====================================================
 
         connection.execute(
             """
@@ -827,67 +935,50 @@ def init_database():
 
                 target_price REAL NOT NULL,
 
-                active INTEGER DEFAULT 1,
+                active INTEGER NOT NULL DEFAULT 1,
 
-                created_at
-                    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-                UNIQUE (
-                    user_id,
-                    product_id
-                ),
+                FOREIGN KEY(user_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE,
 
-                FOREIGN KEY (
-                    user_id
-                )
-                REFERENCES users(id)
-                ON DELETE CASCADE,
-
-                FOREIGN KEY (
-                    product_id
-                )
-                REFERENCES products(id)
-                ON DELETE CASCADE
+                FOREIGN KEY(product_id)
+                    REFERENCES products(id)
+                    ON DELETE CASCADE
             )
             """
         )
 
-
-        # =================================================
+        # ====================================================
         # PRODUCT VIEWS
-        # =================================================
+        # ====================================================
 
         connection.execute(
             """
             CREATE TABLE IF NOT EXISTS product_views (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-                user_id INTEGER,
-
                 product_id INTEGER NOT NULL,
 
-                created_at
-                    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                user_id INTEGER,
 
-                FOREIGN KEY (
-                    user_id
-                )
-                REFERENCES users(id)
-                ON DELETE SET NULL,
+                viewed_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-                FOREIGN KEY (
-                    product_id
-                )
-                REFERENCES products(id)
-                ON DELETE CASCADE
+                FOREIGN KEY(product_id)
+                    REFERENCES products(id)
+                    ON DELETE CASCADE,
+
+                FOREIGN KEY(user_id)
+                    REFERENCES users(id)
+                    ON DELETE SET NULL
             )
             """
         )
 
-
-        # =================================================
+        # ====================================================
         # CHAT SETTINGS
-        # =================================================
+        # ====================================================
 
         connection.execute(
             """
@@ -896,33 +987,64 @@ def init_database():
 
                 user_id INTEGER NOT NULL UNIQUE,
 
-                voice_type TEXT DEFAULT 'female',
+                voice_type TEXT NOT NULL DEFAULT 'female',
 
-                voice_enabled INTEGER DEFAULT 0,
+                voice_enabled INTEGER NOT NULL DEFAULT 0,
 
-                language TEXT DEFAULT 'ar',
+                language TEXT NOT NULL DEFAULT 'ar',
 
-                style TEXT DEFAULT 'friendly',
+                style TEXT NOT NULL DEFAULT 'friendly',
 
-                created_at
-                    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-                FOREIGN KEY (
-                    user_id
-                )
-                REFERENCES users(id)
-                ON DELETE CASCADE
+                updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+                FOREIGN KEY(user_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE
             )
             """
         )
 
-
-        # =================================================
-        # PERFORMANCE INDEXES
-        # =================================================
+        # ====================================================
+        # INDEXES
+        # ====================================================
 
         indexes = [
 
+            # Users
+            """
+            CREATE INDEX IF NOT EXISTS
+            idx_users_role
+            ON users(role)
+            """,
+
+            """
+            CREATE INDEX IF NOT EXISTS
+            idx_users_verification
+            ON users(seller_verification_status)
+            """,
+
+            """
+            CREATE INDEX IF NOT EXISTS
+            idx_users_wilaya
+            ON users(wilaya)
+            """,
+
+            # Stores
+            """
+            CREATE INDEX IF NOT EXISTS
+            idx_stores_verification
+            ON stores(verification_status)
+            """,
+
+            """
+            CREATE INDEX IF NOT EXISTS
+            idx_stores_wilaya
+            ON stores(wilaya)
+            """,
+
+            # Products
             """
             CREATE INDEX IF NOT EXISTS
             idx_products_store
@@ -943,6 +1065,27 @@ def init_database():
 
             """
             CREATE INDEX IF NOT EXISTS
+            idx_products_availability
+            ON products(availability_type)
+            """,
+
+            # Favorites
+            """
+            CREATE INDEX IF NOT EXISTS
+            idx_favorites_user
+            ON favorites(user_id)
+            """,
+
+            # Cart
+            """
+            CREATE INDEX IF NOT EXISTS
+            idx_cart_user
+            ON cart_items(user_id)
+            """,
+
+            # Orders
+            """
+            CREATE INDEX IF NOT EXISTS
             idx_orders_user
             ON orders(user_id)
             """,
@@ -953,6 +1096,7 @@ def init_database():
             ON orders(status)
             """,
 
+            # Order items
             """
             CREATE INDEX IF NOT EXISTS
             idx_order_items_order
@@ -961,10 +1105,31 @@ def init_database():
 
             """
             CREATE INDEX IF NOT EXISTS
-            idx_order_items_store
-            ON order_items(store_id)
+            idx_order_items_product
+            ON order_items(product_id)
             """,
 
+            # Reviews
+            """
+            CREATE INDEX IF NOT EXISTS
+            idx_reviews_product
+            ON reviews(product_id)
+            """,
+
+            """
+            CREATE INDEX IF NOT EXISTS
+            idx_reviews_user
+            ON reviews(user_id)
+            """,
+
+            # Followers
+            """
+            CREATE INDEX IF NOT EXISTS
+            idx_followers_store
+            ON store_followers(store_id)
+            """,
+
+            # Messages
             """
             CREATE INDEX IF NOT EXISTS
             idx_messages_sender
@@ -979,174 +1144,106 @@ def init_database():
 
             """
             CREATE INDEX IF NOT EXISTS
-            idx_messages_conversation
-            ON messages(sender_id, receiver_id)
+            idx_messages_product
+            ON messages(product_id)
             """,
 
+            """
+            CREATE INDEX IF NOT EXISTS
+            idx_messages_conversation
+            ON messages(sender_id, receiver_id, created_at)
+            """,
+
+            # Notifications
             """
             CREATE INDEX IF NOT EXISTS
             idx_notifications_user
             ON notifications(user_id)
             """,
 
+            # Complaints
             """
             CREATE INDEX IF NOT EXISTS
             idx_complaints_status
             ON complaints(status)
             """,
 
+            # Reports
             """
             CREATE INDEX IF NOT EXISTS
             idx_reports_status
             ON reports(status)
             """,
 
+            # Rewards
             """
             CREATE INDEX IF NOT EXISTS
             idx_reward_cards_user
             ON reward_cards(user_id)
             """,
 
+            # Referrals
             """
             CREATE INDEX IF NOT EXISTS
             idx_referrals_inviter
             ON referrals(inviter_id)
             """,
 
+            # Price alerts
+            """
+            CREATE INDEX IF NOT EXISTS
+            idx_price_alerts_product
+            ON price_alerts(product_id)
+            """,
+
+            # Product views
             """
             CREATE INDEX IF NOT EXISTS
             idx_product_views_product
             ON product_views(product_id)
             """,
 
+            # Store followers
             """
             CREATE INDEX IF NOT EXISTS
-            idx_store_followers_store
-            ON store_followers(store_id)
-            """,
-
-            """
-            CREATE INDEX IF NOT EXISTS
-            idx_cart_user
-            ON cart_items(user_id)
+            idx_store_followers_user
+            ON store_followers(user_id)
             """
         ]
-
 
         for index_sql in indexes:
             connection.execute(index_sql)
 
+        # ====================================================
+        # MIGRATE OLD COLUMNS / DATA
+        # ====================================================
 
-        # =================================================
-        # SAFE MIGRATIONS
-        # =================================================
+        # Old installations may not have is_active.
+        add_column_if_missing(
+            connection,
+            "users",
+            "is_active",
+            "INTEGER NOT NULL DEFAULT 1"
+        )
 
-        migrations = [
+        # Old notifications might have had different structures.
+        # We keep the canonical column name: message.
 
-            # USERS
-            ("users", "referral_code", "TEXT UNIQUE"),
-            ("users", "referred_by", "INTEGER"),
-            ("users", "avatar", "TEXT DEFAULT ''"),
-            ("users", "bio", "TEXT DEFAULT ''"),
-            ("users", "wilaya", "TEXT DEFAULT ''"),
-            ("users", "municipality", "TEXT DEFAULT ''"),
-            ("users", "phone_verified", "INTEGER DEFAULT 0"),
-            ("users", "language", "TEXT DEFAULT 'ar'"),
-            (
-                "users",
-                "seller_verification_status",
-                "TEXT DEFAULT 'pending'"
-            ),
-            (
-                "users",
-                "seller_activity_type",
-                "TEXT DEFAULT ''"
-            ),
-            (
-                "users",
-                "seller_verification_note",
-                "TEXT DEFAULT ''"
-            ),
+        # Old complaints also use message as canonical column.
+        # This matches models.py.
 
-            # STORES
-            ("stores", "logo", "TEXT DEFAULT ''"),
-            ("stores", "cover_image", "TEXT DEFAULT ''"),
-            (
-                "stores",
-                "verification_status",
-                "TEXT DEFAULT 'pending'"
-            ),
-            ("stores", "trust_score", "REAL DEFAULT 0"),
-            ("stores", "total_sales", "INTEGER DEFAULT 0"),
-
-            # PRODUCTS
-            ("products", "discount", "REAL DEFAULT 0"),
-            ("products", "quantity", "INTEGER DEFAULT 0"),
-            ("products", "category", "TEXT DEFAULT ''"),
-            ("products", "brand", "TEXT DEFAULT ''"),
-            ("products", "images", "TEXT DEFAULT ''"),
-            ("products", "video", "TEXT DEFAULT ''"),
-            (
-                "products",
-                "delivery_wilayas",
-                "TEXT DEFAULT ''"
-            ),
-            ("products", "rating", "REAL DEFAULT 0"),
-            (
-                "products",
-                "reviews_count",
-                "INTEGER DEFAULT 0"
-            ),
-            ("products", "views", "INTEGER DEFAULT 0"),
-            ("products", "active", "INTEGER DEFAULT 1"),
-
-            # ORDERS
-            ("orders", "total_amount", "REAL DEFAULT 0"),
-            (
-                "orders",
-                "delivery_address",
-                "TEXT DEFAULT ''"
-            ),
-            (
-                "orders",
-                "delivery_wilaya",
-                "TEXT DEFAULT ''"
-            ),
-            (
-                "orders",
-                "delivery_phone",
-                "TEXT DEFAULT ''"
-            ),
-            (
-                "orders",
-                "status",
-                "TEXT DEFAULT 'pending'"
-            ),
-            (
-                "orders",
-                "updated_at",
-                "TIMESTAMP"
-            )
-        ]
-
-
-        for table, column, definition in migrations:
-
-            try:
-                add_column_if_missing(
-                    connection,
-                    table,
-                    column,
-                    definition
-                )
-
-            except sqlite3.OperationalError:
-                pass
-
-
-        # =================================================
+        # ====================================================
         # ADMIN ACCOUNT
-        # =================================================
+        # ====================================================
+
+        admin_email = os.getenv(
+            "DZMARKET_ADMIN_EMAIL",
+            "admin@dzmarket.local"
+        )
+
+        admin_password = os.getenv(
+            "DZMARKET_ADMIN_PASSWORD"
+        )
 
         admin = connection.execute(
             """
@@ -1157,8 +1254,7 @@ def init_database():
             """
         ).fetchone()
 
-
-        if not admin:
+        if not admin and admin_password:
 
             connection.execute(
                 """
@@ -1167,49 +1263,38 @@ def init_database():
                     email,
                     password,
                     role,
-                    referral_code
+                    referral_code,
+                    is_active
                 )
-                VALUES (?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, 'admin', ?, 1)
                 """,
                 (
                     "DZ MARKET Admin",
-                    "admin@dzmarket.local",
-                    generate_password_hash(
-                        "ChangeMe123!"
-                    ),
-                    "admin",
+                    admin_email,
+                    generate_password_hash(admin_password),
                     generate_code("ADMIN")
                 )
             )
 
-
-        # =================================================
+        # ====================================================
         # COMMIT
-        # =================================================
+        # ====================================================
 
         connection.commit()
 
-
     except Exception:
-
         connection.rollback()
-
         raise
 
-
     finally:
-
         connection.close()
 
 
-# =========================================================
-# AUTO INITIALIZATION
-# =========================================================
+# ============================================================
+# DIRECT EXECUTION
+# ============================================================
 
 if __name__ == "__main__":
-
     init_database()
-
-    print(
-        "DZ MARKET 🇩🇿 database initialized successfully."
-        )
+    print("DZ MARKET database initialized successfully.")
+    print(f"Database: {DATABASE_PATH}")
