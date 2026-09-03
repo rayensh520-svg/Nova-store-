@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متجري | DZ MARKET 🇩🇿</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f7f1ec;
+            color: #35151f;
+            min-height: 100vh;
+            padding-bottom: 85px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #541827, #7b263b);
+            color: white;
+            padding: 22px 18px;
+            border-radius: 0 0 25px 25px;
+        }
+
+        .top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .back {
+            width: 40px;
+            height: 40px;
+            border: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,.15);
+            color: white;
+            font-size: 22px;
+        }
+
+        .store-logo {
+            width: 58px;
+            height: 58px;
+            border-radius: 18px;
+            background: #d4af37;
+            color: #541827;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 25px;
+            font-weight: bold;
+            overflow: hidden;
+        }
+
+        .store-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .store-info {
+            flex: 1;
+        }
+
+        .store-info h1 {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+
+        .store-info p {
+            font-size: 12px;
+            opacity: .8;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 18px;
+        }
+
+        .stat {
+            background: rgba(255,255,255,.1);
+            border-radius: 14px;
+            padding: 12px 5px;
+            text-align: center;
+        }
+
+        .stat strong {
+            display: block;
+            font-size: 18px;
+            color: #f0d778;
+        }
+
+        .stat span {
+            font-size: 10px;
+            opacity: .75;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 18px 14px;
+        }
+
+        .actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .action {
+            border: 0;
+            border-radius: 15px;
+            padding: 14px;
+            background: white;
+            color: #541827;
+            font-weight: bold;
+            box-shadow: 0 5px 18px rgba(0,0,0,.06);
+            cursor: pointer;
+        }
+
+        .action.primary {
+            background: #641d31;
+            color: white;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 18px 2px 12px;
+        }
+
+        .section-title h2 {
+            font-size: 17px;
+        }
+
+        .section-title span {
+            font-size: 12px;
+            color: #8b6871;
+        }
+
+        .product {
+            background: white;
+            border-radius: 18px;
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            box-shadow: 0 5px 18px rgba(0,0,0,.05);
+        }
+
+        .product-image {
+            width: 78px;
+            height: 78px;
+            border-radius: 14px;
+            background: #eee3dc;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 30px;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .product-info h3 {
+            font-size: 14px;
+            margin-bottom: 7px;
+        }
+
+        .price {
+            color: #641d31;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .stock {
+            font-size: 11px;
+            color: #7b6870;
+            margin-top: 5px;
+        }
+
+        .edit {
+            border: 1px solid #dbc6bd;
+            background: #fffaf7;
+            color: #641d31;
+            border-radius: 10px;
+            padding: 8px 10px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        .empty {
+            text-align: center;
+            background: white;
+            border-radius: 18px;
+            padding: 40px 20px;
+            color: #856b72;
+        }
+
+        .empty-icon {
+            font-size: 45px;
+            margin-bottom: 10px;
+        }
+
+        .nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 68px;
+            background: rgba(255,255,255,.97);
+            border-top: 1px solid #eadbd3;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 20;
+        }
+
+        .nav a {
+            text-decoration: none;
+            color: #7b6870;
+            font-size: 10px;
+            text-align: center;
+        }
+
+        .nav a span {
+            display: block;
+            font-size: 21px;
+            margin-bottom: 3px;
+        }
+
+        .nav a.active {
+            color: #641d31;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="top">
+
+        <button class="back" onclick="history.back()">‹</button>
+
+        <div class="store-logo">
+            {% if store and store.logo %}
+                <img src="{{ store.logo }}" alt="">
+            {% else %}
+                🏪
+            {% endif %}
+        </div>
+
+        <div class="store-info">
+
+            {% if store %}
+                <h1>{{ store.name }}</h1>
+                <p>متجري في DZ MARKET 🇩🇿</p>
+            {% else %}
+                <h1>إنشاء متجرك</h1>
+                <p>ابدأ البيع على DZ MARKET</p>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    {% if store %}
+
+    <div class="stats">
+
+        <div class="stat">
+            <strong>{{ products|length }}</strong>
+            <span>المنتجات</span>
+        </div>
+
+        <div class="stat">
+            <strong>{{ store.total_sales or 0 }}</strong>
+            <span>المبيعات</span>
+        </div>
+
+        <div class="stat">
+            <strong>{{ store.trust_score or 0 }}</strong>
+            <span>الثقة</span>
+        </div>
+
+    </div>
+
+    {% endif %}
+
+</header>
+
+
+<main class="container">
+
+    {% if store %}
+
+        <div class="actions">
+
+            <button
+                class="action primary"
+                onclick="location.href='{{ url_for('auth.seller_product_new') }}'"
+            >
+                ＋ إضافة منتج
+            </button>
+
+            <button
+                class="action"
+                onclick="location.href='{{ url_for('auth.seller_edit') }}'"
+            >
+                ⚙️ تعديل المتجر
+            </button>
+
+        </div>
+
+
+        <div class="section-title">
+            <h2>منتجاتي</h2>
+            <span>{{ products|length }} منتج</span>
+        </div>
+
+
+        {% if products %}
+
+            {% for product in products %}
+
+                <div class="product">
+
+                    <div class="product-image">
+
+                        {% if product.images %}
+                            <img
+                                src="{{ product.images.split(',')[0] }}"
+                                alt="{{ product.name }}"
+                            >
+                        {% else %}
+                            📦
+                        {% endif %}
+
+                    </div>
+
+                    <div class="product-info">
+
+                        <h3>{{ product.name }}</h3>
+
+                        <div class="price">
+                            {{ "%.2f"|format(product.price) }} دج
+                        </div>
+
+                        <div class="stock">
+                            المخزون:
+                            {{ product.quantity }}
+                        </div>
+
+                    </div>
+
+                    <button
+                        class="edit"
+                        onclick="location.href='{{ url_for('auth.seller_product_edit', product_id=product.id) }}'"
+                    >
+                        تعديل
+                    </button>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="empty">
+
+                <div class="empty-icon">📦</div>
+
+                <h3>ما عندك حتى منتج</h3>
+
+                <p style="margin:8px 0 18px;">
+                    أضف أول منتج وابدأ البيع.
+                </p>
+
+                <button
+                    class="action primary"
+                    onclick="location.href='{{ url_for('auth.seller_product_new') }}'"
+                >
+                    ＋ إضافة أول منتج
+                </button>
+
+            </div>
+
+        {% endif %}
+
+    {% else %}
+
+        <div class="empty">
+
+            <div class="empty-icon">🏪</div>
+
+            <h3>أنشئ متجرك الآن</h3>
+
+            <p style="margin:8px 0 18px;">
+                افتح متجرك واعرض منتجاتك للمشترين في الجزائر.
+            </p>
+
+            <button
+                class="action primary"
+                onclick="location.href='{{ url_for('auth.seller_edit') }}'"
+            >
+                إنشاء المتجر
+            </button>
+
+        </div>
+
+    {% endif %}
+
+</main>
+
+
+<nav class="nav">
+
+    <a href="{{ url_for('home') }}">
+        <span>🏠</span>
+        الرئيسية
+    </a>
+
+    <a href="#">
+        <span>◈</span>
+        الاستكشاف
+    </a>
+
+    <a href="{{ url_for('auth.cart') }}">
+        <span>🛒</span>
+        السلة
+    </a>
+
+    <a href="{{ url_for('auth.messages') }}">
+        <span>💬</span>
+        الرسائل
+    </a>
+
+    <a href="{{ url_for('auth.cards') }}">
+        <span>🎟️</span>
+        بطاقاتي
+    </a>
+
+</nav>
+
+</body>
+  </html>
