@@ -1,28 +1,66 @@
 import json
+import secrets
+import string
+
 from database import get_connection
 
 
-# ============================================================
+# =========================================================
+# HELPERS
+# =========================================================
+
+def generate_code(prefix="DZ"):
+    chars = string.ascii_uppercase + string.digits
+    random_part = "".join(
+        secrets.choice(chars)
+        for _ in range(8)
+    )
+    return f"{prefix}-{random_part}"
+
+
+# =========================================================
 # USER
-# ============================================================
+# =========================================================
 
 class User:
 
     @staticmethod
-    def create(full_name, email, password, role="buyer", phone=""):
+    def create(
+        full_name,
+        email,
+        password,
+        role="buyer",
+        phone=""
+    ):
         connection = get_connection()
 
         try:
+            referral_code = generate_code("DZ")
+
             cursor = connection.execute(
                 """
-                INSERT INTO users
-                (full_name, email, phone, password, role)
-                VALUES (?, ?, ?, ?, ?)
+                INSERT INTO users (
+                    full_name,
+                    email,
+                    phone,
+                    password,
+                    role,
+                    referral_code
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
                 """,
-                (full_name, email, phone, password, role)
+                (
+                    full_name,
+                    email,
+                    phone,
+                    password,
+                    role,
+                    referral_code
+                )
             )
 
             connection.commit()
+
             return cursor.lastrowid
 
         except Exception:
@@ -32,36 +70,74 @@ class User:
         finally:
             connection.close()
 
+
     @staticmethod
     def find_by_email(email):
+
         connection = get_connection()
 
         user = connection.execute(
-            "SELECT * FROM users WHERE email = ?",
+            """
+            SELECT *
+            FROM users
+            WHERE email = ?
+            """,
             (email,)
         ).fetchone()
 
         connection.close()
+
         return user
+
 
     @staticmethod
     def find_by_id(user_id):
+
         connection = get_connection()
 
         user = connection.execute(
-            "SELECT * FROM users WHERE id = ?",
+            """
+            SELECT *
+            FROM users
+            WHERE id = ?
+            """,
             (user_id,)
         ).fetchone()
 
         connection.close()
+
         return user
 
+
     @staticmethod
-    def update_profile(user_id, full_name=None, phone=None,
-                       bio=None, wilaya=None, municipality=None,
-                       avatar=None):
+    def find_by_referral_code(code):
 
         connection = get_connection()
+
+        user = connection.execute(
+            """
+            SELECT *
+            FROM users
+            WHERE referral_code = ?
+            """,
+            (code.upper(),)
+        ).fetchone()
+
+        connection.close()
+
+        return user
+
+
+    @staticmethod
+    def update_profile(
+        user_id,
+        full_name=None,
+        phone=None,
+        bio=None,
+        wilaya=None,
+        municipality=None,
+        avatar=None
+    ):
 
         fields = []
         values = []
@@ -76,15 +152,23 @@ class User:
         }
 
         for field, value in data.items():
+
             if value is not None:
-                fields.append(f"{field} = ?")
+
+                fields.append(
+                    f"{field} = ?"
+                )
+
                 values.append(value)
 
+
         if not fields:
-            connection.close()
             return False
 
+
         values.append(user_id)
+
+        connection = get_connection()
 
         connection.execute(
             f"""
@@ -100,8 +184,25 @@ class User:
 
         return True
 
+
     @staticmethod
-    def update_settings(user_id, language=None):
+    def update_settings(
+        user_id,
+        language=None
+    ):
+
+        if language is None:
+            return False
+
+        allowed = {
+            "ar",
+            "dz",
+            "fr",
+            "en"
+        }
+
+        if language not in allowed:
+            language = "ar"
 
         connection = get_connection()
 
@@ -111,13 +212,17 @@ class User:
             SET language = ?
             WHERE id = ?
             """,
-            (language, user_id)
+            (
+                language,
+                user_id
+            )
         )
 
         connection.commit()
         connection.close()
 
         return True
+
 
     @staticmethod
     def verify_phone(user_id):
@@ -137,23 +242,36 @@ class User:
         connection.close()
 
 
-# ============================================================
+# =========================================================
 # STORE
-# ============================================================
+# =========================================================
 
 class Store:
 
     @staticmethod
-    def create(user_id, name, description="",
-               phone="", wilaya="", municipality=""):
+    def create(
+        user_id,
+        name,
+        description="",
+        phone="",
+        wilaya="",
+        municipality=""
+    ):
 
         connection = get_connection()
 
         try:
+
             cursor = connection.execute(
                 """
-                INSERT INTO stores
-                (user_id, name, description, phone, wilaya, municipality)
+                INSERT INTO stores (
+                    user_id,
+                    name,
+                    description,
+                    phone,
+                    wilaya,
+                    municipality
+                )
                 VALUES (?, ?, ?, ?, ?, ?)
                 """,
                 (
@@ -167,14 +285,19 @@ class Store:
             )
 
             connection.commit()
+
             return cursor.lastrowid
 
         except Exception:
+
             connection.rollback()
+
             return None
 
         finally:
+
             connection.close()
+
 
     @staticmethod
     def find_by_user_id(user_id):
@@ -182,12 +305,18 @@ class Store:
         connection = get_connection()
 
         store = connection.execute(
-            "SELECT * FROM stores WHERE user_id = ?",
+            """
+            SELECT *
+            FROM stores
+            WHERE user_id = ?
+            """,
             (user_id,)
         ).fetchone()
 
         connection.close()
+
         return store
+
 
     @staticmethod
     def find_by_id(store_id):
@@ -195,12 +324,18 @@ class Store:
         connection = get_connection()
 
         store = connection.execute(
-            "SELECT * FROM stores WHERE id = ?",
+            """
+            SELECT *
+            FROM stores
+            WHERE id = ?
+            """,
             (store_id,)
         ).fetchone()
 
         connection.close()
+
         return store
+
 
     @staticmethod
     def update(store_id, **fields):
@@ -219,12 +354,19 @@ class Store:
         values = []
 
         for key, value in fields.items():
+
             if key in allowed:
-                updates.append(f"{key} = ?")
+
+                updates.append(
+                    f"{key} = ?"
+                )
+
                 values.append(value)
+
 
         if not updates:
             return False
+
 
         values.append(store_id)
 
@@ -244,6 +386,7 @@ class Store:
 
         return True
 
+
     @staticmethod
     def public_profile(store_id):
 
@@ -256,14 +399,17 @@ class Store:
                 u.full_name,
                 u.email
             FROM stores s
-            JOIN users u ON u.id = s.user_id
+            JOIN users u
+                ON u.id = s.user_id
             WHERE s.id = ?
             """,
             (store_id,)
         ).fetchone()
 
         connection.close()
+
         return store
+
 
     @staticmethod
     def increment_sales(store_id):
@@ -282,8 +428,12 @@ class Store:
         connection.commit()
         connection.close()
 
+
     @staticmethod
-    def update_trust_score(store_id, score):
+    def update_trust_score(
+        store_id,
+        score
+    ):
 
         connection = get_connection()
 
@@ -293,44 +443,63 @@ class Store:
             SET trust_score = ?
             WHERE id = ?
             """,
-            (score, store_id)
+            (
+                score,
+                store_id
+            )
         )
 
         connection.commit()
         connection.close()
 
 
-# ============================================================
+# =========================================================
 # PRODUCT
-# ============================================================
+# =========================================================
 
 class Product:
 
     @staticmethod
-    def create(store_id, name, price,
-               description="", discount=0,
-               quantity=0, category=None,
-               brand=None, images=None,
-               video=None, delivery_wilayas=None):
+    def create(
+        store_id,
+        name,
+        price,
+        description="",
+        discount=0,
+        quantity=0,
+        category=None,
+        brand=None,
+        images=None,
+        video=None,
+        delivery_wilayas=None
+    ):
 
         connection = get_connection()
 
         images_json = (
-            json.dumps(images, ensure_ascii=False)
+            json.dumps(
+                images,
+                ensure_ascii=False
+            )
             if isinstance(images, list)
             else images
         )
 
         wilayas_json = (
-            json.dumps(delivery_wilayas, ensure_ascii=False)
-            if isinstance(delivery_wilayas, list)
+            json.dumps(
+                delivery_wilayas,
+                ensure_ascii=False
+            )
+            if isinstance(
+                delivery_wilayas,
+                list
+            )
             else delivery_wilayas
         )
 
         cursor = connection.execute(
             """
-            INSERT INTO products
-            (
+            INSERT INTO products (
                 store_id,
                 name,
                 description,
@@ -361,10 +530,13 @@ class Product:
         )
 
         connection.commit()
+
         product_id = cursor.lastrowid
+
         connection.close()
 
         return product_id
+
 
     @staticmethod
     def find_by_id(product_id):
@@ -378,14 +550,17 @@ class Product:
                 s.name AS store_name,
                 s.trust_score
             FROM products p
-            JOIN stores s ON s.id = p.store_id
+            JOIN stores s
+                ON s.id = p.store_id
             WHERE p.id = ?
             """,
             (product_id,)
         ).fetchone()
 
         connection.close()
+
         return product
+
 
     @staticmethod
     def by_store(store_id):
@@ -403,7 +578,9 @@ class Product:
         ).fetchall()
 
         connection.close()
+
         return products
+
 
     @staticmethod
     def update_rating(product_id):
@@ -421,60 +598,90 @@ class Product:
             (product_id,)
         ).fetchone()
 
-        rating = result["average_rating"] or 0
-        count = result["reviews_count"] or 0
+        rating = (
+            result["average_rating"]
+            or 0
+        )
+
+        count = (
+            result["reviews_count"]
+            or 0
+        )
 
         connection.execute(
             """
             UPDATE products
-            SET rating = ?, reviews_count = ?
+            SET
+                rating = ?,
+                reviews_count = ?
             WHERE id = ?
             """,
-            (rating, count, product_id)
+            (
+                rating,
+                count,
+                product_id
+            )
         )
 
         connection.commit()
         connection.close()
 
 
-# ============================================================
+# =========================================================
 # FAVORITES
-# ============================================================
+# =========================================================
 
 class Favorite:
 
     @staticmethod
-    def add(user_id, product_id):
+    def add(
+        user_id,
+        product_id
+    ):
 
         connection = get_connection()
 
         connection.execute(
             """
-            INSERT OR IGNORE INTO favorites
-            (user_id, product_id)
+            INSERT OR IGNORE INTO favorites (
+                user_id,
+                product_id
+            )
             VALUES (?, ?)
             """,
-            (user_id, product_id)
+            (
+                user_id,
+                product_id
+            )
         )
 
         connection.commit()
         connection.close()
 
+
     @staticmethod
-    def remove(user_id, product_id):
+    def remove(
+        user_id,
+        product_id
+    ):
 
         connection = get_connection()
 
         connection.execute(
             """
             DELETE FROM favorites
-            WHERE user_id = ? AND product_id = ?
+            WHERE user_id = ?
+            AND product_id = ?
             """,
-            (user_id, product_id)
+            (
+                user_id,
+                product_id
+            )
         )
 
         connection.commit()
         connection.close()
+
 
     @staticmethod
     def all(user_id):
@@ -485,7 +692,8 @@ class Favorite:
             """
             SELECT p.*
             FROM favorites f
-            JOIN products p ON p.id = f.product_id
+            JOIN products p
+                ON p.id = f.product_id
             WHERE f.user_id = ?
             ORDER BY f.created_at DESC
             """,
@@ -493,33 +701,59 @@ class Favorite:
         ).fetchall()
 
         connection.close()
+
         return products
 
 
-# ============================================================
+# =========================================================
 # CART
-# ============================================================
+# =========================================================
 
 class Cart:
 
     @staticmethod
-    def add(user_id, product_id, quantity=1):
+    def add(
+        user_id,
+        product_id,
+        quantity=1
+    ):
+
+        quantity = max(
+            1,
+            int(quantity)
+        )
 
         connection = get_connection()
 
         connection.execute(
             """
-            INSERT INTO cart_items
-            (user_id, product_id, quantity)
+            INSERT INTO cart_items (
+                user_id,
+                product_id,
+                quantity
+            )
             VALUES (?, ?, ?)
-            ON CONFLICT(user_id, product_id)
-            DO UPDATE SET quantity = quantity + excluded.quantity
+
+            ON CONFLICT(
+                user_id,
+                product_id
+            )
+
+            DO UPDATE SET
+                quantity =
+                    quantity +
+                    excluded.quantity
             """,
-            (user_id, product_id, quantity)
+            (
+                user_id,
+                product_id,
+                quantity
+            )
         )
 
         connection.commit()
         connection.close()
+
 
     @staticmethod
     def get_items(user_id):
@@ -537,8 +771,10 @@ class Cart:
                 p.quantity AS stock,
                 s.name AS store_name
             FROM cart_items c
-            JOIN products p ON p.id = c.product_id
-            JOIN stores s ON s.id = p.store_id
+            JOIN products p
+                ON p.id = c.product_id
+            JOIN stores s
+                ON s.id = p.store_id
             WHERE c.user_id = ?
             ORDER BY c.created_at DESC
             """,
@@ -546,23 +782,78 @@ class Cart:
         ).fetchall()
 
         connection.close()
+
         return items
 
+
     @staticmethod
-    def remove(user_id, product_id):
+    def update_quantity(
+        user_id,
+        product_id,
+        quantity
+    ):
+
+        quantity = int(quantity)
+
+        connection = get_connection()
+
+        if quantity <= 0:
+
+            connection.execute(
+                """
+                DELETE FROM cart_items
+                WHERE user_id = ?
+                AND product_id = ?
+                """,
+                (
+                    user_id,
+                    product_id
+                )
+            )
+
+        else:
+
+            connection.execute(
+                """
+                UPDATE cart_items
+                SET quantity = ?
+                WHERE user_id = ?
+                AND product_id = ?
+                """,
+                (
+                    quantity,
+                    user_id,
+                    product_id
+                )
+            )
+
+        connection.commit()
+        connection.close()
+
+
+    @staticmethod
+    def remove(
+        user_id,
+        product_id
+    ):
 
         connection = get_connection()
 
         connection.execute(
             """
             DELETE FROM cart_items
-            WHERE user_id = ? AND product_id = ?
+            WHERE user_id = ?
+            AND product_id = ?
             """,
-            (user_id, product_id)
+            (
+                user_id,
+                product_id
+            )
         )
 
         connection.commit()
         connection.close()
+
 
     @staticmethod
     def clear(user_id):
@@ -570,7 +861,10 @@ class Cart:
         connection = get_connection()
 
         connection.execute(
-            "DELETE FROM cart_items WHERE user_id = ?",
+            """
+            DELETE FROM cart_items
+            WHERE user_id = ?
+            """,
             (user_id,)
         )
 
@@ -578,9 +872,9 @@ class Cart:
         connection.close()
 
 
-# ============================================================
-# ORDERS
-# ============================================================
+# =========================================================
+# ORDER
+# =========================================================
 
 class Order:
 
@@ -594,18 +888,21 @@ class Order:
         "returned"
     }
 
+
     @staticmethod
-    def create(user_id, total_amount,
-               delivery_address,
-               delivery_wilaya,
-               delivery_phone):
+    def create(
+        user_id,
+        total_amount,
+        delivery_address,
+        delivery_wilaya,
+        delivery_phone
+    ):
 
         connection = get_connection()
 
         cursor = connection.execute(
             """
-            INSERT INTO orders
-            (
+            INSERT INTO orders (
                 user_id,
                 total_amount,
                 delivery_address,
@@ -624,10 +921,13 @@ class Order:
         )
 
         connection.commit()
+
         order_id = cursor.lastrowid
+
         connection.close()
 
         return order_id
+
 
     @staticmethod
     def find_by_id(order_id):
@@ -644,7 +944,9 @@ class Order:
         ).fetchone()
 
         connection.close()
+
         return order
+
 
     @staticmethod
     def by_user(user_id):
@@ -662,10 +964,15 @@ class Order:
         ).fetchall()
 
         connection.close()
+
         return orders
 
+
     @staticmethod
-    def update_status(order_id, status):
+    def update_status(
+        order_id,
+        status
+    ):
 
         if status not in Order.ALLOWED_STATUSES:
             return False
@@ -675,10 +982,15 @@ class Order:
         connection.execute(
             """
             UPDATE orders
-            SET status = ?
+            SET
+                status = ?,
+                updated_at = CURRENT_TIMESTAMP
             WHERE id = ?
             """,
-            (status, order_id)
+            (
+                status,
+                order_id
+            )
         )
 
         connection.commit()
@@ -686,45 +998,69 @@ class Order:
 
         return True
 
+
     @staticmethod
-    def confirm_receipt(order_id, user_id):
+    def confirm_receipt(
+        order_id,
+        user_id
+    ):
 
         connection = get_connection()
 
         cursor = connection.execute(
             """
             UPDATE orders
-            SET status = 'delivered'
+            SET
+                status = 'delivered',
+                updated_at = CURRENT_TIMESTAMP
             WHERE id = ?
-              AND user_id = ?
-              AND status IN ('shipped', 'in_transit')
+            AND user_id = ?
+            AND status IN (
+                'shipped',
+                'in_transit'
+            )
             """,
-            (order_id, user_id)
+            (
+                order_id,
+                user_id
+            )
         )
 
         connection.commit()
+
         changed = cursor.rowcount > 0
+
         connection.close()
 
         return changed
 
 
-# ============================================================
-# ORDER ITEMS
-# ============================================================
+# =========================================================
+# ORDER ITEM
+# =========================================================
 
 class OrderItem:
 
     @staticmethod
-    def create(order_id, product_id,
-               quantity, price, store_id=None):
+    def create(
+        order_id,
+        product_id,
+        quantity,
+        price,
+        store_id=None
+    ):
 
         connection = get_connection()
 
         cursor = connection.execute(
             """
-            INSERT INTO order_items
-            (order_id, product_id, store_id, quantity, price)
+            INSERT INTO order_items (
+                order_id,
+                product_id,
+                store_id,
+                quantity,
+                price
+            )
             VALUES (?, ?, ?, ?, ?)
             """,
             (
@@ -737,10 +1073,13 @@ class OrderItem:
         )
 
         connection.commit()
+
         item_id = cursor.lastrowid
+
         connection.close()
 
         return item_id
+
 
     @staticmethod
     def by_order(order_id):
@@ -754,24 +1093,29 @@ class OrderItem:
                 p.name,
                 p.images
             FROM order_items oi
-            JOIN products p ON p.id = oi.product_id
+            JOIN products p
+                ON p.id = oi.product_id
             WHERE oi.order_id = ?
             """,
             (order_id,)
         ).fetchall()
 
         connection.close()
+
         return items
 
 
-# ============================================================
-# REVIEWS
-# ============================================================
+# =========================================================
+# REVIEW
+# =========================================================
 
 class Review:
 
     @staticmethod
-    def can_review(user_id, product_id):
+    def can_review(
+        user_id,
+        product_id
+    ):
 
         connection = get_connection()
 
@@ -786,24 +1130,38 @@ class Review:
                 AND r.product_id = oi.product_id
                 AND r.user_id = o.user_id
             WHERE o.user_id = ?
-              AND oi.product_id = ?
-              AND o.status = 'delivered'
-              AND r.id IS NULL
+            AND oi.product_id = ?
+            AND o.status = 'delivered'
+            AND r.id IS NULL
             LIMIT 1
             """,
-            (user_id, product_id)
+            (
+                user_id,
+                product_id
+            )
         ).fetchone()
 
         connection.close()
 
         return result is not None
 
-    @staticmethod
-    def create(user_id, product_id,
-               order_id, rating,
-               comment="", order_item_id=None):
 
-        if not 1 <= int(rating) <= 5:
+    @staticmethod
+    def create(
+        user_id,
+        product_id,
+        order_id,
+        rating,
+        comment="",
+        order_item_id=None
+    ):
+
+        try:
+            rating = int(rating)
+        except (TypeError, ValueError):
+            return None
+
+        if not 1 <= rating <= 5:
             return None
 
         connection = get_connection()
@@ -812,8 +1170,7 @@ class Review:
 
             cursor = connection.execute(
                 """
-                INSERT INTO reviews
-                (
+                INSERT INTO reviews (
                     user_id,
                     product_id,
                     order_id,
@@ -834,60 +1191,85 @@ class Review:
             )
 
             connection.commit()
+
             review_id = cursor.lastrowid
 
         except Exception:
 
             connection.rollback()
+
             review_id = None
 
         finally:
+
             connection.close()
 
+
         if review_id:
-            Product.update_rating(product_id)
+
+            Product.update_rating(
+                product_id
+            )
+
 
         return review_id
 
 
-# ============================================================
-# STORE FOLLOWERS
-# ============================================================
+# =========================================================
+# STORE FOLLOWER
+# =========================================================
 
 class StoreFollower:
 
     @staticmethod
-    def follow(user_id, store_id):
+    def follow(
+        user_id,
+        store_id
+    ):
 
         connection = get_connection()
 
         connection.execute(
             """
-            INSERT OR IGNORE INTO store_followers
-            (user_id, store_id)
+            INSERT OR IGNORE INTO store_followers (
+                user_id,
+                store_id
+            )
             VALUES (?, ?)
             """,
-            (user_id, store_id)
+            (
+                user_id,
+                store_id
+            )
         )
 
         connection.commit()
         connection.close()
 
+
     @staticmethod
-    def unfollow(user_id, store_id):
+    def unfollow(
+        user_id,
+        store_id
+    ):
 
         connection = get_connection()
 
         connection.execute(
             """
             DELETE FROM store_followers
-            WHERE user_id = ? AND store_id = ?
+            WHERE user_id = ?
+            AND store_id = ?
             """,
-            (user_id, store_id)
+            (
+                user_id,
+                store_id
+            )
         )
 
         connection.commit()
         connection.close()
+
 
     @staticmethod
     def count(store_id):
@@ -908,31 +1290,45 @@ class StoreFollower:
         return result["count"]
 
 
-# ============================================================
-# MESSAGES
-# ============================================================
+# =========================================================
+# MESSAGE
+# =========================================================
 
 class Message:
 
     @staticmethod
-    def create(sender_id, receiver_id, body):
+    def create(
+        sender_id,
+        receiver_id,
+        body
+    ):
 
         connection = get_connection()
 
         cursor = connection.execute(
             """
-            INSERT INTO messages
-            (sender_id, receiver_id, body)
+            INSERT INTO messages (
+                sender_id,
+                receiver_id,
+                body
+            )
             VALUES (?, ?, ?)
             """,
-            (sender_id, receiver_id, body)
+            (
+                sender_id,
+                receiver_id,
+                body
+            )
         )
 
         connection.commit()
+
         message_id = cursor.lastrowid
+
         connection.close()
 
         return message_id
+
 
     @staticmethod
     def conversation(user_id):
@@ -943,28 +1339,45 @@ class Message:
             """
             SELECT
                 m.*,
+
                 CASE
                     WHEN m.sender_id = ?
                     THEN receiver.full_name
                     ELSE sender.full_name
                 END AS other_name
+
             FROM messages m
+
             JOIN users sender
                 ON sender.id = m.sender_id
+
             JOIN users receiver
                 ON receiver.id = m.receiver_id
-            WHERE m.sender_id = ?
-               OR m.receiver_id = ?
+
+            WHERE
+                m.sender_id = ?
+                OR
+                m.receiver_id = ?
+
             ORDER BY m.created_at DESC
             """,
-            (user_id, user_id, user_id)
+            (
+                user_id,
+                user_id,
+                user_id
+            )
         ).fetchall()
 
         connection.close()
+
         return messages
 
+
     @staticmethod
-    def mark_as_read(user_id, sender_id):
+    def mark_as_read(
+        user_id,
+        sender_id
+    ):
 
         connection = get_connection()
 
@@ -973,40 +1386,57 @@ class Message:
             UPDATE messages
             SET is_read = 1
             WHERE receiver_id = ?
-              AND sender_id = ?
+            AND sender_id = ?
             """,
-            (user_id, sender_id)
+            (
+                user_id,
+                sender_id
+            )
         )
 
         connection.commit()
         connection.close()
 
 
-# ============================================================
-# NOTIFICATIONS
-# ============================================================
+# =========================================================
+# NOTIFICATION
+# =========================================================
 
 class Notification:
 
     @staticmethod
-    def create(user_id, title, message):
+    def create(
+        user_id,
+        title,
+        message
+    ):
 
         connection = get_connection()
 
         cursor = connection.execute(
             """
-            INSERT INTO notifications
-            (user_id, title, message)
+            INSERT INTO notifications (
+                user_id,
+                title,
+                message
+            )
             VALUES (?, ?, ?)
             """,
-            (user_id, title, message)
+            (
+                user_id,
+                title,
+                message
+            )
         )
 
         connection.commit()
+
         notification_id = cursor.lastrowid
+
         connection.close()
 
         return notification_id
+
 
     @staticmethod
     def by_user(user_id):
@@ -1024,10 +1454,15 @@ class Notification:
         ).fetchall()
 
         connection.close()
+
         return notifications
 
+
     @staticmethod
-    def mark_as_read(notification_id, user_id):
+    def mark_as_read(
+        notification_id,
+        user_id
+    ):
 
         connection = get_connection()
 
@@ -1035,31 +1470,43 @@ class Notification:
             """
             UPDATE notifications
             SET is_read = 1
-            WHERE id = ? AND user_id = ?
+            WHERE id = ?
+            AND user_id = ?
             """,
-            (notification_id, user_id)
+            (
+                notification_id,
+                user_id
+            )
         )
 
         connection.commit()
         connection.close()
 
 
-# ============================================================
-# COMPLAINTS
-# ============================================================
+# =========================================================
+# COMPLAINT
+# =========================================================
 
 class Complaint:
 
     @staticmethod
-    def create(user_id, message,
-               order_id=None, subject=""):
+    def create(
+        user_id,
+        message,
+        order_id=None,
+        subject=""
+    ):
 
         connection = get_connection()
 
         cursor = connection.execute(
             """
-            INSERT INTO complaints
-            (user_id, order_id, subject, message)
+            INSERT INTO complaints (
+                user_id,
+                order_id,
+                subject,
+                message
+            )
             VALUES (?, ?, ?, ?)
             """,
             (
@@ -1071,10 +1518,13 @@ class Complaint:
         )
 
         connection.commit()
+
         complaint_id = cursor.lastrowid
+
         connection.close()
 
         return complaint_id
+
 
     @staticmethod
     def by_user(user_id):
@@ -1092,25 +1542,30 @@ class Complaint:
         ).fetchall()
 
         connection.close()
+
         return complaints
 
 
-# ============================================================
-# REPORTS
-# ============================================================
+# =========================================================
+# REPORT
+# =========================================================
 
 class Report:
 
     @staticmethod
-    def create(user_id, target_type,
-               target_id, reason, message=""):
+    def create(
+        user_id,
+        target_type,
+        target_id,
+        reason,
+        message=""
+    ):
 
         connection = get_connection()
 
         cursor = connection.execute(
             """
-            INSERT INTO reports
-            (
+            INSERT INTO reports (
                 user_id,
                 target_type,
                 target_id,
@@ -1129,20 +1584,25 @@ class Report:
         )
 
         connection.commit()
+
         report_id = cursor.lastrowid
+
         connection.close()
 
         return report_id
 
 
-# ============================================================
-# BLOCKED USERS
-# ============================================================
+# =========================================================
+# BLOCKED USER
+# =========================================================
 
 class BlockedUser:
 
     @staticmethod
-    def block(blocker_id, blocked_id):
+    def block(
+        blocker_id,
+        blocked_id
+    ):
 
         if blocker_id == blocked_id:
             return False
@@ -1151,11 +1611,16 @@ class BlockedUser:
 
         connection.execute(
             """
-            INSERT OR IGNORE INTO blocked_users
-            (blocker_id, blocked_id)
+            INSERT OR IGNORE INTO blocked_users (
+                blocker_id,
+                blocked_id
+            )
             VALUES (?, ?)
             """,
-            (blocker_id, blocked_id)
+            (
+                blocker_id,
+                blocked_id
+            )
         )
 
         connection.commit()
@@ -1163,8 +1628,12 @@ class BlockedUser:
 
         return True
 
+
     @staticmethod
-    def unblock(blocker_id, blocked_id):
+    def unblock(
+        blocker_id,
+        blocked_id
+    ):
 
         connection = get_connection()
 
@@ -1172,16 +1641,23 @@ class BlockedUser:
             """
             DELETE FROM blocked_users
             WHERE blocker_id = ?
-              AND blocked_id = ?
+            AND blocked_id = ?
             """,
-            (blocker_id, blocked_id)
+            (
+                blocker_id,
+                blocked_id
+            )
         )
 
         connection.commit()
         connection.close()
 
+
     @staticmethod
-    def is_blocked(blocker_id, blocked_id):
+    def is_blocked(
+        blocker_id,
+        blocked_id
+    ):
 
         connection = get_connection()
 
@@ -1190,9 +1666,12 @@ class BlockedUser:
             SELECT id
             FROM blocked_users
             WHERE blocker_id = ?
-              AND blocked_id = ?
+            AND blocked_id = ?
             """,
-            (blocker_id, blocked_id)
+            (
+                blocker_id,
+                blocked_id
+            )
         ).fetchone()
 
         connection.close()
@@ -1200,24 +1679,26 @@ class BlockedUser:
         return result is not None
 
 
-# ============================================================
-# DISCOUNT CODES
-# ============================================================
+# =========================================================
+# DISCOUNT CODE
+# =========================================================
 
 class DiscountCode:
 
     @staticmethod
-    def create(store_id, code,
-               discount_percent,
-               usage_limit=0,
-               expires_at=None):
+    def create(
+        store_id,
+        code,
+        discount_percent,
+        usage_limit=0,
+        expires_at=None
+    ):
 
         connection = get_connection()
 
         cursor = connection.execute(
             """
-            INSERT INTO discount_codes
-            (
+            INSERT INTO discount_codes (
                 store_id,
                 code,
                 discount_percent,
@@ -1236,10 +1717,13 @@ class DiscountCode:
         )
 
         connection.commit()
+
         code_id = cursor.lastrowid
+
         connection.close()
 
         return code_id
+
 
     @staticmethod
     def find(code):
@@ -1251,13 +1735,15 @@ class DiscountCode:
             SELECT *
             FROM discount_codes
             WHERE code = ?
-              AND active = 1
+            AND active = 1
             """,
             (code.upper(),)
         ).fetchone()
 
         connection.close()
+
         return result
+
 
     @staticmethod
     def use(code):
@@ -1269,21 +1755,30 @@ class DiscountCode:
             SELECT *
             FROM discount_codes
             WHERE code = ?
-              AND active = 1
+            AND active = 1
             """,
             (code.upper(),)
         ).fetchone()
 
+
         if not result:
+
             connection.close()
+
             return False
+
 
         if (
             result["max_uses"] > 0
-            and result["used_count"] >= result["max_uses"]
+            and
+            result["used_count"]
+            >= result["max_uses"]
         ):
+
             connection.close()
+
             return False
+
 
         connection.execute(
             """
@@ -1300,25 +1795,409 @@ class DiscountCode:
         return True
 
 
-# ============================================================
-# PRICE ALERTS
-# ============================================================
+# =========================================================
+# REWARD CARDS
+# =========================================================
+
+class RewardCard:
+
+    @staticmethod
+    def create(
+        user_id,
+        title,
+        description="",
+        discount_percent=0,
+        reward_type="discount",
+        source="order",
+        expires_at=None
+    ):
+
+        connection = get_connection()
+
+        code = generate_code("CARD")
+
+        cursor = connection.execute(
+            """
+            INSERT INTO reward_cards (
+                user_id,
+                code,
+                title,
+                description,
+                discount_percent,
+                reward_type,
+                source,
+                expires_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                user_id,
+                code,
+                title,
+                description,
+                discount_percent,
+                reward_type,
+                source,
+                expires_at
+            )
+        )
+
+        connection.commit()
+
+        card_id = cursor.lastrowid
+
+        connection.close()
+
+        return card_id
+
+
+    @staticmethod
+    def by_user(user_id):
+
+        connection = get_connection()
+
+        cards = connection.execute(
+            """
+            SELECT *
+            FROM reward_cards
+            WHERE user_id = ?
+            AND active = 1
+            AND used = 0
+            ORDER BY created_at DESC
+            """,
+            (user_id,)
+        ).fetchall()
+
+        connection.close()
+
+        return cards
+
+
+    @staticmethod
+    def find_by_code(
+        user_id,
+        code
+    ):
+
+        connection = get_connection()
+
+        card = connection.execute(
+            """
+            SELECT *
+            FROM reward_cards
+            WHERE user_id = ?
+            AND code = ?
+            AND active = 1
+            AND used = 0
+            """,
+            (
+                user_id,
+                code.upper()
+            )
+        ).fetchone()
+
+        connection.close()
+
+        return card
+
+
+    @staticmethod
+    def use(
+        user_id,
+        code
+    ):
+
+        connection = get_connection()
+
+        cursor = connection.execute(
+            """
+            UPDATE reward_cards
+            SET used = 1
+            WHERE user_id = ?
+            AND code = ?
+            AND active = 1
+            AND used = 0
+            """,
+            (
+                user_id,
+                code.upper()
+            )
+        )
+
+        connection.commit()
+
+        changed = cursor.rowcount > 0
+
+        connection.close()
+
+        return changed
+
+
+# =========================================================
+# REFERRAL
+# =========================================================
+
+class Referral:
+
+    @staticmethod
+    def create(
+        inviter_id,
+        invited_user_id,
+        referral_code
+    ):
+
+        if inviter_id == invited_user_id:
+            return None
+
+        connection = get_connection()
+
+        try:
+
+            cursor = connection.execute(
+                """
+                INSERT INTO referrals (
+                    inviter_id,
+                    invited_user_id,
+                    referral_code
+                )
+                VALUES (?, ?, ?)
+                """,
+                (
+                    inviter_id,
+                    invited_user_id,
+                    referral_code
+                )
+            )
+
+            connection.execute(
+                """
+                UPDATE users
+                SET referred_by = ?
+                WHERE id = ?
+                """,
+                (
+                    inviter_id,
+                    invited_user_id
+                )
+            )
+
+            connection.commit()
+
+            referral_id = cursor.lastrowid
+
+        except Exception:
+
+            connection.rollback()
+
+            referral_id = None
+
+        finally:
+
+            connection.close()
+
+        return referral_id
+
+
+    @staticmethod
+    def by_inviter(inviter_id):
+
+        connection = get_connection()
+
+        referrals = connection.execute(
+            """
+            SELECT
+                r.*,
+                u.full_name,
+                u.email
+            FROM referrals r
+            LEFT JOIN users u
+                ON u.id = r.invited_user_id
+            WHERE r.inviter_id = ?
+            ORDER BY r.created_at DESC
+            """,
+            (inviter_id,)
+        ).fetchall()
+
+        connection.close()
+
+        return referrals
+
+
+    @staticmethod
+    def complete(
+        invited_user_id
+    ):
+
+        connection = get_connection()
+
+        referral = connection.execute(
+            """
+            SELECT *
+            FROM referrals
+            WHERE invited_user_id = ?
+            AND reward_granted = 0
+            LIMIT 1
+            """,
+            (invited_user_id,)
+        ).fetchone()
+
+
+        if not referral:
+
+            connection.close()
+
+            return None
+
+
+        connection.execute(
+            """
+            UPDATE referrals
+            SET
+                status = 'completed',
+                reward_granted = 1,
+                completed_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+            """,
+            (referral["id"],)
+        )
+
+        connection.commit()
+
+        connection.close()
+
+        return referral
+
+
+# =========================================================
+# REWARD MILESTONES
+# =========================================================
+
+class RewardMilestone:
+
+    @staticmethod
+    def completed_orders(
+        user_id
+    ):
+
+        connection = get_connection()
+
+        result = connection.execute(
+            """
+            SELECT COUNT(*) AS count
+            FROM orders
+            WHERE user_id = ?
+            AND status = 'delivered'
+            """,
+            (user_id,)
+        ).fetchone()
+
+        connection.close()
+
+        return result["count"]
+
+
+    @staticmethod
+    def grant_milestone(
+        user_id,
+        milestone,
+        reward_card_id=None
+    ):
+
+        connection = get_connection()
+
+        try:
+
+            cursor = connection.execute(
+                """
+                INSERT INTO reward_milestones (
+                    user_id,
+                    milestone,
+                    reward_card_id
+                )
+                VALUES (?, ?, ?)
+                """,
+                (
+                    user_id,
+                    milestone,
+                    reward_card_id
+                )
+            )
+
+            connection.commit()
+
+            milestone_id = cursor.lastrowid
+
+        except Exception:
+
+            connection.rollback()
+
+            milestone_id = None
+
+        finally:
+
+            connection.close()
+
+        return milestone_id
+
+
+    @staticmethod
+    def has_achieved(
+        user_id,
+        milestone
+    ):
+
+        connection = get_connection()
+
+        result = connection.execute(
+            """
+            SELECT id
+            FROM reward_milestones
+            WHERE user_id = ?
+            AND milestone = ?
+            """,
+            (
+                user_id,
+                milestone
+            )
+        ).fetchone()
+
+        connection.close()
+
+        return result is not None
+
+
+# =========================================================
+# PRICE ALERT
+# =========================================================
 
 class PriceAlert:
 
     @staticmethod
-    def create(user_id, product_id, target_price):
+    def create(
+        user_id,
+        product_id,
+        target_price
+    ):
 
         connection = get_connection()
 
         connection.execute(
             """
-            INSERT INTO price_alerts
-            (user_id, product_id, target_price)
+            INSERT INTO price_alerts (
+                user_id,
+                product_id,
+                target_price
+            )
             VALUES (?, ?, ?)
-            ON CONFLICT(user_id, product_id)
+
+            ON CONFLICT(
+                user_id,
+                product_id
+            )
+
             DO UPDATE SET
-                target_price = excluded.target_price,
+                target_price =
+                    excluded.target_price,
                 active = 1
             """,
             (
@@ -1332,24 +2211,32 @@ class PriceAlert:
         connection.close()
 
 
-# ============================================================
-# PRODUCT VIEWS
-# ============================================================
+# =========================================================
+# PRODUCT VIEW
+# =========================================================
 
 class ProductView:
 
     @staticmethod
-    def add(product_id, user_id=None):
+    def add(
+        product_id,
+        user_id=None
+    ):
 
         connection = get_connection()
 
         connection.execute(
             """
-            INSERT INTO product_views
-            (user_id, product_id)
+            INSERT INTO product_views (
+                user_id,
+                product_id
+            )
             VALUES (?, ?)
             """,
-            (user_id, product_id)
+            (
+                user_id,
+                product_id
+            )
         )
 
         connection.execute(
@@ -1363,6 +2250,7 @@ class ProductView:
 
         connection.commit()
         connection.close()
+
 
     @staticmethod
     def count(product_id):
@@ -1383,9 +2271,9 @@ class ProductView:
         return result["count"]
 
 
-# ============================================================
+# =========================================================
 # CHAT SETTINGS
-# ============================================================
+# =========================================================
 
 class ChatSettings:
 
@@ -1403,18 +2291,21 @@ class ChatSettings:
             (user_id,)
         ).fetchone()
 
+
         if not settings:
 
             connection.execute(
                 """
-                INSERT INTO chat_settings
-                (user_id)
+                INSERT INTO chat_settings (
+                    user_id
+                )
                 VALUES (?)
                 """,
                 (user_id,)
             )
 
             connection.commit()
+
 
             settings = connection.execute(
                 """
@@ -1425,20 +2316,23 @@ class ChatSettings:
                 (user_id,)
             ).fetchone()
 
+
         connection.close()
 
         return settings
 
+
     @staticmethod
-    def update(user_id,
-               voice_type="female",
-               voice_enabled=False,
-               language="ar",
-               style="friendly"):
+    def update(
+        user_id,
+        voice_type="female",
+        voice_enabled=False,
+        language="ar",
+        style="friendly"
+    ):
 
         allowed_languages = {
             "ar",
-            "tz",
             "dz",
             "fr",
             "en"
@@ -1452,18 +2346,20 @@ class ChatSettings:
             "darija"
         }
 
+
         if language not in allowed_languages:
             language = "ar"
 
+
         if style not in allowed_styles:
             style = "friendly"
+
 
         connection = get_connection()
 
         connection.execute(
             """
-            INSERT INTO chat_settings
-            (
+            INSERT INTO chat_settings (
                 user_id,
                 voice_type,
                 voice_enabled,
@@ -1471,12 +2367,22 @@ class ChatSettings:
                 style
             )
             VALUES (?, ?, ?, ?, ?)
+
             ON CONFLICT(user_id)
+
             DO UPDATE SET
-                voice_type = excluded.voice_type,
-                voice_enabled = excluded.voice_enabled,
-                language = excluded.language,
-                style = excluded.style
+
+                voice_type =
+                    excluded.voice_type,
+
+                voice_enabled =
+                    excluded.voice_enabled,
+
+                language =
+                    excluded.language,
+
+                style =
+                    excluded.style
             """,
             (
                 user_id,
