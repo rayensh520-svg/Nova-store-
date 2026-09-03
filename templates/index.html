@@ -6,482 +6,649 @@
 
     <title>DZ MARKET 🇩🇿</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #fffaf3;
+            color: #261016;
+            padding-bottom: 80px;
+        }
+
+        body.dark {
+            background: #16070c;
+            color: #fff;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            background: rgba(67, 12, 30, .96);
+            padding: 14px 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,.15);
+        }
+
+        .top {
+            max-width: 1100px;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .logo {
+            color: #d8ad55;
+            font-size: 23px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            border: 1px solid rgba(216,173,85,.4);
+            background: rgba(255,255,255,.08);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .search {
+            flex: 1;
+            max-width: 430px;
+            padding: 11px 15px;
+            border: none;
+            border-radius: 13px;
+            outline: none;
+            background: rgba(255,255,255,.12);
+            color: white;
+        }
+
+        .search::placeholder {
+            color: #ddd;
+        }
+
+        .hero {
+            background:
+                radial-gradient(circle at top left, #8a2444, transparent 40%),
+                linear-gradient(135deg, #3d0b1e, #6d1835);
+            color: white;
+            padding: 55px 20px;
+        }
+
+        .hero-content {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .hero h1 {
+            font-size: clamp(30px, 7vw, 55px);
+            margin-bottom: 15px;
+        }
+
+        .hero h1 span {
+            color: #d8ad55;
+        }
+
+        .hero p {
+            color: #f5e6d2;
+            max-width: 650px;
+            line-height: 1.8;
+            margin-bottom: 25px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 13px 20px;
+            border-radius: 13px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-left: 7px;
+        }
+
+        .btn-primary {
+            background: #d8ad55;
+            color: #280914;
+        }
+
+        .btn-secondary {
+            border: 1px solid #d8ad55;
+            color: #d8ad55;
+        }
+
+        section {
+            max-width: 1100px;
+            margin: auto;
+            padding: 35px 18px;
+        }
+
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-title h2 {
+            font-size: 23px;
+        }
+
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .category {
+            text-align: center;
+            padding: 20px 10px;
+            border-radius: 18px;
+            background: #fff;
+            box-shadow: 0 5px 25px rgba(50,10,20,.08);
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .category:hover {
+            transform: translateY(-3px);
+        }
+
+        .category div {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .products {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .product {
+            background: white;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 5px 25px rgba(50,10,20,.08);
+        }
+
+        .product-img {
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f3e8d8;
+            font-size: 55px;
+        }
+
+        .product-info {
+            padding: 14px;
+        }
+
+        .product-info h3 {
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .price {
+            color: #8c1738;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .badge {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 5px 8px;
+            border-radius: 8px;
+            background: #f1e3bd;
+            color: #674b13;
+            font-size: 11px;
+        }
+
+        .seller-banner {
+            margin-top: 10px;
+            padding: 35px 25px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #430c1e, #711a38);
+            color: white;
+        }
+
+        .seller-banner h2 {
+            color: #d8ad55;
+            margin-bottom: 10px;
+        }
+
+        .seller-banner p {
+            color: #eee;
+            line-height: 1.7;
+            margin-bottom: 18px;
+        }
+
+        .dark .category,
+        .dark .product {
+            background: #281019;
+            color: white;
+        }
+
+        .dark .category,
+        .dark .product {
+            box-shadow: 0 5px 25px rgba(0,0,0,.25);
+        }
+
+        .dark .product-img {
+            background: #35151f;
+        }
+
+        .dark .price {
+            color: #d8ad55;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            z-index: 30;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: rgba(40,7,17,.97);
+            border-top: 1px solid rgba(216,173,85,.25);
+        }
+
+        .bottom-nav a {
+            color: #aaa;
+            text-decoration: none;
+            text-align: center;
+            font-size: 10px;
+        }
+
+        .bottom-nav a div {
+            font-size: 21px;
+            margin-bottom: 3px;
+        }
+
+        .bottom-nav a.active {
+            color: #d8ad55;
+        }
+
+        .ai {
+            position: fixed;
+            right: 18px;
+            bottom: 88px;
+            z-index: 31;
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            border: 2px solid #d8ad55;
+            background: #5b1230;
+            color: white;
+            font-size: 25px;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(0,0,0,.25);
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px 15px;
+            background: #280914;
+            color: #bbb;
+            font-size: 13px;
+        }
+
+        footer strong {
+            color: #d8ad55;
+        }
+
+        @media (max-width: 800px) {
+            .categories {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .products {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .search {
+                display: none;
+            }
+        }
+
+        @media (max-width: 430px) {
+            .products {
+                gap: 10px;
+            }
+
+            .product-img {
+                height: 125px;
+            }
+
+            .hero {
+                padding: 40px 18px;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-    <!-- =========================
-         TOP NAVBAR
-    ========================== -->
+<header>
+    <div class="top">
 
-    <header class="navbar">
-
-        <a href="{{ url_for('home') }}" class="logo">
-            DZ <span>MARKET</span> 🇩🇿
-        </a>
-
-        <div class="search-box">
-            <input
-                type="search"
-                placeholder="🔎 ابحثي عن منتج، متجر أو خدمة..."
-                aria-label="البحث"
-            >
+        <div class="logo">
+            DZ MARKET 🇩🇿
         </div>
 
-        <div class="nav-actions">
-            <button type="button" onclick="toggleDarkMode()" title="الوضع الليلي">
+        <input
+            class="search"
+            id="searchInput"
+            type="search"
+            placeholder="🔎 ابحث عن منتج..."
+            oninput="searchProducts()"
+        >
+
+        <div class="actions">
+            <button
+                class="icon-btn"
+                onclick="toggleDark()"
+                title="الوضع الليلي"
+            >
                 🌙
             </button>
 
-            <a href="{{ url_for('auth.login') }}" title="تسجيل الدخول">
+            <a
+                href="{{ url_for('auth.login') }}"
+                class="icon-btn"
+                style="display:flex;align-items:center;justify-content:center;text-decoration:none;"
+            >
                 👤
             </a>
         </div>
 
-    </header>
+    </div>
+</header>
 
 
-    <main>
+<section class="hero">
 
-        <!-- =========================
-             HERO
-        ========================== -->
+    <div class="hero-content">
 
-        <section class="hero">
+        <h1>
+            كل ما تحتاجه في
+            <span>DZ MARKET</span> 🇩🇿
+        </h1>
 
-            <h1>
-                سوقك الجزائري،
-                <br>
-                بطريقة جديدة 🇩🇿
-            </h1>
-
-            <p>
-                اكتشفي المنتجات الجزائرية، دعمي المشاريع الصغيرة،
-                واشتري بثقة من مكان واحد.
-            </p>
-
-            <div class="hero-buttons">
-
-                <a
-                    href="{{ url_for('auth.register') }}"
-                    class="btn btn-gold"
-                >
-                    ✨ إنشاء حساب
-                </a>
-
-                <a
-                    href="#products"
-                    class="btn btn-light"
-                >
-                    🛍️ اكتشفي المنتجات
-                </a>
-
-            </div>
-
-        </section>
-
-
-        <!-- =========================
-             CATEGORIES
-        ========================== -->
-
-        <section class="section">
-
-            <div class="section-header">
-                <div>
-                    <h2 class="section-title">استكشفي حسب الفئة</h2>
-                    <p class="section-subtitle">
-                        كل ما تحتاجينه في مكان واحد
-                    </p>
-                </div>
-            </div>
-
-            <div class="categories">
-
-                <a href="#products" class="category-card">
-                    <div class="category-icon">👗</div>
-                    <strong>أزياء</strong>
-                </a>
-
-                <a href="#products" class="category-card">
-                    <div class="category-icon">💄</div>
-                    <strong>جمال</strong>
-                </a>
-
-                <a href="#products" class="category-card">
-                    <div class="category-icon">🏠</div>
-                    <strong>منزل</strong>
-                </a>
-
-                <a href="#products" class="category-card">
-                    <div class="category-icon">📱</div>
-                    <strong>إلكترونيات</strong>
-                </a>
-
-                <a href="#products" class="category-card">
-                    <div class="category-icon">🎁</div>
-                    <strong>هدايا</strong>
-                </a>
-
-                <a href="#products" class="category-card">
-                    <div class="category-icon">🍰</div>
-                    <strong>مأكولات</strong>
-                </a>
-
-            </div>
-
-        </section>
-
-
-        <!-- =========================
-             AI ASSISTANT
-        ========================== -->
-
-        <section class="section">
-
-            <div class="ai-section">
-
-                <h2>🤖 ساعديني نختار</h2>
-
-                <p>
-                    محتارة واش تشري؟ المساعد الذكي يساعدك
-                    تختاري حسب الميزانية والمناسبة والولاية.
-                </p>
-
-                <br>
-
-                <button
-                    type="button"
-                    class="btn btn-primary"
-                    onclick="openAssistant()"
-                >
-                    ✨ ابدئي المساعدة
-                </button>
-
-            </div>
-
-        </section>
-
-
-        <!-- =========================
-             PRODUCTS
-        ========================== -->
-
-        <section class="section" id="products">
-
-            <div class="section-header">
-
-                <div>
-                    <h2 class="section-title">
-                        منتجات مميزة
-                    </h2>
-
-                    <p class="section-subtitle">
-                        اكتشفي بعض المنتجات المعروضة
-                    </p>
-                </div>
-
-                <a href="#products" class="btn btn-primary">
-                    الكل
-                </a>
-
-            </div>
-
-
-            <div class="products-grid">
-
-                <article class="product-card">
-
-                    <div class="product-image">
-                        👜
-                    </div>
-
-                    <div class="product-info">
-
-                        <h3 class="product-title">
-                            حقيبة جزائرية أنيقة
-                        </h3>
-
-                        <div class="product-price">
-                            3,500 دج
-                        </div>
-
-                        <div class="product-meta">
-
-                            <span class="stars">
-                                ★★★★★
-                            </span>
-
-                            <span class="trust">
-                                ✓ موثوق
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                </article>
-
-
-                <article class="product-card">
-
-                    <div class="product-image">
-                        👟
-                    </div>
-
-                    <div class="product-info">
-
-                        <h3 class="product-title">
-                            حذاء عصري
-                        </h3>
-
-                        <div class="product-price">
-                            4,800 دج
-                        </div>
-
-                        <div class="product-meta">
-
-                            <span class="stars">
-                                ★★★★☆
-                            </span>
-
-                            <span class="trust">
-                                ✓ موثوق
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                </article>
-
-
-                <article class="product-card">
-
-                    <div class="product-image">
-                        🕯️
-                    </div>
-
-                    <div class="product-info">
-
-                        <h3 class="product-title">
-                            شموع ديكور يدوية
-                        </h3>
-
-                        <div class="product-price">
-                            1,200 دج
-                        </div>
-
-                        <div class="product-meta">
-
-                            <span class="stars">
-                                ★★★★★
-                            </span>
-
-                            <span class="trust">
-                                ✓ موثوق
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                </article>
-
-
-                <article class="product-card">
-
-                    <div class="product-image">
-                        🎁
-                    </div>
-
-                    <div class="product-info">
-
-                        <h3 class="product-title">
-                            صندوق هدايا
-                        </h3>
-
-                        <div class="product-price">
-                            2,500 دج
-                        </div>
-
-                        <div class="product-meta">
-
-                            <span class="stars">
-                                ★★★★★
-                            </span>
-
-                            <span class="trust">
-                                ✓ موثوق
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                </article>
-
-            </div>
-
-        </section>
-
-
-        <!-- =========================
-             SELLER SECTION
-        ========================== -->
-
-        <section class="section">
-
-            <div class="seller-section">
-
-                <div>
-
-                    <h2>
-                        عندك مشروع صغير؟ 🚀
-                    </h2>
-
-                    <p>
-                        افتحي متجرك في DZ MARKET ووصل منتجاتك
-                        للزبائن من مختلف ولايات الجزائر.
-                    </p>
-
-                    <a
-                        href="{{ url_for('auth.register') }}"
-                        class="btn btn-primary"
-                    >
-                        🏪 افتحي متجرك
-                    </a>
-
-                </div>
-
-                <div class="seller-icon">
-                    🏪
-                </div>
-
-            </div>
-
-        </section>
-
-    </main>
-
-
-    <!-- =========================
-         FLOATING AI BUTTON
-    ========================== -->
-
-    <button
-        class="ai-button"
-        type="button"
-        onclick="openAssistant()"
-        title="المساعد الذكي"
-    >
-        🤖
-    </button>
-
-
-    <!-- =========================
-         MOBILE BOTTOM NAVIGATION
-    ========================== -->
-
-    <nav class="bottom-nav" aria-label="التنقل الرئيسي">
+        <p>
+            سوق جزائري يجمع المشترين والبائعين في مكان واحد.
+            اكتشف المنتجات، تواصل مع البائعين وابدأ تجارتك بسهولة.
+        </p>
 
         <a
-            href="{{ url_for('home') }}"
-            class="active"
+            href="{{ url_for('auth.register') }}"
+            class="btn btn-primary"
         >
-            <span>⌂</span>
-            <small>الرئيسية</small>
+            إنشاء حساب 🚀
         </a>
 
-        <a href="#products">
-            <span>◈</span>
-            <small>استكشاف</small>
+        <a
+            href="#products"
+            class="btn btn-secondary"
+        >
+            اكتشف المنتجات
         </a>
 
-        <a href="#cart">
-            <span>🛒</span>
-            <small>السلة</small>
-        </a>
+    </div>
 
-        <a href="#messages">
-            <span>💬</span>
-            <small>الرسائل</small>
-        </a>
-
-        <a href="{{ url_for('auth.login') }}">
-            <span>👤</span>
-            <small>حسابي</small>
-        </a>
-
-    </nav>
+</section>
 
 
-    <!-- =========================
-         FOOTER
-    ========================== -->
+<section>
 
-    <footer>
+    <div class="section-title">
+        <h2>🧭 التصنيفات</h2>
+    </div>
 
-        <strong>DZ MARKET 🇩🇿</strong>
+    <div class="categories">
+
+        <div class="category" onclick="filterCategory('all')">
+            <div>🛍️</div>
+            الكل
+        </div>
+
+        <div class="category" onclick="filterCategory('fashion')">
+            <div>👕</div>
+            أزياء
+        </div>
+
+        <div class="category" onclick="filterCategory('electronics')">
+            <div>📱</div>
+            إلكترونيات
+        </div>
+
+        <div class="category" onclick="filterCategory('home')">
+            <div>🏠</div>
+            المنزل
+        </div>
+
+    </div>
+
+</section>
+
+
+<section id="products">
+
+    <div class="section-title">
+        <h2>🔥 منتجات مميزة</h2>
+    </div>
+
+    <div class="products" id="productGrid">
+
+        <article class="product" data-name="هاتف ذكي" data-category="electronics">
+            <div class="product-img">📱</div>
+            <div class="product-info">
+                <h3>هاتف ذكي</h3>
+                <div class="price">45,000 دج</div>
+                <span class="badge">🇩🇿 منتج جزائري</span>
+            </div>
+        </article>
+
+        <article class="product" data-name="حقيبة نسائية" data-category="fashion">
+            <div class="product-img">👜</div>
+            <div class="product-info">
+                <h3>حقيبة نسائية</h3>
+                <div class="price">3,500 دج</div>
+                <span class="badge">⭐ متجر موثوق</span>
+            </div>
+        </article>
+
+        <article class="product" data-name="ديكور منزلي" data-category="home">
+            <div class="product-img">🏺</div>
+            <div class="product-info">
+                <h3>ديكور منزلي</h3>
+                <div class="price">2,800 دج</div>
+                <span class="badge">🇩🇿 محلي</span>
+            </div>
+        </article>
+
+        <article class="product" data-name="ساعة ذكية" data-category="electronics">
+            <div class="product-img">⌚</div>
+            <div class="product-info">
+                <h3>ساعة ذكية</h3>
+                <div class="price">6,900 دج</div>
+                <span class="badge">🔥 الأكثر طلبًا</span>
+            </div>
+        </article>
+
+    </div>
+
+</section>
+
+
+<section>
+
+    <div class="seller-banner">
+
+        <h2>🏪 عندك مشروع؟</h2>
 
         <p>
-            سوق جزائري يجمع المشاريع والزبائن في مكان واحد.
+            افتح متجرك على DZ MARKET ووصل منتجاتك لزبائن من مختلف
+            ولايات الجزائر.
         </p>
 
-        <p>
-            © 2026 DZ MARKET
-        </p>
+        <a
+            href="{{ url_for('auth.register') }}"
+            class="btn btn-primary"
+        >
+            ابدأ كبائع
+        </a>
 
-    </footer>
+    </div>
 
-
-    <!-- =========================
-         JAVASCRIPT
-    ========================== -->
-
-    <script>
-
-        function toggleDarkMode() {
-
-            document.body.classList.toggle("dark-mode");
-
-            const enabled =
-                document.body.classList.contains("dark-mode");
-
-            localStorage.setItem(
-                "dzmarket-dark-mode",
-                enabled ? "on" : "off"
-            );
-        }
+</section>
 
 
-        function loadDarkMode() {
-
-            const mode =
-                localStorage.getItem("dzmarket-dark-mode");
-
-            if (mode === "on") {
-                document.body.classList.add("dark-mode");
-            }
-        }
+<button
+    class="ai"
+    onclick="openAI()"
+    title="مساعد DZ MARKET"
+>
+    ✨
+</button>
 
 
-        function openAssistant() {
+<nav class="bottom-nav">
 
-            alert(
-                "🤖 المساعد الذكي DZ MARKET\n\n" +
-                "قريباً نربطوه بالذكاء الاصطناعي الحقيقي ✨"
-            );
-        }
+    <a href="{{ url_for('home') }}" class="active">
+        <div>🏠</div>
+        الرئيسية
+    </a>
+
+    <a href="#products">
+        <div>◈</div>
+        استكشاف
+    </a>
+
+    <a href="#">
+        <div>🛒</div>
+        السلة
+    </a>
+
+    <a href="{{ url_for('auth.messages') }}">
+        <div>💬</div>
+        الرسائل
+    </a>
+
+    <a href="{{ url_for('auth.login') }}">
+        <div>👤</div>
+        حسابي
+    </a>
+
+</nav>
 
 
-        document.addEventListener(
-            "DOMContentLoaded",
-            loadDarkMode
+<footer>
+    <strong>DZ MARKET 🇩🇿</strong>
+    <br><br>
+    منصتك الجزائرية للتجارة والبيع والشراء.
+</footer>
+
+
+<script>
+
+    function toggleDark() {
+
+        document.body.classList.toggle("dark");
+
+        localStorage.setItem(
+            "dz_dark_mode",
+            document.body.classList.contains("dark")
         );
+    }
 
-    </script>
+
+    if (
+        localStorage.getItem("dz_dark_mode")
+        === "true"
+    ) {
+        document.body.classList.add("dark");
+    }
+
+
+    function searchProducts() {
+
+        const query =
+            document
+                .getElementById("searchInput")
+                .value
+                .toLowerCase()
+                .trim();
+
+        const products =
+            document.querySelectorAll(".product");
+
+        products.forEach(product => {
+
+            const name =
+                product.dataset.name.toLowerCase();
+
+            product.style.display =
+                name.includes(query)
+                    ? "block"
+                    : "none";
+        });
+    }
+
+
+    function filterCategory(category) {
+
+        const products =
+            document.querySelectorAll(".product");
+
+        products.forEach(product => {
+
+            if (
+                category === "all" ||
+                product.dataset.category === category
+            ) {
+                product.style.display = "block";
+            } else {
+                product.style.display = "none";
+            }
+
+        });
+
+        document
+            .getElementById("products")
+            .scrollIntoView({
+                behavior: "smooth"
+            });
+    }
+
+
+    function openAI() {
+
+        alert(
+            "✨ مساعد DZ MARKET\n\n" +
+            "المساعد الذكي الحقيقي سنربطوه لاحقًا."
+        );
+    }
+
+</script>
 
 </body>
 </html>
