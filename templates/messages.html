@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>الرسائل | DZ MARKET</title>
+
+    <style>
+        :root {
+            --burgundy: #65152d;
+            --burgundy-dark: #3f0b1c;
+            --gold: #c9a227;
+            --cream: #fffaf3;
+            --white: #ffffff;
+            --text: #241820;
+            --muted: #81757a;
+            --border: #eee3e6;
+            --bubble: #f7eef1;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #fbf7f4;
+            color: var(--text);
+            font-family: Arial, sans-serif;
+        }
+
+        .app {
+            width: 100%;
+            max-width: 1100px;
+            margin: auto;
+            min-height: 100vh;
+            background: var(--white);
+            position: relative;
+        }
+
+        /* Header */
+        .topbar {
+            height: 68px;
+            padding: 0 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(255,255,255,.95);
+            position: sticky;
+            top: 0;
+            z-index: 20;
+        }
+
+        .back {
+            width: 38px;
+            height: 38px;
+            border: 0;
+            border-radius: 12px;
+            background: #f7eef1;
+            color: var(--burgundy);
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .top-title {
+            flex: 1;
+        }
+
+        .top-title h1 {
+            margin: 0;
+            font-size: 19px;
+        }
+
+        .top-title span {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .ai-status {
+            padding: 8px 10px;
+            border-radius: 12px;
+            background: #fff8e4;
+            color: #80630b;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        /* Conversations */
+        .content {
+            display: grid;
+            grid-template-columns: 310px 1fr;
+            min-height: calc(100vh - 68px);
+        }
+
+        .conversations {
+            border-left: 1px solid var(--border);
+            padding: 15px;
+            background: #fffdfb;
+        }
+
+        .search {
+            width: 100%;
+            height: 43px;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            padding: 0 13px;
+            outline: none;
+            font-size: 13px;
+            margin-bottom: 14px;
+        }
+
+        .search:focus {
+            border-color: var(--gold);
+        }
+
+        .conversation {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px;
+            border-radius: 15px;
+            cursor: pointer;
+            margin-bottom: 5px;
+        }
+
+        .conversation.active {
+            background: #f8edf0;
+        }
+
+        .avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--burgundy), #8d3150);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+
+        .conversation-info {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .conversation-name {
+            font-size: 13px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .conversation-preview {
+            color: var(--muted);
+            font-size: 11px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .time {
+            font-size: 9px;
+            color: #aaa;
+        }
+
+        /* Chat */
+        .chat {
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .chat-header {
+            min-height: 64px;
+            padding: 10px 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .chat-user {
+            flex: 1;
+        }
+
+        .chat-user strong {
+            display: block;
+            font-size: 14px;
+        }
+
+        .online {
+            color: #43865a;
+            font-size: 10px;
+        }
+
+        .product-chip {
+            background: #fff8e4;
+            color: #765c08;
+            padding: 8px 10px;
+            border-radius: 11px;
+            font-size: 10px;
+        }
+
+        /* Messages */
+        .messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background:
+                radial-gradient(circle at 20% 20%, rgba(201,162,39,.04), transparent 25%),
+                #fffdfb;
+        }
+
+        .date {
+            text-align: center;
+            color: #aaa;
+            font-size: 10px;
+            margin: 5px 0 18px;
+        }
+
+        .message-row {
+            display: flex;
+            margin-bottom: 12px;
+        }
+
+        .message-row.me {
+            justify-content: flex-start;
+        }
+
+        .message-row.customer {
+            justify-content: flex-end;
+        }
+
+        .message {
+            max-width: min(72%, 460px);
+            padding: 11px 13px;
+            border-radius: 16px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .message.customer {
+            background: var(--bubble);
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.me {
+            background: linear-gradient(135deg, var(--burgundy), var(--burgundy-dark));
+            color: white;
+            border-bottom-left-radius: 5px;
+        }
+
+        .message-time {
+            display: block;
+            margin-top: 5px;
+            font-size: 9px;
+            opacity: .65;
+        }
+
+        /* AI */
+        .ai-box {
+            margin: 0 18px 10px;
+            padding: 11px;
+            border: 1px solid #ead9a2;
+            border-radius: 15px;
+            background: #fffaf0;
+            display: none;
+        }
+
+        .ai-box.show {
+            display: block;
+        }
+
+        .ai-title {
+            font-size: 11px;
+            font-weight: 800;
+            color: #735a0a;
+            margin-bottom: 7px;
+        }
+
+        .suggestion {
+            background: white;
+            border: 1px solid #eee3c4;
+            border-radius: 11px;
+            padding: 9px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 6px;
+        }
+
+        .suggestion:hover {
+            border-color: var(--gold);
+        }
+
+        .style-row {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .style-btn {
+            border: 1px solid #e5d8b3;
+            background: white;
+            color: #725c16;
+            border-radius: 9px;
+            padding: 6px 8px;
+            font-size: 10px;
+            cursor: pointer;
+        }
+
+        .style-btn.active {
+            background: var(--gold);
+            color: white;
+            border-color: var(--gold);
+        }
+
+        /* Composer */
+        .composer {
+            padding: 10px 14px 14px;
+            border-top: 1px solid var(--border);
+            background: white;
+        }
+
+        .composer-row {
+            display: flex;
+            align-items: flex-end;
+            gap: 7px;
+        }
+
+        .composer textarea {
+            flex: 1;
+            min-height: 44px;
+            max-height: 110px;
+            resize: none;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 12px;
+            outline: none;
+            font-family: inherit;
+            font-size: 13px;
+        }
+
+        .composer textarea:focus {
+            border-color: var(--gold);
+        }
+
+        .icon-btn,
+        .send-btn {
+            width: 43px;
+            height: 43px;
+            border: 0;
+            border-radius: 13px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .icon-btn {
+            background: #f7eef1;
+            color: var(--burgundy);
+            font-size: 18px;
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, var(--burgundy), var(--burgundy-dark));
+            color: white;
+            font-size: 17px;
+        }
+
+        .ai-btn {
+            width: 100%;
+            margin-top: 8px;
+            height: 38px;
+            border: 1px solid #ead9a2;
+            background: #fff9e8;
+            color: #745b09;
+            border-radius: 11px;
+            font-weight: 800;
+            cursor: pointer;
+            font-size: 11px;
+        }
+
+        /* Mobile */
+        @media (max-width: 720px) {
+
+            .content {
+                display: block;
+            }
+
+            .conversations {
+                display: none;
+            }
+
+            .chat {
+                min-height: calc(100vh - 68px);
+            }
+
+            .chat-header {
+                padding: 10px 13px;
+            }
+
+            .product-chip {
+                display: none;
+            }
+
+            .messages {
+                padding: 15px 12px;
+            }
+
+            .message {
+                max-width: 82%;
+                font-size: 12px;
+            }
+
+            .ai-box {
+                margin: 0 10px 8px;
+            }
+
+            .composer {
+                padding: 8px 9px 12px;
+            }
+
+            .ai-status {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <header class="topbar">
+        <button class="back" onclick="goHome()">→</button>
+
+        <div class="top-title">
+            <h1>الرسائل 💬</h1>
+            <span>تواصل مع زبائنك بسهولة</span>
+        </div>
+
+        <div class="ai-status">
+            ✨ AI مساعد
+        </div>
+    </header>
+
+    <main class="content">
+
+        <!-- قائمة المحادثات -->
+        <aside class="conversations">
+
+            <input
+                class="search"
+                type="search"
+                placeholder="ابحث في المحادثات..."
+                oninput="searchChats(this.value)"
+            >
+
+            <div class="conversation active">
+                <div class="avatar">م</div>
+
+                <div class="conversation-info">
+                    <div class="conversation-name">محمد</div>
+                    <div class="conversation-preview">
+                        واش كاين التوصيل لوهران؟
+                    </div>
+                </div>
+
+                <div class="time">21:40</div>
+            </div>
+
+            <div class="conversation">
+                <div class="avatar">س</div>
+
+                <div class="conversation-info">
+                    <div class="conversation-name">سارة</div>
+                    <div class="conversation-preview">
+                        شكراً، وصلني الطلب ❤️
+                    </div>
+                </div>
+
+                <div class="time">19:20</div>
+            </div>
+
+            <div class="conversation">
+                <div class="avatar">ي</div>
+
+                <div class="conversation-info">
+                    <div class="conversation-name">يوسف</div>
+                    <div class="conversation-preview">
+                        واش هو المقاس المتوفر؟
+                    </div>
+                </div>
+
+                <div class="time">17:05</div>
+            </div>
+
+        </aside>
+
+        <!-- المحادثة -->
+        <section class="chat">
+
+            <div class="chat-header">
+
+                <div class="avatar">م</div>
+
+                <div class="chat-user">
+                    <strong>محمد</strong>
+                    <span class="online">● متصل الآن</span>
+                </div>
+
+                <div class="product-chip">
+                    🛍️ المنتج: حقيبة جلدية
+                </div>
+
+            </div>
+
+            <div class="messages" id="messages">
+
+                <div class="date">
+                    اليوم
+                </div>
+
+                <div class="message-row customer">
+                    <div class="message customer">
+                        سلام، واش كاين التوصيل لوهران؟
+                        <span class="message-time">21:38</span>
+                    </div>
+                </div>
+
+                <div class="message-row me">
+                    <div class="message me">
+                        وعليكم السلام 😄 إيه كاين التوصيل إن شاء الله.
+                        <span class="message-time">21:39</span>
+                    </div>
+                </div>
+
+                <div class="message-row customer">
+                    <div class="message customer">
+                        مليح 😂 و شحال يجي السعر كامل؟
+                        <span class="message-time">21:40</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- اقتراحات AI -->
+            <div class="ai-box" id="aiBox">
+
+                <div class="ai-title">
+                    ✨ اقتراحات DZ MARKET AI
+                </div>
+
+                <div
+                    class="suggestion"
+                    onclick="useSuggestion(this)"
+                >
+                    "السعر الإجمالي هو 2800 دج مع التوصيل لوهران 😊 إذا حاب نأكدلك الطلب؟"
+                </div>
+
+                <div
+                    class="suggestion"
+                    onclick="useSuggestion(this)"
+                >
+                    "أكيد 😄 المنتج متوفر والتوصيل لوهران كاين. نقدر نجهزلك الطلب إذا حاب."
+                </div>
+
+                <div class="style-row">
+                    <button class="style-btn active" onclick="chooseStyle(this)">
+                        😎 شبابي
+                    </button>
+
+                    <button class="style-btn" onclick="chooseStyle(this)">
+                        😂 طريف
+                    </button>
+
+                    <button class="style-btn" onclick="chooseStyle(this)">
+                        😊 ودّي
+                    </button>
+
+                    <button class="style-btn" onclick="chooseStyle(this)">
+                        💼 احترافي
+                    </button>
+
+                    <button class="style-btn" onclick="chooseStyle(this)">
+                        🇩🇿 دارجة
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- الكتابة -->
+            <div class="composer">
+
+                <div class="composer-row">
+
+                    <button
+                        class="icon-btn"
+                        type="button"
+                        onclick="voiceMessage()"
+                        title="رسالة صوتية"
+                    >
+                        🎤
+                    </button>
+
+                    <textarea
+                        id="messageInput"
+                        placeholder="اكتب رسالتك..."
+                        onkeydown="handleEnter(event)"
+                    ></textarea>
+
+                    <button
+                        class="send-btn"
+                        type="button"
+                        onclick="sendMessage()"
+                    >
+                        ➤
+                    </button>
+
+                </div>
+
+                <button
+                    class="ai-btn"
+                    type="button"
+                    onclick="showAI()"
+                >
+                    ✨ اقترحلي رد بالذكاء الاصطناعي
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+<script>
+
+    function goHome() {
+        window.location.href = "/";
+    }
+
+    function sendMessage() {
+
+        const input = document.getElementById("messageInput");
+        const text = input.value.trim();
+
+        if (!text) return;
+
+        const messages = document.getElementById("messages");
+
+        const row = document.createElement("div");
+        row.className = "message-row me";
+
+        const message = document.createElement("div");
+        message.className = "message me";
+
+        message.textContent = text;
+
+        const time = document.createElement("span");
+        time.className = "message-time";
+        time.textContent = "الآن";
+
+        message.appendChild(time);
+        row.appendChild(message);
+        messages.appendChild(row);
+
+        input.value = "";
+
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    function handleEnter(event) {
+
+        if (event.key === "Enter" && !event.shiftKey) {
+            event.preventDefault();
+            sendMessage();
+        }
+    }
+
+    function showAI() {
+
+        const box = document.getElementById("aiBox");
+
+        box.classList.toggle("show");
+
+        if (box.classList.contains("show")) {
+            setTimeout(() => {
+                box.scrollIntoView({
+                    behavior: "smooth",
+                    block: "nearest"
+                });
+            }, 50);
+        }
+    }
+
+    function useSuggestion(element) {
+
+        const input = document.getElementById("messageInput");
+
+        input.value = element.textContent.trim();
+
+        input.focus();
+    }
+
+    function chooseStyle(button) {
+
+        document.querySelectorAll(".style-btn").forEach(btn => {
+            btn.classList.remove("active");
+        });
+
+        button.classList.add("active");
+    }
+
+    function voiceMessage() {
+        alert("🎤 الرسائل الصوتية سنربطها بالـBackend في المرحلة القادمة.");
+    }
+
+    function searchChats(value) {
+
+        const chats = document.querySelectorAll(".conversation");
+
+        value = value.trim().toLowerCase();
+
+        chats.forEach(chat => {
+            const name = chat
+                .querySelector(".conversation-name")
+                .textContent
+                .toLowerCase();
+
+            chat.style.display =
+                !value || name.includes(value)
+                    ? "flex"
+                    : "none";
+        });
+    }
+
+</script>
+
+</body>
+                  </html>
