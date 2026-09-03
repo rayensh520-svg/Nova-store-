@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>بطاقاتي | DZ MARKET 🇩🇿</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f8f4ef;
+            color: #35151d;
+            padding-bottom: 90px;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4b0f1c, #741b2d);
+            color: white;
+            padding: 20px 18px;
+            border-radius: 0 0 24px 24px;
+        }
+
+        .header-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .back {
+            color: white;
+            text-decoration: none;
+            font-size: 28px;
+        }
+
+        .header h1 {
+            font-size: 22px;
+        }
+
+        .container {
+            max-width: 650px;
+            margin: auto;
+            padding: 18px 14px;
+        }
+
+        .intro {
+            background: white;
+            border-radius: 20px;
+            padding: 18px;
+            margin-bottom: 16px;
+            box-shadow: 0 7px 20px rgba(0,0,0,.05);
+        }
+
+        .intro h2 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .intro p {
+            color: #777;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .card {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #64162a, #92283f);
+            color: white;
+            border-radius: 22px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 10px 25px rgba(70,15,30,.18);
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .brand {
+            font-weight: bold;
+            color: #f2d27a;
+        }
+
+        .badge {
+            background: rgba(255,255,255,.15);
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+        }
+
+        .discount {
+            font-size: 36px;
+            font-weight: bold;
+            color: #f2d27a;
+            margin-bottom: 5px;
+        }
+
+        .description {
+            font-size: 14px;
+            margin-bottom: 14px;
+        }
+
+        .expiry {
+            font-size: 11px;
+            opacity: .8;
+            margin-bottom: 15px;
+        }
+
+        .use-btn {
+            border: 0;
+            background: #f2d27a;
+            color: #4b0f1c;
+            padding: 11px 18px;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .empty {
+            text-align: center;
+            background: white;
+            border-radius: 22px;
+            padding: 45px 20px;
+            margin-top: 20px;
+            box-shadow: 0 7px 20px rgba(0,0,0,.05);
+        }
+
+        .empty-icon {
+            font-size: 55px;
+            margin-bottom: 14px;
+        }
+
+        .empty h2 {
+            margin-bottom: 8px;
+        }
+
+        .empty p {
+            color: #777;
+            line-height: 1.7;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            height: 72px;
+            background: rgba(255,255,255,.97);
+            border-top: 1px solid #eadfe1;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .nav-item {
+            text-decoration: none;
+            color: #725d63;
+            font-size: 11px;
+            text-align: center;
+        }
+
+        .nav-item span {
+            display: block;
+            font-size: 22px;
+            margin-bottom: 3px;
+        }
+
+        .nav-item.active {
+            color: #68172a;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="header-row">
+
+        <a href="{{ url_for('home') }}" class="back">
+            ‹
+        </a>
+
+        <h1>🎟️ بطاقاتي</h1>
+
+        <div></div>
+
+    </div>
+
+</header>
+
+<main class="container">
+
+    <section class="intro">
+
+        <h2>مكافآتك 🎁</h2>
+
+        <p>
+            هنا تلقى بطاقات الخصم والمكافآت اللي ربحتها
+            من طلباتك ودعوات الأصدقاء.
+        </p>
+
+    </section>
+
+
+    {% if cards %}
+
+        {% for card in cards %}
+
+        <div class="card">
+
+            <div class="card-top">
+
+                <div class="brand">
+                    DZ MARKET 🇩🇿
+                </div>
+
+                <div class="badge">
+                    صالحة
+                </div>
+
+            </div>
+
+
+            <div class="discount">
+                {{ card['discount_percent'] }}%
+            </div>
+
+
+            <div class="description">
+                خصم خاص على مشترياتك 🎉
+            </div>
+
+
+            {% if card['expires_at'] %}
+
+            <div class="expiry">
+                تنتهي في: {{ card['expires_at'] }}
+            </div>
+
+            {% else %}
+
+            <div class="expiry">
+                بدون تاريخ انتهاء
+            </div>
+
+            {% endif %}
+
+
+            <button
+                class="use-btn"
+                type="button"
+                onclick="useCard('{{ card['code'] }}')">
+
+                استعمال البطاقة
+
+            </button>
+
+        </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <section class="empty">
+
+            <div class="empty-icon">
+                🎟️
+            </div>
+
+            <h2>
+                ما عندك حتى بطاقة حاليا
+            </h2>
+
+            <p>
+                كمل طلباتك وشارك رابط الدعوة مع أصحابك
+                باش تجمع مكافآت وبطاقات خصم 🎁
+            </p>
+
+        </section>
+
+    {% endif %}
+
+</main>
+
+
+<nav class="bottom-nav">
+
+    <a href="{{ url_for('home') }}" class="nav-item">
+        <span>🏠</span>
+        الرئيسية
+    </a>
+
+    <a href="#" class="nav-item">
+        <span>◈</span>
+        الاستكشاف
+    </a>
+
+    <a href="#" class="nav-item">
+        <span>🛒</span>
+        السلة
+    </a>
+
+    <a href="{{ url_for('auth.messages') }}" class="nav-item">
+        <span>💬</span>
+        الرسائل
+    </a>
+
+    <a href="#" class="nav-item active">
+        <span>🎟️</span>
+        بطاقاتي
+    </a>
+
+</nav>
+
+
+<script>
+
+function useCard(code) {
+
+    alert(
+        "كود البطاقة: " +
+        code +
+        "\nسيتم تطبيقها عند تأكيد الطلب 🎟️"
+    );
+
+}
+
+</script>
+
+</body>
+</html>
