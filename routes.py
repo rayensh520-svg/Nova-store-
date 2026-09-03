@@ -56,33 +56,27 @@ def register():
     if request.method == "POST":
 
         full_name = request.form.get(
-            "full_name",
-            ""
+            "full_name", ""
         ).strip()
 
         email = request.form.get(
-            "email",
-            ""
+            "email", ""
         ).strip().lower()
 
         phone = request.form.get(
-            "phone",
-            ""
+            "phone", ""
         ).strip()
 
         password = request.form.get(
-            "password",
-            ""
+            "password", ""
         )
 
         confirm_password = request.form.get(
-            "confirm_password",
-            ""
+            "confirm_password", ""
         )
 
         role = request.form.get(
-            "role",
-            "buyer"
+            "role", "buyer"
         ).strip().lower()
 
         accepted_terms = request.form.get(
@@ -90,42 +84,33 @@ def register():
         )
 
         store_name = request.form.get(
-            "store_name",
-            ""
+            "store_name", ""
         ).strip()
 
         activity_type = request.form.get(
-            "activity_type",
-            ""
+            "activity_type", ""
         ).strip()
 
         wilaya = request.form.get(
-            "wilaya",
-            ""
+            "wilaya", ""
         ).strip()
 
         municipality = request.form.get(
-            "municipality",
-            ""
+            "municipality", ""
         ).strip()
 
         verification_note = request.form.get(
-            "verification_note",
-            ""
+            "verification_note", ""
         ).strip()
 
-
-        # ----------------------------------------------------
-        # ROLE
-        # ----------------------------------------------------
 
         if role not in ("buyer", "seller"):
             role = "buyer"
 
 
-        # ----------------------------------------------------
+        # -------------------------
         # BASIC VALIDATION
-        # ----------------------------------------------------
+        # -------------------------
 
         if not full_name:
             flash(
@@ -136,7 +121,6 @@ def register():
                 url_for("auth.register")
             )
 
-
         if not email:
             flash(
                 "يرجى إدخال البريد الإلكتروني.",
@@ -145,7 +129,6 @@ def register():
             return redirect(
                 url_for("auth.register")
             )
-
 
         if not phone:
             flash(
@@ -156,7 +139,6 @@ def register():
                 url_for("auth.register")
             )
 
-
         if not password:
             flash(
                 "يرجى إدخال كلمة المرور.",
@@ -166,7 +148,6 @@ def register():
                 url_for("auth.register")
             )
 
-
         if not confirm_password:
             flash(
                 "يرجى تأكيد كلمة المرور.",
@@ -175,7 +156,6 @@ def register():
             return redirect(
                 url_for("auth.register")
             )
-
 
         if not accepted_terms:
             flash(
@@ -187,88 +167,101 @@ def register():
             )
 
 
+        # -------------------------
+        # PASSWORD
+        # -------------------------
+
         if not validate_password(password):
+
             flash(
                 "كلمة المرور يجب أن تحتوي على 8 أحرف على الأقل، وحرف واحد ورقم واحد.",
                 "error"
             )
+
             return redirect(
                 url_for("auth.register")
             )
 
 
         if password != confirm_password:
+
             flash(
                 "كلمتا المرور غير متطابقتين.",
                 "error"
             )
+
             return redirect(
                 url_for("auth.register")
             )
 
 
-        # ----------------------------------------------------
-        # CHECK EMAIL
-        # ----------------------------------------------------
+        # -------------------------
+        # EMAIL CHECK
+        # -------------------------
 
         existing_user = User.find_by_email(
             email
         )
 
         if existing_user:
+
             flash(
                 "هذا البريد الإلكتروني مسجل من قبل.",
                 "error"
             )
+
             return redirect(
                 url_for("auth.register")
             )
 
 
-        # ----------------------------------------------------
+        # -------------------------
         # SELLER VALIDATION
-        # ----------------------------------------------------
+        # -------------------------
 
         if role == "seller":
 
             if not store_name:
+
                 flash(
                     "يرجى إدخال اسم المتجر.",
                     "error"
                 )
+
                 return redirect(
                     url_for("auth.register")
                 )
 
-
             if not activity_type:
+
                 flash(
                     "يرجى تحديد نوع النشاط.",
                     "error"
                 )
+
                 return redirect(
                     url_for("auth.register")
                 )
 
-
             if not wilaya:
+
                 flash(
                     "يرجى تحديد الولاية.",
                     "error"
                 )
+
                 return redirect(
                     url_for("auth.register")
                 )
 
 
-        # ----------------------------------------------------
+        # -------------------------
         # CREATE USER
-        # ----------------------------------------------------
+        # -------------------------
 
         password_hash = generate_password_hash(
             password
         )
-
 
         user_id = User.create(
             full_name=full_name,
@@ -280,18 +273,20 @@ def register():
 
 
         if user_id is None:
+
             flash(
                 "تعذر إنشاء الحساب. ربما البريد الإلكتروني مستخدم.",
                 "error"
             )
+
             return redirect(
                 url_for("auth.register")
             )
 
 
-        # ----------------------------------------------------
+        # -------------------------
         # CREATE SELLER STORE
-        # ----------------------------------------------------
+        # -------------------------
 
         if role == "seller":
 
@@ -303,7 +298,6 @@ def register():
                 wilaya=wilaya,
                 municipality=municipality
             )
-
 
             from database import get_connection
 
@@ -329,14 +323,13 @@ def register():
             connection.close()
 
 
-        # ----------------------------------------------------
+        # -------------------------
         # LOGIN AFTER REGISTER
-        # ----------------------------------------------------
+        # -------------------------
 
         user = User.find_by_id(
             user_id
         )
-
 
         if user:
             login_user(
@@ -349,7 +342,6 @@ def register():
             "تم إنشاء حسابك بنجاح 🎉",
             "success"
         )
-
 
         return redirect(
             url_for("home")
@@ -371,13 +363,11 @@ def login():
     if request.method == "POST":
 
         email = request.form.get(
-            "email",
-            ""
+            "email", ""
         ).strip().lower()
 
         password = request.form.get(
-            "password",
-            ""
+            "password", ""
         )
 
         remember = (
@@ -387,6 +377,7 @@ def login():
 
 
         if not email or not password:
+
             flash(
                 "يرجى إدخال البريد الإلكتروني وكلمة المرور.",
                 "error"
@@ -403,6 +394,7 @@ def login():
 
 
         if not user:
+
             flash(
                 "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
                 "error"
@@ -423,12 +415,16 @@ def login():
                 password
             )
 
-        except (ValueError, TypeError):
+        except (
+            ValueError,
+            TypeError
+        ):
 
             password_correct = False
 
 
         if not password_correct:
+
             flash(
                 "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
                 "error"
@@ -449,7 +445,6 @@ def login():
             "مرحبًا بك من جديد 👋",
             "success"
         )
-
 
         return redirect(
             url_for("home")
@@ -547,7 +542,6 @@ def send_message():
         type=int
     )
 
-
     text = request.form.get(
         "message",
         ""
@@ -641,20 +635,16 @@ def chat_settings():
             "female"
         )
 
-
         voice_enabled = (
             request.form.get(
                 "voice_enabled"
-            )
-            == "1"
+            ) == "1"
         )
-
 
         language = request.form.get(
             "language",
             "ar"
         )
-
 
         style = request.form.get(
             "style",
@@ -676,7 +666,6 @@ def chat_settings():
             "success"
         )
 
-
         return redirect(
             url_for("auth.chat_settings")
         )
@@ -690,4 +679,4 @@ def chat_settings():
     return render_template(
         "chat_settings.html",
         settings=settings
-        )
+            )
