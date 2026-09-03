@@ -1,346 +1,170 @@
-import json
+import sqlite3
 import secrets
 import string
+from datetime import datetime
+from database import get_db
 
-from database import get_connection
-
-
-# =========================================================
-# HELPERS
-# =========================================================
 
 def generate_code(prefix="DZ"):
     chars = string.ascii_uppercase + string.digits
-    random_part = "".join(
-        secrets.choice(chars)
-        for _ in range(8)
-    )
-    return f"{prefix}-{random_part}"
+    return prefix + "-" + "".join(secrets.choice(chars) for _ in range(8))
 
-
-# =========================================================
-# USER
-# =========================================================
 
 class User:
 
     @staticmethod
-    def create(
-        full_name,
-        email,
-        password,
-        role="buyer",
-        phone=""
-    ):
-        connection = get_connection()
+    def create(full_name, email, phone, password, role="buyer", referral_code=None):
+        db = get_db()
 
-        try:
-            referral_code = generate_code("DZ")
+        code = referral_code or generate_code("DZ")
 
-            cursor = connection.execute(
-                """
-                INSERT INTO users (
-                    full_name,
-                    email,
-                    phone,
-                    password,
-                    role,
-                    referral_code
-                )
-                VALUES (?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    full_name,
-                    email,
-                    phone,
-                    password,
-                    role,
-                    referral_code
-                )
-            )
+        cur = db.execute("""
+            INSERT INTO users
+            (full_name, email, phone, password, role, referral_code)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (
+            full_name,
+            email,
+            phone,
+            password,
+            role,
+            code
+        ))
 
-            connection.commit()
-
-            return cursor.lastrowid
-
-        except Exception:
-            connection.rollback()
-            return None
-
-        finally:
-            connection.close()
-
+        db.commit()
+        return cur.lastrowid
 
     @staticmethod
     def find_by_email(email):
-
-        connection = get_connection()
-
-        user = connection.execute(
-            """
-            SELECT *
-            FROM users
-            WHERE email = ?
-            """,
+        db = get_db()
+        return db.execute(
+            "SELECT * FROM users WHERE email = ?",
             (email,)
         ).fetchone()
 
-        connection.close()
-
-        return user
-
-
     @staticmethod
     def find_by_id(user_id):
-
-        connection = get_connection()
-
-        user = connection.execute(
-            """
-            SELECT *
-            FROM users
-            WHERE id = ?
-            """,
+        db = get_db()
+        return db.execute(
+            "SELECT * FROM users WHERE id = ?",
             (user_id,)
         ).fetchone()
 
-        connection.close()
-
-        return user
-
-
     @staticmethod
     def find_by_referral_code(code):
-
-        connection = get_connection()
-
-        user = connection.execute(
-            """
-            SELECT *
-            FROM users
-            WHERE referral_code = ?
-            """,
-            (code.upper(),)
+        db = get_db()
+        return db.execute(
+            "SELECT * FROM users WHERE referral_code = ?",
+            (code,)
         ).fetchone()
 
-        connection.close()
-
-        return user
-
-
     @staticmethod
-    def update_profile(
-        user_id,
-        full_name=None,
-        phone=None,
-        bio=None,
-        wilaya=None,
-        municipality=None,
-        avatar=None
-    ):
+    def update_profile(user_id, **data):
+        allowed = [
+            "full_name",
+            "phone",
+            "avatar",
+            "bio",
+            "wilaya",
+            "municipality"
+        ]
 
         fields = []
         values = []
 
-        data = {
-            "full_name": full_name,
-            "phone": phone,
-            "bio": bio,
-            "wilaya": wilaya,
-            "municipality": municipality,
-            "avatar": avatar
-        }
-
-        for field, value in data.items():
-
-            if value is not None:
-
-                fields.append(
-                    f"{field} = ?"
-                )
-
-                values.append(value)
-
+        for key in allowed:
+            if key in data:
+                fields.append(f"{key} = ?")
+                values.append(data[key])
 
         if not fields:
-            return False
-
+            return
 
         values.append(user_id)
 
-        connection = get_connection()
-
-        connection.execute(
-            f"""
-            UPDATE users
-            SET {", ".join(fields)}
-            WHERE id = ?
-            """,
+        db = get_db()
+        db.execute(
+            f"UPDATE users SET {', '.join(fields)} WHERE id = ?",
             values
         )
-
-        connection.commit()
-        connection.close()
-
-        return True
-
+        db.commit()
 
     @staticmethod
-    def update_settings(
-        user_id,
-        language=None
-    ):
+    def update_settings(user_id, **data):
+        allowed = ["language"]
 
-        if language is None:
-            return False
+        fields = []
+        values = []
 
-        allowed = {
-            "ar",
-            "dz",
-            "fr",
-            "en"
-        }
+        for key in allowed:
+            if key in data:
+                fields.append(f"{key} = ?")
+                values.append(data[key])
 
-        if language not in allowed:
-            language = "ar"
+        if not fields:
+            return
 
-        connection = get_connection()
+        values.append(user_id)
 
-        connection.execute(
-            """
-            UPDATE users
-            SET language = ?
-            WHERE id = ?
-            """,
-            (
-                language,
-                user_id
-            )
+        db = get_db()
+        db.execute(
+            f"UPDATE users SET {', '.join(fields)} WHERE id = ?",
+            values
         )
-
-        connection.commit()
-        connection.close()
-
-        return True
-
+        db.commit()
 
     @staticmethod
     def verify_phone(user_id):
-
-        connection = get_connection()
-
-        connection.execute(
-            """
-            UPDATE users
-            SET phone_verified = 1
-            WHERE id = ?
-            """,
+        db = get_db()
+        db.execute(
+            "UPDATE users SET phone_verified = 1 WHERE id = ?",
             (user_id,)
         )
+        db.commit()
 
-        connection.commit()
-        connection.close()
-
-
-# =========================================================
-# STORE
-# =========================================================
 
 class Store:
 
     @staticmethod
-    def create(
-        user_id,
-        name,
-        description="",
-        phone="",
-        wilaya="",
-        municipality=""
-    ):
+    def create(user_id, name, description="", phone=None,
+               wilaya=None, municipality=None):
+        db = get_db()
 
-        connection = get_connection()
+        cur = db.execute("""
+            INSERT INTO stores
+            (user_id, name, description, phone, wilaya, municipality)
+            VALUES (?, ?, ?, ?, ?, ?)
+        """, (
+            user_id,
+            name,
+            description,
+            phone,
+            wilaya,
+            municipality
+        ))
 
-        try:
-
-            cursor = connection.execute(
-                """
-                INSERT INTO stores (
-                    user_id,
-                    name,
-                    description,
-                    phone,
-                    wilaya,
-                    municipality
-                )
-                VALUES (?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    user_id,
-                    name,
-                    description,
-                    phone,
-                    wilaya,
-                    municipality
-                )
-            )
-
-            connection.commit()
-
-            return cursor.lastrowid
-
-        except Exception:
-
-            connection.rollback()
-
-            return None
-
-        finally:
-
-            connection.close()
-
+        db.commit()
+        return cur.lastrowid
 
     @staticmethod
     def find_by_user_id(user_id):
-
-        connection = get_connection()
-
-        store = connection.execute(
-            """
-            SELECT *
-            FROM stores
-            WHERE user_id = ?
-            """,
+        db = get_db()
+        return db.execute(
+            "SELECT * FROM stores WHERE user_id = ?",
             (user_id,)
         ).fetchone()
 
-        connection.close()
-
-        return store
-
-
     @staticmethod
     def find_by_id(store_id):
-
-        connection = get_connection()
-
-        store = connection.execute(
-            """
-            SELECT *
-            FROM stores
-            WHERE id = ?
-            """,
+        db = get_db()
+        return db.execute(
+            "SELECT * FROM stores WHERE id = ?",
             (store_id,)
         ).fetchone()
 
-        connection.close()
-
-        return store
-
-
     @staticmethod
-    def update(store_id, **fields):
-
-        allowed = {
+    def update(store_id, **data):
+        allowed = [
             "name",
             "description",
             "phone",
@@ -348,158 +172,74 @@ class Store:
             "municipality",
             "logo",
             "cover_image"
-        }
+        ]
 
-        updates = []
+        fields = []
         values = []
 
-        for key, value in fields.items():
+        for key in allowed:
+            if key in data:
+                fields.append(f"{key} = ?")
+                values.append(data[key])
 
-            if key in allowed:
-
-                updates.append(
-                    f"{key} = ?"
-                )
-
-                values.append(value)
-
-
-        if not updates:
-            return False
-
+        if not fields:
+            return
 
         values.append(store_id)
 
-        connection = get_connection()
-
-        connection.execute(
-            f"""
-            UPDATE stores
-            SET {", ".join(updates)}
-            WHERE id = ?
-            """,
+        db = get_db()
+        db.execute(
+            f"UPDATE stores SET {', '.join(fields)} WHERE id = ?",
             values
         )
-
-        connection.commit()
-        connection.close()
-
-        return True
-
+        db.commit()
 
     @staticmethod
     def public_profile(store_id):
-
-        connection = get_connection()
-
-        store = connection.execute(
-            """
+        db = get_db()
+        return db.execute("""
             SELECT
                 s.*,
-                u.full_name,
-                u.email
+                u.full_name
             FROM stores s
-            JOIN users u
-                ON u.id = s.user_id
+            JOIN users u ON u.id = s.user_id
             WHERE s.id = ?
-            """,
-            (store_id,)
-        ).fetchone()
-
-        connection.close()
-
-        return store
-
+        """, (store_id,)).fetchone()
 
     @staticmethod
     def increment_sales(store_id):
-
-        connection = get_connection()
-
-        connection.execute(
-            """
+        db = get_db()
+        db.execute("""
             UPDATE stores
             SET total_sales = total_sales + 1
             WHERE id = ?
-            """,
-            (store_id,)
-        )
-
-        connection.commit()
-        connection.close()
-
+        """, (store_id,))
+        db.commit()
 
     @staticmethod
-    def update_trust_score(
-        store_id,
-        score
-    ):
-
-        connection = get_connection()
-
-        connection.execute(
-            """
+    def update_trust_score(store_id, score):
+        db = get_db()
+        db.execute("""
             UPDATE stores
             SET trust_score = ?
             WHERE id = ?
-            """,
-            (
-                score,
-                store_id
-            )
-        )
+        """, (score, store_id))
+        db.commit()
 
-        connection.commit()
-        connection.close()
-
-
-# =========================================================
-# PRODUCT
-# =========================================================
 
 class Product:
 
     @staticmethod
-    def create(
-        store_id,
-        name,
-        price,
-        description="",
-        discount=0,
-        quantity=0,
-        category=None,
-        brand=None,
-        images=None,
-        video=None,
-        delivery_wilayas=None
-    ):
+    def create(store_id, name, description="", price=0,
+               discount=0, quantity=0, category=None,
+               brand=None, images=None, video=None,
+               delivery_wilayas=None):
 
-        connection = get_connection()
+        db = get_db()
 
-        images_json = (
-            json.dumps(
-                images,
-                ensure_ascii=False
-            )
-            if isinstance(images, list)
-            else images
-        )
-
-        wilayas_json = (
-            json.dumps(
-                delivery_wilayas,
-                ensure_ascii=False
-            )
-            if isinstance(
-                delivery_wilayas,
-                list
-            )
-            else delivery_wilayas
-        )
-
-        cursor = connection.execute(
-            """
-            INSERT INTO products (
+        cur = db.execute("""
+            INSERT INTO products
+            (
                 store_id,
                 name,
                 description,
@@ -513,372 +253,253 @@ class Product:
                 delivery_wilayas
             )
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-            (
-                store_id,
-                name,
-                description,
-                price,
-                discount,
-                quantity,
-                category,
-                brand,
-                images_json,
-                video,
-                wilayas_json
-            )
-        )
+        """, (
+            store_id,
+            name,
+            description,
+            price,
+            discount,
+            quantity,
+            category,
+            brand,
+            images,
+            video,
+            delivery_wilayas
+        ))
 
-        connection.commit()
-
-        product_id = cursor.lastrowid
-
-        connection.close()
-
-        return product_id
-
+        db.commit()
+        return cur.lastrowid
 
     @staticmethod
     def find_by_id(product_id):
-
-        connection = get_connection()
-
-        product = connection.execute(
-            """
-            SELECT
-                p.*,
-                s.name AS store_name,
-                s.trust_score
-            FROM products p
-            JOIN stores s
-                ON s.id = p.store_id
-            WHERE p.id = ?
-            """,
+        db = get_db()
+        return db.execute(
+            "SELECT * FROM products WHERE id = ?",
             (product_id,)
         ).fetchone()
 
-        connection.close()
-
-        return product
-
-
     @staticmethod
     def by_store(store_id):
-
-        connection = get_connection()
-
-        products = connection.execute(
-            """
+        db = get_db()
+        return db.execute("""
             SELECT *
             FROM products
             WHERE store_id = ?
             ORDER BY created_at DESC
-            """,
-            (store_id,)
-        ).fetchall()
-
-        connection.close()
-
-        return products
-
+        """, (store_id,)).fetchall()
 
     @staticmethod
-    def update_rating(product_id):
+    def update(product_id, **data):
+        allowed = [
+            "name",
+            "description",
+            "price",
+            "discount",
+            "quantity",
+            "category",
+            "brand",
+            "images",
+            "video",
+            "delivery_wilayas",
+            "active"
+        ]
 
-        connection = get_connection()
+        fields = []
+        values = []
 
-        result = connection.execute(
-            """
-            SELECT
-                AVG(rating) AS average_rating,
-                COUNT(*) AS reviews_count
-            FROM reviews
-            WHERE product_id = ?
-            """,
-            (product_id,)
-        ).fetchone()
+        for key in allowed:
+            if key in data:
+                fields.append(f"{key} = ?")
+                values.append(data[key])
 
-        rating = (
-            result["average_rating"]
-            or 0
+        if not fields:
+            return
+
+        values.append(product_id)
+
+        db = get_db()
+        db.execute(
+            f"UPDATE products SET {', '.join(fields)} WHERE id = ?",
+            values
         )
+        db.commit()
 
-        count = (
-            result["reviews_count"]
-            or 0
-        )
+    @staticmethod
+    def update_rating(product_id, rating):
+        db = get_db()
 
-        connection.execute(
-            """
-            UPDATE products
-            SET
-                rating = ?,
-                reviews_count = ?
+        row = db.execute("""
+            SELECT rating, reviews_count
+            FROM products
             WHERE id = ?
-            """,
-            (
-                rating,
-                count,
-                product_id
-            )
-        )
+        """, (product_id,)).fetchone()
 
-        connection.commit()
-        connection.close()
+        if not row:
+            return
 
+        old_rating = float(row["rating"] or 0)
+        count = int(row["reviews_count"] or 0)
 
-# =========================================================
-# FAVORITES
-# =========================================================
+        new_count = count + 1
+        new_rating = (
+            (old_rating * count) + float(rating)
+        ) / new_count
+
+        db.execute("""
+            UPDATE products
+            SET rating = ?, reviews_count = ?
+            WHERE id = ?
+        """, (
+            round(new_rating, 2),
+            new_count,
+            product_id
+        ))
+
+        db.commit()
+
 
 class Favorite:
 
     @staticmethod
-    def add(
-        user_id,
-        product_id
-    ):
+    def add(user_id, product_id):
+        db = get_db()
 
-        connection = get_connection()
-
-        connection.execute(
-            """
-            INSERT OR IGNORE INTO favorites (
-                user_id,
-                product_id
-            )
+        db.execute("""
+            INSERT OR IGNORE INTO favorites
+            (user_id, product_id)
             VALUES (?, ?)
-            """,
-            (
-                user_id,
-                product_id
-            )
-        )
+        """, (user_id, product_id))
 
-        connection.commit()
-        connection.close()
-
+        db.commit()
 
     @staticmethod
-    def remove(
-        user_id,
-        product_id
-    ):
+    def remove(user_id, product_id):
+        db = get_db()
 
-        connection = get_connection()
-
-        connection.execute(
-            """
+        db.execute("""
             DELETE FROM favorites
-            WHERE user_id = ?
-            AND product_id = ?
-            """,
-            (
-                user_id,
-                product_id
-            )
-        )
+            WHERE user_id = ? AND product_id = ?
+        """, (user_id, product_id))
 
-        connection.commit()
-        connection.close()
-
+        db.commit()
 
     @staticmethod
     def all(user_id):
+        db = get_db()
 
-        connection = get_connection()
-
-        products = connection.execute(
-            """
-            SELECT p.*
+        return db.execute("""
+            SELECT
+                f.*,
+                p.name,
+                p.price,
+                p.discount,
+                p.images
             FROM favorites f
-            JOIN products p
-                ON p.id = f.product_id
+            JOIN products p ON p.id = f.product_id
             WHERE f.user_id = ?
-            ORDER BY f.created_at DESC
-            """,
-            (user_id,)
-        ).fetchall()
+            ORDER BY f.id DESC
+        """, (user_id,)).fetchall()
 
-        connection.close()
-
-        return products
-
-
-# =========================================================
-# CART
-# =========================================================
 
 class Cart:
 
     @staticmethod
-    def add(
-        user_id,
-        product_id,
-        quantity=1
-    ):
+    def add(user_id, product_id, quantity=1):
+        db = get_db()
 
-        quantity = max(
-            1,
-            int(quantity)
-        )
+        existing = db.execute("""
+            SELECT *
+            FROM cart_items
+            WHERE user_id = ? AND product_id = ?
+        """, (user_id, product_id)).fetchone()
 
-        connection = get_connection()
-
-        connection.execute(
-            """
-            INSERT INTO cart_items (
-                user_id,
-                product_id,
-                quantity
-            )
-            VALUES (?, ?, ?)
-
-            ON CONFLICT(
+        if existing:
+            db.execute("""
+                UPDATE cart_items
+                SET quantity = quantity + ?
+                WHERE user_id = ? AND product_id = ?
+            """, (
+                quantity,
                 user_id,
                 product_id
-            )
-
-            DO UPDATE SET
-                quantity =
-                    quantity +
-                    excluded.quantity
-            """,
-            (
+            ))
+        else:
+            db.execute("""
+                INSERT INTO cart_items
+                (user_id, product_id, quantity)
+                VALUES (?, ?, ?)
+            """, (
                 user_id,
                 product_id,
                 quantity
-            )
-        )
+            ))
 
-        connection.commit()
-        connection.close()
-
+        db.commit()
 
     @staticmethod
     def get_items(user_id):
+        db = get_db()
 
-        connection = get_connection()
-
-        items = connection.execute(
-            """
+        return db.execute("""
             SELECT
                 c.*,
                 p.name,
                 p.price,
                 p.discount,
                 p.images,
-                p.quantity AS stock,
-                s.name AS store_name
+                p.quantity AS stock_quantity,
+                p.store_id
             FROM cart_items c
-            JOIN products p
-                ON p.id = c.product_id
-            JOIN stores s
-                ON s.id = p.store_id
+            JOIN products p ON p.id = c.product_id
             WHERE c.user_id = ?
-            ORDER BY c.created_at DESC
-            """,
-            (user_id,)
-        ).fetchall()
-
-        connection.close()
-
-        return items
-
+            ORDER BY c.id DESC
+        """, (user_id,)).fetchall()
 
     @staticmethod
-    def update_quantity(
-        user_id,
-        product_id,
-        quantity
-    ):
+    def update_quantity(user_id, product_id, quantity):
+        db = get_db()
 
-        quantity = int(quantity)
+        db.execute("""
+            UPDATE cart_items
+            SET quantity = ?
+            WHERE user_id = ? AND product_id = ?
+        """, (
+            quantity,
+            user_id,
+            product_id
+        ))
 
-        connection = get_connection()
-
-        if quantity <= 0:
-
-            connection.execute(
-                """
-                DELETE FROM cart_items
-                WHERE user_id = ?
-                AND product_id = ?
-                """,
-                (
-                    user_id,
-                    product_id
-                )
-            )
-
-        else:
-
-            connection.execute(
-                """
-                UPDATE cart_items
-                SET quantity = ?
-                WHERE user_id = ?
-                AND product_id = ?
-                """,
-                (
-                    quantity,
-                    user_id,
-                    product_id
-                )
-            )
-
-        connection.commit()
-        connection.close()
-
+        db.commit()
 
     @staticmethod
-    def remove(
-        user_id,
-        product_id
-    ):
+    def remove(user_id, product_id):
+        db = get_db()
 
-        connection = get_connection()
-
-        connection.execute(
-            """
+        db.execute("""
             DELETE FROM cart_items
-            WHERE user_id = ?
-            AND product_id = ?
-            """,
-            (
-                user_id,
-                product_id
-            )
-        )
+            WHERE user_id = ? AND product_id = ?
+        """, (
+            user_id,
+            product_id
+        ))
 
-        connection.commit()
-        connection.close()
-
+        db.commit()
 
     @staticmethod
     def clear(user_id):
+        db = get_db()
 
-        connection = get_connection()
-
-        connection.execute(
-            """
-            DELETE FROM cart_items
-            WHERE user_id = ?
-            """,
+        db.execute(
+            "DELETE FROM cart_items WHERE user_id = ?",
             (user_id,)
         )
 
-        connection.commit()
-        connection.close()
+        db.commit()
 
-
-# =========================================================
-# ORDER
-# =========================================================
 
 class Order:
 
-    ALLOWED_STATUSES = {
+    ALLOWED_STATUSES = [
         "pending",
         "confirmed",
         "shipped",
@@ -886,175 +507,109 @@ class Order:
         "delivered",
         "cancelled",
         "returned"
-    }
-
+    ]
 
     @staticmethod
-    def create(
-        user_id,
-        total_amount,
-        delivery_address,
-        delivery_wilaya,
-        delivery_phone
-    ):
+    def create(user_id, total_amount,
+               delivery_wilaya=None,
+               delivery_municipality=None,
+               status="pending"):
 
-        connection = get_connection()
+        db = get_db()
 
-        cursor = connection.execute(
-            """
-            INSERT INTO orders (
-                user_id,
-                total_amount,
-                delivery_address,
-                delivery_wilaya,
-                delivery_phone
-            )
-            VALUES (?, ?, ?, ?, ?)
-            """,
+        cur = db.execute("""
+            INSERT INTO orders
             (
                 user_id,
                 total_amount,
-                delivery_address,
                 delivery_wilaya,
-                delivery_phone
+                delivery_municipality,
+                status
             )
-        )
+            VALUES (?, ?, ?, ?, ?)
+        """, (
+            user_id,
+            total_amount,
+            delivery_wilaya,
+            delivery_municipality,
+            status
+        ))
 
-        connection.commit()
-
-        order_id = cursor.lastrowid
-
-        connection.close()
-
-        return order_id
-
+        db.commit()
+        return cur.lastrowid
 
     @staticmethod
     def find_by_id(order_id):
+        db = get_db()
 
-        connection = get_connection()
-
-        order = connection.execute(
-            """
-            SELECT *
-            FROM orders
-            WHERE id = ?
-            """,
+        return db.execute(
+            "SELECT * FROM orders WHERE id = ?",
             (order_id,)
         ).fetchone()
 
-        connection.close()
-
-        return order
-
-
     @staticmethod
     def by_user(user_id):
+        db = get_db()
 
-        connection = get_connection()
-
-        orders = connection.execute(
-            """
+        return db.execute("""
             SELECT *
             FROM orders
             WHERE user_id = ?
             ORDER BY created_at DESC
-            """,
-            (user_id,)
-        ).fetchall()
-
-        connection.close()
-
-        return orders
-
+        """, (user_id,)).fetchall()
 
     @staticmethod
-    def update_status(
-        order_id,
-        status
-    ):
+    def update_status(order_id, status):
 
         if status not in Order.ALLOWED_STATUSES:
             return False
 
-        connection = get_connection()
+        db = get_db()
 
-        connection.execute(
-            """
+        db.execute("""
             UPDATE orders
-            SET
-                status = ?,
-                updated_at = CURRENT_TIMESTAMP
+            SET status = ?, updated_at = CURRENT_TIMESTAMP
             WHERE id = ?
-            """,
-            (
-                status,
-                order_id
-            )
-        )
+        """, (
+            status,
+            order_id
+        ))
 
-        connection.commit()
-        connection.close()
-
+        db.commit()
         return True
 
-
     @staticmethod
-    def confirm_receipt(
-        order_id,
-        user_id
-    ):
+    def confirm_receipt(order_id, user_id):
 
-        connection = get_connection()
+        db = get_db()
 
-        cursor = connection.execute(
-            """
+        result = db.execute("""
             UPDATE orders
-            SET
-                status = 'delivered',
+            SET status = 'delivered',
                 updated_at = CURRENT_TIMESTAMP
             WHERE id = ?
             AND user_id = ?
-            AND status IN (
-                'shipped',
-                'in_transit'
-            )
-            """,
-            (
-                order_id,
-                user_id
-            )
-        )
+        """, (
+            order_id,
+            user_id
+        ))
 
-        connection.commit()
+        db.commit()
 
-        changed = cursor.rowcount > 0
+        return result.rowcount > 0
 
-        connection.close()
-
-        return changed
-
-
-# =========================================================
-# ORDER ITEM
-# =========================================================
 
 class OrderItem:
 
     @staticmethod
-    def create(
-        order_id,
-        product_id,
-        quantity,
-        price,
-        store_id=None
-    ):
+    def create(order_id, product_id, store_id,
+               quantity, price):
 
-        connection = get_connection()
+        db = get_db()
 
-        cursor = connection.execute(
-            """
-            INSERT INTO order_items (
+        cur = db.execute("""
+            INSERT INTO order_items
+            (
                 order_id,
                 product_id,
                 store_id,
@@ -1062,289 +617,190 @@ class OrderItem:
                 price
             )
             VALUES (?, ?, ?, ?, ?)
-            """,
-            (
-                order_id,
-                product_id,
-                store_id,
-                quantity,
-                price
-            )
-        )
+        """, (
+            order_id,
+            product_id,
+            store_id,
+            quantity,
+            price
+        ))
 
-        connection.commit()
-
-        item_id = cursor.lastrowid
-
-        connection.close()
-
-        return item_id
-
+        db.commit()
+        return cur.lastrowid
 
     @staticmethod
     def by_order(order_id):
 
-        connection = get_connection()
+        db = get_db()
 
-        items = connection.execute(
-            """
+        return db.execute("""
             SELECT
                 oi.*,
                 p.name,
                 p.images
             FROM order_items oi
-            JOIN products p
-                ON p.id = oi.product_id
+            LEFT JOIN products p ON p.id = oi.product_id
             WHERE oi.order_id = ?
-            """,
-            (order_id,)
-        ).fetchall()
+        """, (order_id,)).fetchall()
 
-        connection.close()
-
-        return items
-
-
-# =========================================================
-# REVIEW
-# =========================================================
 
 class Review:
 
     @staticmethod
-    def can_review(
-        user_id,
-        product_id
-    ):
+    def can_review(user_id, product_id):
 
-        connection = get_connection()
+        db = get_db()
 
-        result = connection.execute(
-            """
-            SELECT o.id
-            FROM orders o
-            JOIN order_items oi
-                ON oi.order_id = o.id
-            LEFT JOIN reviews r
-                ON r.order_id = o.id
-                AND r.product_id = oi.product_id
-                AND r.user_id = o.user_id
+        row = db.execute("""
+            SELECT oi.id
+            FROM order_items oi
+            JOIN orders o ON o.id = oi.order_id
             WHERE o.user_id = ?
             AND oi.product_id = ?
             AND o.status = 'delivered'
-            AND r.id IS NULL
             LIMIT 1
-            """,
-            (
-                user_id,
-                product_id
-            )
-        ).fetchone()
+        """, (
+            user_id,
+            product_id
+        )).fetchone()
 
-        connection.close()
-
-        return result is not None
-
+        return bool(row)
 
     @staticmethod
-    def create(
-        user_id,
-        product_id,
-        order_id,
-        rating,
-        comment="",
-        order_item_id=None
-    ):
+    def create(user_id, product_id, rating, comment=""):
 
-        try:
-            rating = int(rating)
-        except (TypeError, ValueError):
-            return None
+        db = get_db()
 
-        if not 1 <= rating <= 5:
-            return None
-
-        connection = get_connection()
-
-        try:
-
-            cursor = connection.execute(
-                """
-                INSERT INTO reviews (
-                    user_id,
-                    product_id,
-                    order_id,
-                    order_item_id,
-                    rating,
-                    comment
-                )
-                VALUES (?, ?, ?, ?, ?, ?)
-                """,
-                (
-                    user_id,
-                    product_id,
-                    order_id,
-                    order_item_id,
-                    rating,
-                    comment
-                )
+        cur = db.execute("""
+            INSERT INTO reviews
+            (
+                user_id,
+                product_id,
+                rating,
+                comment
             )
+            VALUES (?, ?, ?, ?)
+        """, (
+            user_id,
+            product_id,
+            rating,
+            comment
+        ))
 
-            connection.commit()
+        db.commit()
+        return cur.lastrowid
 
-            review_id = cursor.lastrowid
-
-        except Exception:
-
-            connection.rollback()
-
-            review_id = None
-
-        finally:
-
-            connection.close()
-
-
-        if review_id:
-
-            Product.update_rating(
-                product_id
-            )
-
-
-        return review_id
-
-
-# =========================================================
-# STORE FOLLOWER
-# =========================================================
 
 class StoreFollower:
 
     @staticmethod
-    def follow(
-        user_id,
-        store_id
-    ):
+    def follow(user_id, store_id):
 
-        connection = get_connection()
+        db = get_db()
 
-        connection.execute(
-            """
-            INSERT OR IGNORE INTO store_followers (
-                user_id,
-                store_id
-            )
+        db.execute("""
+            INSERT OR IGNORE INTO store_followers
+            (user_id, store_id)
             VALUES (?, ?)
-            """,
-            (
-                user_id,
-                store_id
-            )
-        )
+        """, (
+            user_id,
+            store_id
+        ))
 
-        connection.commit()
-        connection.close()
-
+        db.commit()
 
     @staticmethod
-    def unfollow(
-        user_id,
-        store_id
-    ):
+    def unfollow(user_id, store_id):
 
-        connection = get_connection()
+        db = get_db()
 
-        connection.execute(
-            """
+        db.execute("""
             DELETE FROM store_followers
-            WHERE user_id = ?
-            AND store_id = ?
-            """,
-            (
-                user_id,
-                store_id
-            )
-        )
+            WHERE user_id = ? AND store_id = ?
+        """, (
+            user_id,
+            store_id
+        ))
 
-        connection.commit()
-        connection.close()
-
+        db.commit()
 
     @staticmethod
     def count(store_id):
 
-        connection = get_connection()
+        db = get_db()
 
-        result = connection.execute(
-            """
-            SELECT COUNT(*) AS count
+        row = db.execute("""
+            SELECT COUNT(*) AS total
             FROM store_followers
             WHERE store_id = ?
-            """,
-            (store_id,)
-        ).fetchone()
+        """, (store_id,)).fetchone()
 
-        connection.close()
+        return row["total"] if row else 0
 
-        return result["count"]
-
-
-# =========================================================
-# MESSAGE
-# =========================================================
 
 class Message:
 
     @staticmethod
-    def create(
-        sender_id,
-        receiver_id,
-        body
-    ):
+    def create(sender_id, receiver_id, body):
 
-        connection = get_connection()
+        db = get_db()
 
-        cursor = connection.execute(
-            """
-            INSERT INTO messages (
+        cur = db.execute("""
+            INSERT INTO messages
+            (
                 sender_id,
                 receiver_id,
                 body
             )
             VALUES (?, ?, ?)
-            """,
-            (
-                sender_id,
-                receiver_id,
-                body
-            )
-        )
+        """, (
+            sender_id,
+            receiver_id,
+            body
+        ))
 
-        connection.commit()
+        db.commit()
+        return cur.lastrowid
 
-        message_id = cursor.lastrowid
+    @staticmethod
+    def between(user1_id, user2_id):
 
-        connection.close()
+        db = get_db()
 
-        return message_id
-
+        return db.execute("""
+            SELECT *
+            FROM messages
+            WHERE
+                (sender_id = ? AND receiver_id = ?)
+                OR
+                (sender_id = ? AND receiver_id = ?)
+            ORDER BY created_at ASC, id ASC
+        """, (
+            user1_id,
+            user2_id,
+            user2_id,
+            user1_id
+        )).fetchall()
 
     @staticmethod
     def conversation(user_id):
 
-        connection = get_connection()
+        db = get_db()
 
-        messages = connection.execute(
-            """
+        return db.execute("""
             SELECT
                 m.*,
-
                 CASE
                     WHEN m.sender_id = ?
                     THEN receiver.full_name
                     ELSE sender.full_name
-                END AS other_name
+                END AS other_name,
+
+                CASE
+                    WHEN m.sender_id = ?
+                    THEN receiver.id
+                    ELSE sender.id
+                END AS other_id
 
             FROM messages m
 
@@ -1354,471 +810,160 @@ class Message:
             JOIN users receiver
                 ON receiver.id = m.receiver_id
 
-            WHERE
-                m.sender_id = ?
-                OR
-                m.receiver_id = ?
+            WHERE m.id IN (
+
+                SELECT MAX(m2.id)
+                FROM messages m2
+                WHERE
+                    m2.sender_id = ?
+                    OR
+                    m2.receiver_id = ?
+
+                GROUP BY
+                    CASE
+                        WHEN m2.sender_id = ?
+                        THEN m2.receiver_id
+                        ELSE m2.sender_id
+                    END
+            )
 
             ORDER BY m.created_at DESC
-            """,
-            (
-                user_id,
-                user_id,
-                user_id
-            )
-        ).fetchall()
-
-        connection.close()
-
-        return messages
-
+        """, (
+            user_id,
+            user_id,
+            user_id,
+            user_id,
+            user_id
+        )).fetchall()
 
     @staticmethod
-    def mark_as_read(
-        user_id,
-        sender_id
-    ):
+    def mark_as_read(user_id, other_user_id):
 
-        connection = get_connection()
+        db = get_db()
 
-        connection.execute(
-            """
-            UPDATE messages
-            SET is_read = 1
-            WHERE receiver_id = ?
-            AND sender_id = ?
-            """,
-            (
+        try:
+            db.execute("""
+                UPDATE messages
+                SET is_read = 1
+                WHERE receiver_id = ?
+                AND sender_id = ?
+            """, (
                 user_id,
-                sender_id
-            )
-        )
+                other_user_id
+            ))
 
-        connection.commit()
-        connection.close()
+            db.commit()
 
+        except sqlite3.OperationalError:
+            pass
 
-# =========================================================
-# NOTIFICATION
-# =========================================================
 
 class Notification:
 
     @staticmethod
-    def create(
-        user_id,
-        title,
-        message
-    ):
+    def create(user_id, title, body):
 
-        connection = get_connection()
+        db = get_db()
 
-        cursor = connection.execute(
-            """
-            INSERT INTO notifications (
-                user_id,
-                title,
-                message
-            )
-            VALUES (?, ?, ?)
-            """,
+        cur = db.execute("""
+            INSERT INTO notifications
             (
                 user_id,
                 title,
-                message
+                body
             )
-        )
+            VALUES (?, ?, ?)
+        """, (
+            user_id,
+            title,
+            body
+        ))
 
-        connection.commit()
-
-        notification_id = cursor.lastrowid
-
-        connection.close()
-
-        return notification_id
-
+        db.commit()
+        return cur.lastrowid
 
     @staticmethod
     def by_user(user_id):
 
-        connection = get_connection()
+        db = get_db()
 
-        notifications = connection.execute(
-            """
+        return db.execute("""
             SELECT *
             FROM notifications
             WHERE user_id = ?
             ORDER BY created_at DESC
-            """,
-            (user_id,)
-        ).fetchall()
-
-        connection.close()
-
-        return notifications
-
+        """, (user_id,)).fetchall()
 
     @staticmethod
-    def mark_as_read(
-        notification_id,
-        user_id
-    ):
+    def mark_as_read(notification_id, user_id):
 
-        connection = get_connection()
+        db = get_db()
 
-        connection.execute(
-            """
+        db.execute("""
             UPDATE notifications
             SET is_read = 1
-            WHERE id = ?
-            AND user_id = ?
-            """,
-            (
-                notification_id,
-                user_id
-            )
-        )
+            WHERE id = ? AND user_id = ?
+        """, (
+            notification_id,
+            user_id
+        ))
 
-        connection.commit()
-        connection.close()
+        db.commit()
 
-
-# =========================================================
-# COMPLAINT
-# =========================================================
 
 class Complaint:
 
     @staticmethod
-    def create(
-        user_id,
-        message,
-        order_id=None,
-        subject=""
-    ):
+    def create(user_id, subject, body):
 
-        connection = get_connection()
+        db = get_db()
 
-        cursor = connection.execute(
-            """
-            INSERT INTO complaints (
-                user_id,
-                order_id,
-                subject,
-                message
-            )
-            VALUES (?, ?, ?, ?)
-            """,
+        cur = db.execute("""
+            INSERT INTO complaints
             (
                 user_id,
-                order_id,
                 subject,
-                message
+                body
             )
-        )
+            VALUES (?, ?, ?)
+        """, (
+            user_id,
+            subject,
+            body
+        ))
 
-        connection.commit()
-
-        complaint_id = cursor.lastrowid
-
-        connection.close()
-
-        return complaint_id
-
+        db.commit()
+        return cur.lastrowid
 
     @staticmethod
     def by_user(user_id):
 
-        connection = get_connection()
+        db = get_db()
 
-        complaints = connection.execute(
-            """
+        return db.execute("""
             SELECT *
             FROM complaints
             WHERE user_id = ?
             ORDER BY created_at DESC
-            """,
-            (user_id,)
-        ).fetchall()
+        """, (user_id,)).fetchall()
 
-        connection.close()
-
-        return complaints
-
-
-# =========================================================
-# REPORT
-# =========================================================
-
-class Report:
-
-    @staticmethod
-    def create(
-        user_id,
-        target_type,
-        target_id,
-        reason,
-        message=""
-    ):
-
-        connection = get_connection()
-
-        cursor = connection.execute(
-            """
-            INSERT INTO reports (
-                user_id,
-                target_type,
-                target_id,
-                reason,
-                message
-            )
-            VALUES (?, ?, ?, ?, ?)
-            """,
-            (
-                user_id,
-                target_type,
-                target_id,
-                reason,
-                message
-            )
-        )
-
-        connection.commit()
-
-        report_id = cursor.lastrowid
-
-        connection.close()
-
-        return report_id
-
-
-# =========================================================
-# BLOCKED USER
-# =========================================================
-
-class BlockedUser:
-
-    @staticmethod
-    def block(
-        blocker_id,
-        blocked_id
-    ):
-
-        if blocker_id == blocked_id:
-            return False
-
-        connection = get_connection()
-
-        connection.execute(
-            """
-            INSERT OR IGNORE INTO blocked_users (
-                blocker_id,
-                blocked_id
-            )
-            VALUES (?, ?)
-            """,
-            (
-                blocker_id,
-                blocked_id
-            )
-        )
-
-        connection.commit()
-        connection.close()
-
-        return True
-
-
-    @staticmethod
-    def unblock(
-        blocker_id,
-        blocked_id
-    ):
-
-        connection = get_connection()
-
-        connection.execute(
-            """
-            DELETE FROM blocked_users
-            WHERE blocker_id = ?
-            AND blocked_id = ?
-            """,
-            (
-                blocker_id,
-                blocked_id
-            )
-        )
-
-        connection.commit()
-        connection.close()
-
-
-    @staticmethod
-    def is_blocked(
-        blocker_id,
-        blocked_id
-    ):
-
-        connection = get_connection()
-
-        result = connection.execute(
-            """
-            SELECT id
-            FROM blocked_users
-            WHERE blocker_id = ?
-            AND blocked_id = ?
-            """,
-            (
-                blocker_id,
-                blocked_id
-            )
-        ).fetchone()
-
-        connection.close()
-
-        return result is not None
-
-
-# =========================================================
-# DISCOUNT CODE
-# =========================================================
-
-class DiscountCode:
-
-    @staticmethod
-    def create(
-        store_id,
-        code,
-        discount_percent,
-        usage_limit=0,
-        expires_at=None
-    ):
-
-        connection = get_connection()
-
-        cursor = connection.execute(
-            """
-            INSERT INTO discount_codes (
-                store_id,
-                code,
-                discount_percent,
-                max_uses,
-                expires_at
-            )
-            VALUES (?, ?, ?, ?, ?)
-            """,
-            (
-                store_id,
-                code.upper(),
-                discount_percent,
-                usage_limit,
-                expires_at
-            )
-        )
-
-        connection.commit()
-
-        code_id = cursor.lastrowid
-
-        connection.close()
-
-        return code_id
-
-
-    @staticmethod
-    def find(code):
-
-        connection = get_connection()
-
-        result = connection.execute(
-            """
-            SELECT *
-            FROM discount_codes
-            WHERE code = ?
-            AND active = 1
-            """,
-            (code.upper(),)
-        ).fetchone()
-
-        connection.close()
-
-        return result
-
-
-    @staticmethod
-    def use(code):
-
-        connection = get_connection()
-
-        result = connection.execute(
-            """
-            SELECT *
-            FROM discount_codes
-            WHERE code = ?
-            AND active = 1
-            """,
-            (code.upper(),)
-        ).fetchone()
-
-
-        if not result:
-
-            connection.close()
-
-            return False
-
-
-        if (
-            result["max_uses"] > 0
-            and
-            result["used_count"]
-            >= result["max_uses"]
-        ):
-
-            connection.close()
-
-            return False
-
-
-        connection.execute(
-            """
-            UPDATE discount_codes
-            SET used_count = used_count + 1
-            WHERE id = ?
-            """,
-            (result["id"],)
-        )
-
-        connection.commit()
-        connection.close()
-
-        return True
-
-
-# =========================================================
-# REWARD CARDS
-# =========================================================
 
 class RewardCard:
 
     @staticmethod
-    def create(
-        user_id,
-        title,
-        description="",
-        discount_percent=0,
-        reward_type="discount",
-        source="order",
-        expires_at=None
-    ):
+    def create(user_id, title, description="",
+               discount_percent=0,
+               reward_type="discount",
+               source="system",
+               expires_at=None):
 
-        connection = get_connection()
+        db = get_db()
 
         code = generate_code("CARD")
 
-        cursor = connection.execute(
-            """
-            INSERT INTO reward_cards (
+        cur = db.execute("""
+            INSERT INTO reward_cards
+            (
                 user_id,
                 code,
                 title,
@@ -1829,571 +974,327 @@ class RewardCard:
                 expires_at
             )
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-            (
-                user_id,
-                code,
-                title,
-                description,
-                discount_percent,
-                reward_type,
-                source,
-                expires_at
-            )
-        )
+        """, (
+            user_id,
+            code,
+            title,
+            description,
+            discount_percent,
+            reward_type,
+            source,
+            expires_at
+        ))
 
-        connection.commit()
-
-        card_id = cursor.lastrowid
-
-        connection.close()
-
-        return card_id
-
+        db.commit()
+        return cur.lastrowid
 
     @staticmethod
     def by_user(user_id):
 
-        connection = get_connection()
+        db = get_db()
 
-        cards = connection.execute(
-            """
+        return db.execute("""
             SELECT *
             FROM reward_cards
             WHERE user_id = ?
             AND active = 1
             AND used = 0
             ORDER BY created_at DESC
-            """,
-            (user_id,)
-        ).fetchall()
-
-        connection.close()
-
-        return cards
-
+        """, (user_id,)).fetchall()
 
     @staticmethod
-    def find_by_code(
-        user_id,
-        code
-    ):
+    def find_by_code(user_id, code):
 
-        connection = get_connection()
+        db = get_db()
 
-        card = connection.execute(
-            """
+        return db.execute("""
             SELECT *
             FROM reward_cards
             WHERE user_id = ?
             AND code = ?
             AND active = 1
             AND used = 0
-            """,
-            (
-                user_id,
-                code.upper()
-            )
-        ).fetchone()
-
-        connection.close()
-
-        return card
-
+            LIMIT 1
+        """, (
+            user_id,
+            code
+        )).fetchone()
 
     @staticmethod
-    def use(
-        user_id,
-        code
-    ):
+    def use(card_id):
 
-        connection = get_connection()
+        db = get_db()
 
-        cursor = connection.execute(
-            """
+        db.execute("""
             UPDATE reward_cards
             SET used = 1
-            WHERE user_id = ?
-            AND code = ?
-            AND active = 1
-            AND used = 0
-            """,
-            (
-                user_id,
-                code.upper()
-            )
-        )
+            WHERE id = ?
+        """, (card_id,))
 
-        connection.commit()
+        db.commit()
 
-        changed = cursor.rowcount > 0
-
-        connection.close()
-
-        return changed
-
-
-# =========================================================
-# REFERRAL
-# =========================================================
 
 class Referral:
 
     @staticmethod
-    def create(
-        inviter_id,
-        invited_user_id,
-        referral_code
-    ):
+    def create(inviter_id, invited_user_id, referral_code):
 
-        if inviter_id == invited_user_id:
-            return None
+        db = get_db()
 
-        connection = get_connection()
-
-        try:
-
-            cursor = connection.execute(
-                """
-                INSERT INTO referrals (
-                    inviter_id,
-                    invited_user_id,
-                    referral_code
-                )
-                VALUES (?, ?, ?)
-                """,
-                (
-                    inviter_id,
-                    invited_user_id,
-                    referral_code
-                )
+        cur = db.execute("""
+            INSERT OR IGNORE INTO referrals
+            (
+                inviter_id,
+                invited_user_id,
+                referral_code
             )
+            VALUES (?, ?, ?)
+        """, (
+            inviter_id,
+            invited_user_id,
+            referral_code
+        ))
 
-            connection.execute(
-                """
-                UPDATE users
-                SET referred_by = ?
-                WHERE id = ?
-                """,
-                (
-                    inviter_id,
-                    invited_user_id
-                )
-            )
-
-            connection.commit()
-
-            referral_id = cursor.lastrowid
-
-        except Exception:
-
-            connection.rollback()
-
-            referral_id = None
-
-        finally:
-
-            connection.close()
-
-        return referral_id
-
+        db.commit()
+        return cur.lastrowid
 
     @staticmethod
     def by_inviter(inviter_id):
 
-        connection = get_connection()
+        db = get_db()
 
-        referrals = connection.execute(
-            """
-            SELECT
-                r.*,
-                u.full_name,
-                u.email
-            FROM referrals r
-            LEFT JOIN users u
-                ON u.id = r.invited_user_id
-            WHERE r.inviter_id = ?
-            ORDER BY r.created_at DESC
-            """,
-            (inviter_id,)
-        ).fetchall()
-
-        connection.close()
-
-        return referrals
-
+        return db.execute("""
+            SELECT *
+            FROM referrals
+            WHERE inviter_id = ?
+            ORDER BY created_at DESC
+        """, (inviter_id,)).fetchall()
 
     @staticmethod
-    def complete(
-        invited_user_id
-    ):
+    def complete(invited_user_id):
 
-        connection = get_connection()
+        db = get_db()
 
-        referral = connection.execute(
-            """
+        row = db.execute("""
             SELECT *
             FROM referrals
             WHERE invited_user_id = ?
-            AND reward_granted = 0
+            AND status != 'completed'
             LIMIT 1
-            """,
-            (invited_user_id,)
-        ).fetchone()
+        """, (invited_user_id,)).fetchone()
 
-
-        if not referral:
-
-            connection.close()
-
+        if not row:
             return None
 
-
-        connection.execute(
-            """
+        db.execute("""
             UPDATE referrals
-            SET
-                status = 'completed',
+            SET status = 'completed',
                 reward_granted = 1,
                 completed_at = CURRENT_TIMESTAMP
             WHERE id = ?
-            """,
-            (referral["id"],)
-        )
+        """, (row["id"],))
 
-        connection.commit()
+        db.commit()
 
-        connection.close()
+        return row
 
-        return referral
-
-
-# =========================================================
-# REWARD MILESTONES
-# =========================================================
 
 class RewardMilestone:
 
     @staticmethod
-    def completed_orders(
-        user_id
-    ):
+    def completed_orders(user_id):
 
-        connection = get_connection()
+        db = get_db()
 
-        result = connection.execute(
-            """
-            SELECT COUNT(*) AS count
+        row = db.execute("""
+            SELECT COUNT(*) AS total
             FROM orders
             WHERE user_id = ?
             AND status = 'delivered'
-            """,
-            (user_id,)
-        ).fetchone()
+        """, (user_id,)).fetchone()
 
-        connection.close()
-
-        return result["count"]
-
+        return int(row["total"] or 0)
 
     @staticmethod
-    def grant_milestone(
-        user_id,
-        milestone,
-        reward_card_id=None
-    ):
+    def has_achieved(user_id, milestone):
 
-        connection = get_connection()
+        db = get_db()
 
-        try:
-
-            cursor = connection.execute(
-                """
-                INSERT INTO reward_milestones (
-                    user_id,
-                    milestone,
-                    reward_card_id
-                )
-                VALUES (?, ?, ?)
-                """,
-                (
-                    user_id,
-                    milestone,
-                    reward_card_id
-                )
-            )
-
-            connection.commit()
-
-            milestone_id = cursor.lastrowid
-
-        except Exception:
-
-            connection.rollback()
-
-            milestone_id = None
-
-        finally:
-
-            connection.close()
-
-        return milestone_id
-
-
-    @staticmethod
-    def has_achieved(
-        user_id,
-        milestone
-    ):
-
-        connection = get_connection()
-
-        result = connection.execute(
-            """
+        row = db.execute("""
             SELECT id
             FROM reward_milestones
             WHERE user_id = ?
             AND milestone = ?
-            """,
+            LIMIT 1
+        """, (
+            user_id,
+            milestone
+        )).fetchone()
+
+        return bool(row)
+
+    @staticmethod
+    def grant_milestone(user_id, milestone, reward_card_id):
+
+        db = get_db()
+
+        db.execute("""
+            INSERT OR IGNORE INTO reward_milestones
             (
                 user_id,
-                milestone
+                milestone,
+                reward_card_id
             )
-        ).fetchone()
+            VALUES (?, ?, ?)
+        """, (
+            user_id,
+            milestone,
+            reward_card_id
+        ))
 
-        connection.close()
+        db.commit()
 
-        return result is not None
-
-
-# =========================================================
-# PRICE ALERT
-# =========================================================
 
 class PriceAlert:
 
     @staticmethod
-    def create(
-        user_id,
-        product_id,
-        target_price
-    ):
+    def create(user_id, product_id, target_price):
 
-        connection = get_connection()
+        db = get_db()
 
-        connection.execute(
-            """
-            INSERT INTO price_alerts (
+        cur = db.execute("""
+            INSERT INTO price_alerts
+            (
                 user_id,
                 product_id,
                 target_price
             )
             VALUES (?, ?, ?)
+        """, (
+            user_id,
+            product_id,
+            target_price
+        ))
 
-            ON CONFLICT(
-                user_id,
-                product_id
-            )
+        db.commit()
+        return cur.lastrowid
 
-            DO UPDATE SET
-                target_price =
-                    excluded.target_price,
-                active = 1
-            """,
-            (
-                user_id,
-                product_id,
-                target_price
-            )
-        )
-
-        connection.commit()
-        connection.close()
-
-
-# =========================================================
-# PRODUCT VIEW
-# =========================================================
 
 class ProductView:
 
     @staticmethod
-    def add(
-        product_id,
-        user_id=None
-    ):
+    def add(user_id, product_id):
 
-        connection = get_connection()
+        db = get_db()
 
-        connection.execute(
-            """
-            INSERT INTO product_views (
-                user_id,
-                product_id
-            )
-            VALUES (?, ?)
-            """,
+        db.execute("""
+            INSERT INTO product_views
             (
                 user_id,
                 product_id
             )
-        )
+            VALUES (?, ?)
+        """, (
+            user_id,
+            product_id
+        ))
 
-        connection.execute(
-            """
+        db.execute("""
             UPDATE products
             SET views = views + 1
             WHERE id = ?
-            """,
-            (product_id,)
-        )
+        """, (product_id,))
 
-        connection.commit()
-        connection.close()
-
+        db.commit()
 
     @staticmethod
     def count(product_id):
 
-        connection = get_connection()
+        db = get_db()
 
-        result = connection.execute(
-            """
-            SELECT COUNT(*) AS count
+        row = db.execute("""
+            SELECT COUNT(*) AS total
             FROM product_views
             WHERE product_id = ?
-            """,
-            (product_id,)
-        ).fetchone()
+        """, (product_id,)).fetchone()
 
-        connection.close()
+        return int(row["total"] or 0)
 
-        return result["count"]
-
-
-# =========================================================
-# CHAT SETTINGS
-# =========================================================
 
 class ChatSettings:
 
     @staticmethod
     def get(user_id):
 
-        connection = get_connection()
+        db = get_db()
 
-        settings = connection.execute(
-            """
+        row = db.execute("""
             SELECT *
             FROM chat_settings
             WHERE user_id = ?
-            """,
-            (user_id,)
-        ).fetchone()
+        """, (user_id,)).fetchone()
 
+        if row:
+            return row
 
-        if not settings:
-
-            connection.execute(
-                """
-                INSERT INTO chat_settings (
-                    user_id
-                )
-                VALUES (?)
-                """,
-                (user_id,)
-            )
-
-            connection.commit()
-
-
-            settings = connection.execute(
-                """
-                SELECT *
-                FROM chat_settings
-                WHERE user_id = ?
-                """,
-                (user_id,)
-            ).fetchone()
-
-
-        connection.close()
-
-        return settings
-
-
-    @staticmethod
-    def update(
-        user_id,
-        voice_type="female",
-        voice_enabled=False,
-        language="ar",
-        style="friendly"
-    ):
-
-        allowed_languages = {
-            "ar",
-            "dz",
-            "fr",
-            "en"
-        }
-
-        allowed_styles = {
-            "friendly",
-            "youthful",
-            "funny",
-            "professional",
-            "darija"
-        }
-
-
-        if language not in allowed_languages:
-            language = "ar"
-
-
-        if style not in allowed_styles:
-            style = "friendly"
-
-
-        connection = get_connection()
-
-        connection.execute(
-            """
-            INSERT INTO chat_settings (
+        db.execute("""
+            INSERT OR IGNORE INTO chat_settings
+            (
                 user_id,
                 voice_type,
                 voice_enabled,
                 language,
                 style
             )
-            VALUES (?, ?, ?, ?, ?)
+            VALUES (?, 'female', 1, 'ar', 'friendly')
+        """, (user_id,))
 
-            ON CONFLICT(user_id)
+        db.commit()
 
-            DO UPDATE SET
+        return db.execute("""
+            SELECT *
+            FROM chat_settings
+            WHERE user_id = ?
+        """, (user_id,)).fetchone()
 
-                voice_type =
-                    excluded.voice_type,
+    @staticmethod
+    def update(user_id, **data):
 
-                voice_enabled =
-                    excluded.voice_enabled,
+        allowed = [
+            "voice_type",
+            "voice_enabled",
+            "language",
+            "style"
+        ]
 
-                language =
-                    excluded.language,
+        fields = []
+        values = []
 
-                style =
-                    excluded.style
+        for key in allowed:
+            if key in data:
+                fields.append(f"{key} = ?")
+                values.append(data[key])
+
+        if not fields:
+            return
+
+        values.append(user_id)
+
+        db = get_db()
+
+        db.execute("""
+            INSERT OR IGNORE INTO chat_settings
+            (user_id)
+            VALUES (?)
+        """, (user_id,))
+
+        db.execute(
+            f"""
+            UPDATE chat_settings
+            SET {', '.join(fields)}
+            WHERE user_id = ?
             """,
-            (
-                user_id,
-                voice_type,
-                1 if voice_enabled else 0,
-                language,
-                style
-            )
+            values
         )
 
-        connection.commit()
-        connection.close()
-
-        return True
+        db.commit()
