@@ -8,11 +8,7 @@ from flask import (
     flash,
     jsonify
 )
-
-from werkzeug.security import (
-    generate_password_hash,
-    check_password_hash
-)
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from models import (
     User,
@@ -31,11 +27,6 @@ from models import (
     ChatSettings
 )
 
-
-# =========================================================
-# BLUEPRINT
-# =========================================================
-
 auth = Blueprint("auth", __name__)
 
 
@@ -44,7 +35,6 @@ auth = Blueprint("auth", __name__)
 # =========================================================
 
 def current_user():
-
     user_id = session.get("user_id")
 
     if not user_id:
@@ -54,19 +44,29 @@ def current_user():
 
 
 def login_required():
+    if not session.get("user_id"):
+        return redirect(url_for("auth.login"))
 
-    return "user_id" in session
+    return None
+
+
+def row_value(row, key, default=None):
+    if row is None:
+        return default
+
+    try:
+        return row[key]
+    except (KeyError, IndexError, TypeError):
+        return default
 
 
 def calculate_cart_total(items):
-
     total = 0
 
     for item in items:
-
-        price = float(item["price"] or 0)
-        discount = float(item["discount"] or 0)
-        quantity = int(item["quantity"] or 1)
+        price = float(row_value(item, "price", 0) or 0)
+        discount = float(row_value(item, "discount", 0) or 0)
+        quantity = int(row_value(item, "quantity", 1) or 1)
 
         final_price = price
 
@@ -79,61 +79,31 @@ def calculate_cart_total(items):
 
 
 def check_rewards(user_id):
+    try:
+        completed = RewardMilestone.completed_orders(user_id)
 
-    completed_orders = RewardMilestone.completed_orders(user_id)
-
-    rewards = {
-        5: (
-            "مبروك! وصلتِ إلى 5 طلبات 🎉",
-            "بطاقة خصم 10%",
-            10
-        ),
-        10: (
-            "رائع! وصلتِ إلى 10 طلبات 🏆",
-            "بطاقة خصم 15%",
-            15
-        ),
-        20: (
-            "إنجاز كبير! 20 طلب مكتمل 👑",
-            "بطاقة خصم 20%",
-            20
-        )
-    }
-
-    for milestone, data in rewards.items():
-
-        if completed_orders >= milestone:
-
-            if not RewardMilestone.has_achieved(
+        for milestone in [5, 10, 20]:
+            if completed >= milestone and not RewardMilestone.has_achieved(
                 user_id,
                 milestone
             ):
-
-                title = data[1]
-                discount = data[2]
-
-                card_id = RewardCard.create(
+                card = RewardCard.create(
                     user_id=user_id,
-                    title=title,
-                    description=(
-                        f"مكافأة إتمام {milestone} طلبات"
-                    ),
-                    discount_percent=discount,
+                    title=f"مكافأة {milestone} طلبات 🎁",
+                    description=f"مبروك! أكملت {milestone} طلبات.",
+                    discount_percent=10,
                     reward_type="discount",
-                    source=f"milestone_{milestone}"
+                    source="milestone"
                 )
 
                 RewardMilestone.grant_milestone(
                     user_id,
                     milestone,
-                    card_id
+                    card
                 )
 
-                Notification.create(
-                    user_id,
-                    "مكافأة جديدة 🎁",
-                    data[0]
-                )
+    except Exception:
+        pass
 
 
 # =========================================================
@@ -143,168 +113,81 @@ def check_rewards(user_id):
 @auth.route("/register", methods=["GET", "POST"])
 def register():
 
-    if request.method == "POST":
+    if request.method == "GET":
+        return render_template("register.html")
 
-        full_name = request.form.get(
-            "full_name", ""
-        ).strip()
+    full_name = request.form.get("full_name", "").strip()
+    email = request.form.get("email", "").strip().lower()
+    phone = request.form.get("phone", "").strip()
+    password = request.form.get("password", "")
+    confirm_password = request.form.get("confirm_password", "")
+    role = request.form.get("role", "buyer")
 
-        email = request.form.get(
-            "email", ""
-        ).strip().lower()
+    if not full_name or not email or not password:
+        flash("يرجى ملء جميع المعلومات المطلوبة.", "error")
+        return redirect(url_for("auth.register"))
 
-        phone = request.form.get(
-            "phone", ""
-        ).strip()
+    if password != confirm_password:
+        flash("كلمتا المرور غير متطابقتين.", "error")
+        return redirect(url_for("auth.register"))
 
-        password = request.form.get(
-            "password", ""
-        )
+    if len(password) < 8:
+        flash("كلمة المرور يجب أن تحتوي على 8 أحرف على الأقل.", "error")
+        return redirect(url_for("auth.register"))
 
-        confirm_password = request.form.get(
-            "confirm_password", ""
-        )
+    if role not in ["buyer", "seller"]:
+        role = "buyer"
 
-        role = request.form.get(
-            "role", "buyer"
-        )
+    if User.find_by_email(email):
+        flash("هذا البريد الإلكتروني مستعمل من قبل.", "error")
+        return redirect(url_for("auth.login"))
 
-        referral_code = request.form.get(
-            "referral_code", ""
-        ).strip().upper()
+    hashed_password = generate_password_hash(password)
 
-        if not full_name or not email:
+    referral_code = request.form.get("referral_code", "").strip() or None
 
-            flash(
-                "يرجى ملء المعلومات المطلوبة.",
-                "error"
-            )
+    user_id = User.create(
+        full_name=full_name,
+        email=email,
+        phone=phone,
+        password=hashed_password,
+        role=role,
+        referral_code=referral_code
+    )
 
-            return redirect(
-                url_for("auth.register")
-            )
-
-        if password != confirm_password:
-
-            flash(
-                "كلمتا المرور غير متطابقتين.",
-                "error"
-            )
-
-            return redirect(
-                url_for("auth.register")
-            )
-
-        if len(password) < 6:
-
-            flash(
-                "كلمة المرور يجب أن تحتوي على 6 أحرف على الأقل.",
-                "error"
-            )
-
-            return redirect(
-                url_for("auth.register")
-            )
-
-        if role not in {"buyer", "seller"}:
-            role = "buyer"
-
-        existing = User.find_by_email(email)
-
-        if existing:
-
-            flash(
-                "هذا البريد الإلكتروني مسجل مسبقًا.",
-                "error"
-            )
-
-            return redirect(
-                url_for("auth.register")
-            )
-
-        hashed_password = generate_password_hash(password)
-
-        user_id = User.create(
-            full_name=full_name,
-            email=email,
-            password=hashed_password,
-            role=role,
-            phone=phone
-        )
-
-        if not user_id:
-
-            flash(
-                "تعذر إنشاء الحساب.",
-                "error"
-            )
-
-            return redirect(
-                url_for("auth.register")
-            )
-
-        # SELLER STORE
-        if role == "seller":
-
-            store_name = request.form.get(
-                "store_name", ""
-            ).strip()
-
-            activity_type = request.form.get(
-                "activity_type", ""
-            ).strip()
-
-            wilaya = request.form.get(
-                "wilaya", ""
-            ).strip()
-
-            municipality = request.form.get(
-                "municipality", ""
-            ).strip()
-
-            User.update_profile(
-                user_id,
-                wilaya=wilaya,
-                municipality=municipality
-            )
-
-            Store.create(
-                user_id=user_id,
-                name=store_name or full_name,
-                description=activity_type,
-                phone=phone,
-                wilaya=wilaya,
-                municipality=municipality
-            )
-
-        # REFERRAL
-        if referral_code:
-
-            inviter = User.find_by_referral_code(
-                referral_code
-            )
+    # معالجة الإحالة إن وجدت
+    if referral_code:
+        try:
+            inviter = User.find_by_referral_code(referral_code)
 
             if inviter and inviter["id"] != user_id:
-
                 Referral.create(
                     inviter_id=inviter["id"],
                     invited_user_id=user_id,
                     referral_code=referral_code
                 )
+        except Exception:
+            pass
 
-        session["user_id"] = user_id
-        session["role"] = role
+    # إنشاء متجر للبائع
+    if role == "seller":
+        try:
+            store_name = request.form.get("store_name", "").strip()
 
-        flash(
-            "تم إنشاء حسابك بنجاح 🇩🇿",
-            "success"
-        )
+            if store_name:
+                Store.create(
+                    user_id=user_id,
+                    name=store_name,
+                    description="",
+                    phone=phone,
+                    wilaya=request.form.get("wilaya", ""),
+                    municipality=request.form.get("municipality", "")
+                )
+        except Exception:
+            pass
 
-        return redirect(
-            url_for("home")
-        )
-
-    return render_template("register.html")
+    flash("تم إنشاء حسابك بنجاح 🎉", "success")
+    return redirect(url_for("auth.login"))
 
 
 # =========================================================
@@ -314,59 +197,25 @@ def register():
 @auth.route("/login", methods=["GET", "POST"])
 def login():
 
-    if request.method == "POST":
+    if request.method == "GET":
+        return render_template("login.html")
 
-        email = request.form.get(
-            "email", ""
-        ).strip().lower()
+    email = request.form.get("email", "").strip().lower()
+    password = request.form.get("password", "")
 
-        password = request.form.get(
-            "password", ""
-        )
+    user = User.find_by_email(email)
 
-        user = User.find_by_email(email)
+    if not user or not check_password_hash(user["password"], password):
+        flash("البريد الإلكتروني أو كلمة المرور غير صحيحة.", "error")
+        return redirect(url_for("auth.login"))
 
-        if not user:
+    session.clear()
+    session["user_id"] = user["id"]
+    session["role"] = user["role"]
 
-            flash(
-                "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
-                "error"
-            )
+    flash("تم تسجيل الدخول بنجاح 👋", "success")
 
-            return redirect(
-                url_for("auth.login")
-            )
-
-        if not check_password_hash(
-            user["password"],
-            password
-        ):
-
-            flash(
-                "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
-                "error"
-            )
-
-            return redirect(
-                url_for("auth.login")
-            )
-
-        session["user_id"] = user["id"]
-        session["role"] = user["role"]
-
-        Notification.create(
-            user["id"],
-            "تم تسجيل الدخول",
-            f"تم تسجيل الدخول إلى حسابك باستخدام {email}."
-        )
-
-        check_rewards(user["id"])
-
-        return redirect(
-            url_for("home")
-        )
-
-    return render_template("login.html")
+    return redirect(url_for("home"))
 
 
 # =========================================================
@@ -378,9 +227,9 @@ def logout():
 
     session.clear()
 
-    return redirect(
-        url_for("home")
-    )
+    flash("تم تسجيل الخروج.", "success")
+
+    return redirect(url_for("auth.login"))
 
 
 # =========================================================
@@ -390,15 +239,12 @@ def logout():
 @auth.route("/account")
 def account():
 
+    guard = login_required()
+
+    if guard:
+        return guard
+
     user = current_user()
-
-    if not user:
-
-        return redirect(
-            url_for("auth.login")
-        )
-
-    check_rewards(user["id"])
 
     return render_template(
         "account.html",
@@ -413,52 +259,40 @@ def account():
 @auth.route("/orders")
 def orders():
 
+    guard = login_required()
+
+    if guard:
+        return guard
+
     user = current_user()
 
-    if not user:
-
-        return redirect(
-            url_for("auth.login")
-        )
-
-    check_rewards(user["id"])
-
-    user_orders = Order.by_user(user["id"])
+    orders_list = Order.by_user(user["id"])
 
     return render_template(
         "orders.html",
-        orders=user_orders
+        orders=orders_list
     )
 
-
-# =========================================================
-# ORDER DETAILS
-# =========================================================
 
 @auth.route("/orders/<int:order_id>")
 def order_details(order_id):
 
+    guard = login_required()
+
+    if guard:
+        return guard
+
     user = current_user()
-
-    if not user:
-
-        return redirect(
-            url_for("auth.login")
-        )
 
     order = Order.find_by_id(order_id)
 
     if not order:
+        flash("الطلب غير موجود.", "error")
+        return redirect(url_for("auth.orders"))
 
-        return redirect(
-            url_for("auth.orders")
-        )
-
-    if order["user_id"] != user["id"]:
-
-        return redirect(
-            url_for("auth.orders")
-        )
+    if order["user_id"] != user["id"] and user["role"] != "admin":
+        flash("ليس لديك صلاحية للوصول لهذا الطلب.", "error")
+        return redirect(url_for("auth.orders"))
 
     items = OrderItem.by_order(order_id)
 
@@ -473,19 +307,17 @@ def order_details(order_id):
 # CART
 # =========================================================
 
-@auth.route("/cart", methods=["GET"])
+@auth.route("/cart")
 def cart():
+
+    guard = login_required()
+
+    if guard:
+        return guard
 
     user = current_user()
 
-    if not user:
-
-        return redirect(
-            url_for("auth.login")
-        )
-
     items = Cart.get_items(user["id"])
-
     total = calculate_cart_total(items)
 
     return render_template(
@@ -495,191 +327,149 @@ def cart():
     )
 
 
-# =========================================================
-# CART ADD
-# =========================================================
-
 @auth.route("/cart/add", methods=["POST"])
 def cart_add():
 
-    user = current_user()
+    guard = login_required()
 
-    if not user:
-
-        return jsonify({
-            "success": False,
-            "message": "يجب تسجيل الدخول."
-        }), 401
-
-    data = request.get_json(silent=True) or {}
-
-    product_id = (
-        data.get("product_id")
-        or request.form.get("product_id", type=int)
-    )
-
-    quantity = (
-        data.get("quantity")
-        or request.form.get("quantity", 1, type=int)
-    )
-
-    try:
-        product_id = int(product_id)
-        quantity = int(quantity)
-    except (TypeError, ValueError):
-
-        return jsonify({
-            "success": False,
-            "message": "بيانات غير صالحة."
-        }), 400
-
-    if quantity < 1:
-        quantity = 1
-
-    product = Product.find_by_id(product_id)
-
-    if not product:
-
-        return jsonify({
-            "success": False,
-            "message": "المنتج غير موجود."
-        }), 404
-
-    Cart.add(
-        user["id"],
-        product_id,
-        quantity
-    )
-
-    return jsonify({
-        "success": True,
-        "message": "تمت إضافة المنتج إلى السلة 🛒"
-    })
-
-
-# =========================================================
-# CART UPDATE
-# =========================================================
-
-@auth.route("/cart/update", methods=["POST"])
-def cart_update():
+    if guard:
+        return guard
 
     user = current_user()
 
-    if not user:
-
-        return jsonify({
-            "success": False,
-            "message": "يجب تسجيل الدخول."
-        }), 401
-
     data = request.get_json(silent=True) or {}
 
-    product_id = (
-        data.get("product_id")
-        if data
-        else request.form.get("product_id", type=int)
-    )
+    product_id = data.get("product_id") or request.form.get("product_id")
+    quantity = data.get("quantity") or request.form.get("quantity") or 1
 
-    quantity = (
-        data.get("quantity")
-        if data
-        else request.form.get("quantity", type=int)
-    )
+    if not product_id:
+        return jsonify({
+            "success": False,
+            "message": "المنتج غير محدد."
+        }), 400
 
     try:
         product_id = int(product_id)
-        quantity = int(quantity)
-    except (TypeError, ValueError):
+        quantity = max(1, int(quantity))
 
-        return jsonify({
-            "success": False,
-            "message": "بيانات غير صالحة."
-        }), 400
+        product = Product.find_by_id(product_id)
 
-    if quantity < 1:
-        Cart.remove(
-            user["id"],
-            product_id
-        )
+        if not product:
+            return jsonify({
+                "success": False,
+                "message": "المنتج غير موجود."
+            }), 404
 
-    else:
-        Cart.update_quantity(
+        Cart.add(
             user["id"],
             product_id,
             quantity
         )
 
-    return jsonify({
-        "success": True,
-        "message": "تم تحديث السلة."
-    })
+        return jsonify({
+            "success": True,
+            "message": "تمت إضافة المنتج للسلة 🛒"
+        })
+
+    except Exception as e:
+
+        return jsonify({
+            "success": False,
+            "message": "تعذر إضافة المنتج."
+        }), 400
 
 
-# =========================================================
-# CART REMOVE
-# =========================================================
+@auth.route("/cart/update", methods=["POST"])
+def cart_update():
+
+    guard = login_required()
+
+    if guard:
+        return guard
+
+    user = current_user()
+
+    data = request.get_json(silent=True) or {}
+
+    product_id = data.get("product_id") or request.form.get("product_id")
+    quantity = data.get("quantity") or request.form.get("quantity")
+
+    if not product_id or quantity is None:
+        return jsonify({
+            "success": False,
+            "message": "بيانات غير مكتملة."
+        }), 400
+
+    try:
+        Cart.update_quantity(
+            user["id"],
+            int(product_id),
+            max(1, int(quantity))
+        )
+
+        return jsonify({
+            "success": True
+        })
+
+    except Exception:
+
+        return jsonify({
+            "success": False,
+            "message": "تعذر تحديث الكمية."
+        }), 400
+
 
 @auth.route("/cart/remove", methods=["POST"])
 def cart_remove():
 
+    guard = login_required()
+
+    if guard:
+        return guard
+
     user = current_user()
-
-    if not user:
-
-        return jsonify({
-            "success": False,
-            "message": "يجب تسجيل الدخول."
-        }), 401
 
     data = request.get_json(silent=True) or {}
 
-    product_id = (
-        data.get("product_id")
-        if data
-        else request.form.get("product_id", type=int)
-    )
+    product_id = data.get("product_id") or request.form.get("product_id")
 
-    try:
-        product_id = int(product_id)
-    except (TypeError, ValueError):
-
+    if not product_id:
         return jsonify({
-            "success": False,
-            "message": "المنتج غير صالح."
+            "success": False
         }), 400
 
-    Cart.remove(
-        user["id"],
-        product_id
-    )
+    try:
+        Cart.remove(
+            user["id"],
+            int(product_id)
+        )
 
-    return jsonify({
-        "success": True,
-        "message": "تم حذف المنتج من السلة."
-    })
+        return jsonify({
+            "success": True
+        })
 
+    except Exception:
 
-# =========================================================
-# CART CLEAR
-# =========================================================
+        return jsonify({
+            "success": False
+        }), 400
+
 
 @auth.route("/cart/clear", methods=["POST"])
 def cart_clear():
 
+    guard = login_required()
+
+    if guard:
+        return guard
+
     user = current_user()
-
-    if not user:
-
-        return redirect(
-            url_for("auth.login")
-        )
 
     Cart.clear(user["id"])
 
-    return redirect(
-        url_for("auth.cart")
-    )
+    return jsonify({
+        "success": True
+    })
 
 
 # =========================================================
@@ -689,19 +479,16 @@ def cart_clear():
 @auth.route("/checkout", methods=["POST"])
 def checkout():
 
+    guard = login_required()
+
+    if guard:
+        return guard
+
     user = current_user()
-
-    if not user:
-
-        return jsonify({
-            "success": False,
-            "message": "يجب تسجيل الدخول أولاً."
-        }), 401
 
     items = Cart.get_items(user["id"])
 
     if not items:
-
         return jsonify({
             "success": False,
             "message": "السلة فارغة."
@@ -711,110 +498,90 @@ def checkout():
 
     try:
 
+        wilaya = row_value(user, "wilaya")
+        municipality = row_value(user, "municipality")
+
         order_id = Order.create(
             user_id=user["id"],
             total_amount=total,
-            delivery_wilaya=user.get("wilaya"),
-            delivery_municipality=user.get("municipality")
+            delivery_wilaya=wilaya,
+            delivery_municipality=municipality
         )
-
-        if not order_id:
-
-            return jsonify({
-                "success": False,
-                "message": "تعذر إنشاء الطلب."
-            }), 500
 
         for item in items:
 
             OrderItem.create(
                 order_id=order_id,
                 product_id=item["product_id"],
+                store_id=row_value(item, "store_id"),
                 quantity=item["quantity"],
-                price=item["price"],
-                store_id=item.get("store_id")
+                price=item["price"]
             )
 
         Cart.clear(user["id"])
 
         Notification.create(
             user["id"],
-            "تم إنشاء طلبك 🎉",
-            f"تم تسجيل طلبك رقم #{order_id} بنجاح."
+            "تم إنشاء طلبك بنجاح 🎉",
+            f"تم تسجيل الطلب رقم #{order_id}."
         )
+
+        check_rewards(user["id"])
 
         return jsonify({
             "success": True,
-            "message": "تم إنشاء الطلب بنجاح 🎉",
-            "order_id": order_id
+            "order_id": order_id,
+            "message": "تم تأكيد الطلب بنجاح 🎉"
         })
 
     except Exception:
 
         return jsonify({
             "success": False,
-            "message": "تعذر إنشاء الطلب حالياً."
+            "message": "حدث خطأ أثناء تأكيد الطلب."
         }), 500
 
 
 # =========================================================
-# CARDS
+# CARDS / REWARDS
 # =========================================================
 
 @auth.route("/cards")
 def cards():
 
+    guard = login_required()
+
+    if guard:
+        return guard
+
     user = current_user()
 
-    if not user:
-
-        return redirect(
-            url_for("auth.login")
-        )
-
-    check_rewards(user["id"])
-
-    user_cards = RewardCard.by_user(
-        user["id"]
-    )
+    cards_list = RewardCard.by_user(user["id"])
 
     return render_template(
         "cards.html",
-        cards=user_cards
+        cards=cards_list
     )
 
-
-# =========================================================
-# USE CARD
-# =========================================================
 
 @auth.route("/cards/use", methods=["POST"])
 def use_card():
 
+    guard = login_required()
+
+    if guard:
+        return guard
+
     user = current_user()
-
-    if not user:
-
-        return jsonify({
-            "success": False,
-            "message": "يجب تسجيل الدخول."
-        }), 401
 
     data = request.get_json(silent=True) or {}
 
-    code = (
-        data.get("code")
-        if data
-        else request.form.get("code", "")
-    )
-
-    code = str(code or "").strip().upper()
+    code = data.get("code") or request.form.get("code")
 
     if not code:
-
         return jsonify({
             "success": False,
-            "message": "رمز البطاقة مفقود."
+            "message": "رمز البطاقة غير موجود."
         }), 400
 
     card = RewardCard.find_by_code(
@@ -823,21 +590,25 @@ def use_card():
     )
 
     if not card:
+        return jsonify({
+            "success": False,
+            "message": "البطاقة غير موجودة."
+        }), 404
+
+    try:
+        RewardCard.use(card["id"])
+
+        return jsonify({
+            "success": True,
+            "message": "تم استعمال البطاقة بنجاح 🎁"
+        })
+
+    except Exception:
 
         return jsonify({
             "success": False,
-            "message": "البطاقة غير صالحة أو مستعملة."
+            "message": "تعذر استعمال البطاقة."
         }), 400
-
-    RewardCard.use(
-        user["id"],
-        code
-    )
-
-    return jsonify({
-        "success": True,
-        "message": "تم استخدام البطاقة بنجاح 🎉"
-    })
 
 
 # =========================================================
@@ -847,29 +618,21 @@ def use_card():
 @auth.route("/referral")
 def referral():
 
+    guard = login_required()
+
+    if guard:
+        return guard
+
     user = current_user()
 
-    if not user:
-
-        return redirect(
-            url_for("auth.login")
-        )
-
-    referrals = Referral.by_inviter(
-        user["id"]
-    )
+    referrals = Referral.by_inviter(user["id"])
 
     return jsonify({
-
-        "referral_code": user["referral_code"],
-
+        "success": True,
+        "referral_code": row_value(user, "referral_code"),
         "referrals": [
-            {
-                "name": item["full_name"],
-                "email": item["email"],
-                "status": item["status"]
-            }
-            for item in referrals
+            dict(referral)
+            for referral in referrals
         ]
     })
 
@@ -881,24 +644,20 @@ def referral():
 @auth.route("/favorites")
 def favorites():
 
+    guard = login_required()
+
+    if guard:
+        return guard
+
     user = current_user()
 
-    if not user:
-
-        return redirect(
-            url_for("auth.login")
-        )
-
-    products = Favorite.all(user["id"])
+    favorites_list = Favorite.all(user["id"])
 
     return jsonify({
-        "products": [
-            {
-                "id": p["id"],
-                "name": p["name"],
-                "price": p["price"]
-            }
-            for p in products
+        "success": True,
+        "favorites": [
+            dict(item)
+            for item in favorites_list
         ]
     })
 
@@ -910,17 +669,14 @@ def favorites():
 @auth.route("/messages")
 def messages():
 
+    guard = login_required()
+
+    if guard:
+        return guard
+
     user = current_user()
 
-    if not user:
-
-        return redirect(
-            url_for("auth.login")
-        )
-
-    conversations = Message.conversation(
-        user["id"]
-    )
+    conversations = Message.conversation(user["id"])
 
     return render_template(
         "messages.html",
@@ -928,98 +684,144 @@ def messages():
     )
 
 
-# =========================================================
-# SEND MESSAGE
-# =========================================================
+@auth.route("/messages/<int:user_id>")
+def conversation(user_id):
+
+    guard = login_required()
+
+    if guard:
+        return guard
+
+    user = current_user()
+
+    if user_id == user["id"]:
+        return redirect(url_for("auth.messages"))
+
+    other = User.find_by_id(user_id)
+
+    if not other:
+        flash("المستخدم غير موجود.", "error")
+        return redirect(url_for("auth.messages"))
+
+    # جلب رسائل المحادثة بين المستخدمين
+    try:
+        messages_list = Message.between(
+            user["id"],
+            user_id
+        )
+    except AttributeError:
+        messages_list = []
+
+    try:
+        Message.mark_as_read(
+            user["id"],
+            user_id
+        )
+    except Exception:
+        pass
+
+    return render_template(
+        "chat.html",
+        current_user=user,
+        other=other,
+        messages=messages_list
+    )
+
 
 @auth.route("/messages/send", methods=["POST"])
 def send_message():
 
+    guard = login_required()
+
+    if guard:
+        return guard
+
     user = current_user()
-
-    if not user:
-
-        return jsonify({
-            "success": False,
-            "message": "يجب تسجيل الدخول."
-        }), 401
 
     data = request.get_json(silent=True) or {}
 
     receiver_id = (
         data.get("receiver_id")
-        if data
-        else request.form.get("receiver_id", type=int)
+        or request.form.get("receiver_id")
     )
 
     body = (
         data.get("body")
-        if data
-        else request.form.get("body", "")
-    )
+        or request.form.get("body")
+        or ""
+    ).strip()
+
+    if not receiver_id or not body:
+        flash("الرسالة فارغة.", "error")
+
+        if receiver_id:
+            return redirect(
+                url_for(
+                    "auth.conversation",
+                    user_id=int(receiver_id)
+                )
+            )
+
+        return redirect(url_for("auth.messages"))
 
     try:
         receiver_id = int(receiver_id)
-    except (TypeError, ValueError):
-
-        return jsonify({
-            "success": False,
-            "message": "المستخدم غير صالح."
-        }), 400
-
-    body = str(body or "").strip()
-
-    if not body:
-
-        return jsonify({
-            "success": False,
-            "message": "الرسالة فارغة."
-        }), 400
+    except ValueError:
+        return redirect(url_for("auth.messages"))
 
     receiver = User.find_by_id(receiver_id)
 
     if not receiver:
+        flash("المستخدم غير موجود.", "error")
+        return redirect(url_for("auth.messages"))
 
+    if receiver_id == user["id"]:
+        flash("لا يمكنك إرسال رسالة لنفسك.", "error")
+        return redirect(url_for("auth.messages"))
+
+    Message.create(
+        sender_id=user["id"],
+        receiver_id=receiver_id,
+        body=body
+    )
+
+    try:
+        Notification.create(
+            receiver_id,
+            "رسالة جديدة 💬",
+            f"لديك رسالة جديدة من {user['full_name']}."
+        )
+    except Exception:
+        pass
+
+    # إذا كان الطلب AJAX
+    if request.is_json:
         return jsonify({
-            "success": False,
-            "message": "المستخدم غير موجود."
-        }), 404
+            "success": True,
+            "message": "تم إرسال الرسالة."
+        })
 
-    message_id = Message.create(
-        user["id"],
-        receiver_id,
-        body
+    return redirect(
+        url_for(
+            "auth.conversation",
+            user_id=receiver_id
+        )
     )
-
-    Notification.create(
-        receiver_id,
-        "رسالة جديدة 💬",
-        f"لديك رسالة جديدة من {user['full_name']}."
-    )
-
-    return jsonify({
-        "success": True,
-        "message_id": message_id
-    })
 
 
 # =========================================================
 # CHAT SETTINGS
 # =========================================================
 
-@auth.route(
-    "/chat-settings",
-    methods=["GET", "POST"]
-)
+@auth.route("/chat/settings", methods=["GET", "POST"])
 def chat_settings():
 
+    guard = login_required()
+
+    if guard:
+        return guard
+
     user = current_user()
-
-    if not user:
-
-        return redirect(
-            url_for("auth.login")
-        )
 
     if request.method == "POST":
 
@@ -1028,11 +830,9 @@ def chat_settings():
             "female"
         )
 
-        voice_enabled = (
-            request.form.get(
-                "voice_enabled"
-            ) == "on"
-        )
+        voice_enabled = 1 if request.form.get(
+            "voice_enabled"
+        ) else 0
 
         language = request.form.get(
             "language",
@@ -1046,24 +846,19 @@ def chat_settings():
 
         ChatSettings.update(
             user["id"],
-            voice_type,
-            voice_enabled,
-            language,
-            style
+            voice_type=voice_type,
+            voice_enabled=voice_enabled,
+            language=language,
+            style=style
         )
 
-        flash(
-            "تم حفظ إعدادات المساعد بنجاح.",
-            "success"
-        )
+        flash("تم حفظ إعدادات المحادثة.", "success")
 
         return redirect(
             url_for("auth.chat_settings")
         )
 
-    settings = ChatSettings.get(
-        user["id"]
-    )
+    settings = ChatSettings.get(user["id"])
 
     return render_template(
         "chat_settings.html",
@@ -1072,72 +867,53 @@ def chat_settings():
 
 
 # =========================================================
-# COMPLAINT
+# COMPLAINTS
 # =========================================================
 
 @auth.route("/complaints", methods=["POST"])
-def create_complaint():
+def complaints():
+
+    guard = login_required()
+
+    if guard:
+        return guard
 
     user = current_user()
-
-    if not user:
-
-        return jsonify({
-            "success": False,
-            "message": "يجب تسجيل الدخول."
-        }), 401
 
     data = request.get_json(silent=True) or {}
 
     subject = (
         data.get("subject")
-        if data
-        else request.form.get("subject", "")
+        or request.form.get("subject")
+        or "شكوى"
     )
 
-    message = (
-        data.get("message")
-        if data
-        else request.form.get("message", "")
-    )
+    body = (
+        data.get("body")
+        or request.form.get("body")
+        or ""
+    ).strip()
 
-    order_id = (
-        data.get("order_id")
-        if data
-        else request.form.get("order_id", type=int)
-    )
-
-    subject = str(subject or "").strip()
-    message = str(message or "").strip()
-
-    if not message:
-
+    if not body:
         return jsonify({
             "success": False,
             "message": "اكتب تفاصيل الشكوى."
         }), 400
 
-    complaint_id = Complaint.create(
+    Complaint.create(
         user_id=user["id"],
-        message=message,
-        order_id=order_id,
-        subject=subject
-    )
-
-    Notification.create(
-        user["id"],
-        "تم إرسال الشكوى",
-        "تم استلام شكواك وسيتم التعامل معها."
+        subject=subject,
+        body=body
     )
 
     return jsonify({
         "success": True,
-        "complaint_id": complaint_id
+        "message": "تم إرسال الشكوى بنجاح."
     })
 
 
 # =========================================================
-# HEALTH
+# API STATUS
 # =========================================================
 
 @auth.route("/api/status")
@@ -1146,5 +922,6 @@ def api_status():
     return jsonify({
         "status": "ok",
         "app": "DZ MARKET",
-        "version": "1.0"
+        "version": "1.0",
+        "message": "DZ MARKET is running 🇩🇿"
     })
