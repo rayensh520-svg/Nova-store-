@@ -1,140 +1,152 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>إنشاء حساب | DZ MARKET</title>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='style.css') }}">
-</head>
+    <style>
+        :root {
+            --burgundy: #64152d;
+            --burgundy-dark: #3b0b1b;
+            --gold: #c9a45c;
+            --cream: #fffaf3;
+            --text: #241a1d;
+            --muted: #81757a;
+            --border: #eadfe2;
+            --danger: #b42318;
+            --success: #16794c;
+        }
 
-<body>
+        * {
+            box-sizing: border-box;
+        }
 
-    <main class="auth-page">
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Arial, "Tahoma", sans-serif;
+            background:
+                radial-gradient(circle at top right, rgba(201, 164, 92, 0.16), transparent 35%),
+                linear-gradient(145deg, #fffaf3, #f8eef1);
+            color: var(--text);
+        }
 
-        <div class="auth-card">
+        .page {
+            width: min(100%, 560px);
+            margin: auto;
+            padding: 25px 18px 45px;
+        }
 
-            <div class="auth-logo">
-                🇩🇿
-            </div>
+        /* LOGO */
 
-            <h1>إنشاء حساب</h1>
+        .brand {
+            text-align: center;
+            margin-bottom: 22px;
+        }
 
-            <p class="auth-subtitle">
-                انضم إلى DZ MARKET وابدأ التسوق أو البيع
-            </p>
+        .brand-mark {
+            width: 62px;
+            height: 62px;
+            margin: auto;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="flash {{ category }}">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
+            background: linear-gradient(
+                145deg,
+                var(--burgundy),
+                var(--burgundy-dark)
+            );
 
+            color: var(--gold);
+            font-size: 27px;
+            font-weight: 900;
 
-            <form method="POST" action="{{ url_for('auth.register') }}">
+            box-shadow:
+                0 12px 30px rgba(59, 11, 27, 0.22);
+        }
 
-                <label for="full_name">
-                    الاسم الكامل
-                </label>
+        .brand h1 {
+            margin: 12px 0 4px;
+            font-size: 26px;
+            color: var(--burgundy);
+        }
 
-                <input
-                    type="text"
-                    id="full_name"
-                    name="full_name"
-                    placeholder="أدخل اسمك الكامل"
-                    required
-                >
+        .brand p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
 
+        /* CARD */
 
-                <label for="email">
-                    البريد الإلكتروني
-                </label>
+        .card {
+            background: rgba(255, 255, 255, 0.88);
+            border: 1px solid rgba(234, 223, 226, 0.9);
+            border-radius: 26px;
+            padding: 23px 19px;
 
-                <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    placeholder="example@email.com"
-                    required
-                >
+            box-shadow:
+                0 20px 55px rgba(59, 11, 27, 0.10);
 
+            backdrop-filter: blur(14px);
+        }
 
-                <label for="password">
-                    كلمة المرور
-                </label>
+        .card-title {
+            margin: 0 0 5px;
+            font-size: 21px;
+            color: var(--burgundy);
+        }
 
-                <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    placeholder="أدخل كلمة المرور"
-                    minlength="6"
-                    required
-                >
+        .card-subtitle {
+            margin: 0 0 22px;
+            color: var(--muted);
+            font-size: 13px;
+        }
 
+        /* ROLE */
 
-                <label>
-                    نوع الحساب
-                </label>
+        .role-title {
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 9px;
+        }
 
-                <div class="role-options">
+        .roles {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
 
-                    <label class="role-option">
-                        <input
-                            type="radio"
-                            name="role"
-                            value="buyer"
-                            checked
-                        >
+        .role-option {
+            position: relative;
+        }
 
-                        <span>
-                            🛍️ مشتري
-                        </span>
-                    </label>
+        .role-option input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
 
+        .role-option label {
+            display: block;
+            padding: 15px 10px;
+            text-align: center;
 
-                    <label class="role-option">
-                        <input
-                            type="radio"
-                            name="role"
-                            value="seller"
-                        >
+            border: 1px solid var(--border);
+            border-radius: 17px;
 
-                        <span>
-                            🏪 بائع
-                        </span>
-                    </label>
+            background: #fff;
+            cursor: pointer;
 
-                </div>
+            transition: 0.2s ease;
+        }
 
-
-                <button type="submit" class="primary-btn">
-                    إنشاء الحساب
-                </button>
-
-            </form>
-
-
-            <p class="auth-footer">
-                لديك حساب بالفعل؟
-                <a href="{{ url_for('auth.login') }}">
-                    تسجيل الدخول
-                </a>
-            </p>
-
-            <a href="{{ url_for('home') }}" class="back-home">
-                ← العودة إلى الصفحة الرئيسية
-            </a>
-
-        </div>
-
-    </main>
-
-</body>
-</html>
+        .role-icon {
+            display: block;
+            font-size: 24
