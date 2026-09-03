@@ -3,166 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>إعدادات الدردشة | DZ MARKET</title>
 
     <style>
-        :root {
-            --burgundy: #65152d;
-            --dark: #3f0b1c;
-            --gold: #c9a227;
-            --cream: #fffaf3;
-            --text: #241820;
-            --muted: #81757a;
-            --border: #eadfe2;
-        }
-
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --burgundy: #721b3a;
+            --dark: #421024;
+            --gold: #c69b4d;
+            --cream: #faf7f2;
+            --white: #ffffff;
+            --text: #29151e;
+            --muted: #81737a;
+            --border: #eee3e6;
         }
 
         body {
-            margin: 0;
-            min-height: 100vh;
-            padding: 20px;
-            background:
-                radial-gradient(circle at top right, rgba(201,162,39,.13), transparent 35%),
-                linear-gradient(135deg, #fffaf3, #f7eef1);
             font-family: Arial, sans-serif;
+            background: var(--cream);
             color: var(--text);
+            min-height: 100vh;
         }
 
-        .container {
+        .app {
             width: 100%;
             max-width: 650px;
             margin: auto;
+            padding-bottom: 30px;
         }
 
-        .header {
+        header {
+            padding: 15px;
             display: flex;
             align-items: center;
             gap: 12px;
-            margin-bottom: 18px;
         }
 
         .back {
-            width: 42px;
-            height: 42px;
-            border: 0;
-            border-radius: 13px;
-            background: #f7eef1;
-            color: var(--burgundy);
-            font-size: 20px;
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 11px;
+            font-size: 18px;
             cursor: pointer;
         }
 
-        .header h1 {
-            margin: 0;
-            font-size: 21px;
+        header h1 {
             color: var(--burgundy);
+            font-size: 19px;
         }
 
-        .header p {
-            margin: 4px 0 0;
+        header p {
             color: var(--muted);
-            font-size: 12px;
+            font-size: 10px;
+            margin-top: 3px;
         }
 
         .card {
-            background: rgba(255,255,255,.92);
-            border: 1px solid rgba(255,255,255,.8);
-            border-radius: 22px;
-            padding: 20px;
-            margin-bottom: 14px;
-            box-shadow: 0 15px 40px rgba(63,11,28,.08);
-        }
-
-        .card-title {
-            font-size: 15px;
-            font-weight: 800;
-            margin-bottom: 5px;
-        }
-
-        .card-description {
-            color: var(--muted);
-            font-size: 11px;
-            margin-bottom: 15px;
-        }
-
-        .choices {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .choice {
-            position: relative;
-        }
-
-        .choice input {
-            position: absolute;
-            opacity: 0;
-        }
-
-        .choice label {
-            display: block;
-            padding: 15px 12px;
-            border: 1px solid var(--border);
-            border-radius: 15px;
-            cursor: pointer;
-            text-align: center;
             background: white;
-            transition: .2s;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            margin: 0 15px 12px;
+            padding: 15px;
+            box-shadow: 0 5px 18px rgba(50, 15, 30, .04);
         }
 
-        .choice input:checked + label {
-            border-color: var(--gold);
-            background: #fff9e8;
-            box-shadow: 0 0 0 2px rgba(201,162,39,.10);
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 13px;
         }
 
-        .choice-icon {
+        .section-title span {
+            font-size: 20px;
+        }
+
+        .section-title h2 {
+            font-size: 14px;
+        }
+
+        .field {
+            margin-bottom: 13px;
+        }
+
+        .field:last-child {
+            margin-bottom: 0;
+        }
+
+        label {
             display: block;
-            font-size: 25px;
-            margin-bottom: 7px;
-        }
-
-        .choice-name {
-            display: block;
+            font-size: 11px;
             font-weight: 800;
-            font-size: 13px;
+            margin-bottom: 6px;
         }
 
-        .choice-note {
-            display: block;
-            color: var(--muted);
-            font-size: 10px;
-            margin-top: 4px;
+        select {
+            width: 100%;
+            height: 42px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0 10px;
+            background: #fff;
+            color: var(--text);
+            outline: none;
+            font-size: 12px;
         }
 
         .switch-row {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
             gap: 15px;
         }
 
         .switch-text strong {
             display: block;
-            font-size: 13px;
+            font-size: 12px;
         }
 
-        .switch-text span {
+        .switch-text small {
             display: block;
             color: var(--muted);
             font-size: 10px;
             margin-top: 4px;
+            line-height: 1.5;
         }
 
         .switch {
             position: relative;
-            width: 48px;
-            height: 27px;
+            width: 45px;
+            height: 25px;
             flex-shrink: 0;
         }
 
@@ -181,158 +158,154 @@
             transition: .2s;
         }
 
-        .slider::before {
+        .slider:before {
             content: "";
             position: absolute;
-            width: 21px;
-            height: 21px;
+            width: 19px;
+            height: 19px;
             right: 3px;
             top: 3px;
             background: white;
             border-radius: 50%;
             transition: .2s;
-            box-shadow: 0 2px 5px rgba(0,0,0,.15);
         }
 
-        .switch input:checked + .slider {
+        input:checked + .slider {
             background: var(--burgundy);
         }
 
-        .switch input:checked + .slider::before {
-            transform: translateX(-21px);
-        }
-
-        .select {
-            width: 100%;
-            height: 47px;
-            border: 1px solid var(--border);
-            border-radius: 13px;
-            padding: 0 12px;
-            background: white;
-            font-size: 13px;
-            outline: none;
-        }
-
-        .select:focus {
-            border-color: var(--gold);
+        input:checked + .slider:before {
+            transform: translateX(-20px);
         }
 
         .save {
-            width: 100%;
-            height: 50px;
+            width: calc(100% - 30px);
+            margin: 3px 15px 0;
+            height: 46px;
             border: 0;
-            border-radius: 15px;
-            background: linear-gradient(135deg, var(--burgundy), var(--dark));
+            border-radius: 12px;
+            background: linear-gradient(
+                135deg,
+                var(--burgundy),
+                var(--dark)
+            );
             color: white;
-            font-size: 14px;
-            font-weight: 800;
+            font-size: 13px;
+            font-weight: 900;
             cursor: pointer;
-            box-shadow: 0 12px 25px rgba(101,21,45,.20);
+            box-shadow: 0 7px 20px rgba(114, 27, 58, .18);
         }
 
-        .info {
-            margin-top: 12px;
-            color: var(--muted);
+        .note {
             text-align: center;
-            font-size: 10px;
+            color: var(--muted);
+            font-size: 9px;
+            line-height: 1.6;
+            margin: 12px 25px;
         }
 
-        @media (max-width: 450px) {
-            body {
-                padding: 12px;
-            }
-
-            .card {
-                padding: 16px;
-            }
+        .flash {
+            margin: 0 15px 12px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: #edf8f0;
+            color: #23643a;
+            font-size: 11px;
+            border: 1px solid #d4ead9;
         }
     </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="app">
 
-    <div class="header">
-        <button class="back" onclick="history.back()">→</button>
+    <header>
+        <button
+            class="back"
+            onclick="window.location.href='{{ url_for('home') }}'"
+        >
+            ←
+        </button>
 
         <div>
             <h1>إعدادات الدردشة 🎙️</h1>
-            <p>اختار كيف تحب DZ MARKET يتعامل مع الرسائل.</p>
+            <p>خصص طريقة تواصلك داخل DZ MARKET</p>
         </div>
-    </div>
+    </header>
 
 
-    <form method="POST" action="{{ url_for('auth.chat_settings') }}">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="flash">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endwith %}
+
+
+    <form
+        method="POST"
+        action="{{ url_for('auth.chat_settings') }}"
+    >
 
         <div class="card">
 
-            <div class="card-title">
-                🎙️ صوت الدردشة
+            <div class="section-title">
+                <span>🎙️</span>
+                <h2>الصوت</h2>
             </div>
 
-            <div class="card-description">
-                اختر الصوت الذي يستخدمه التطبيق عند قراءة الرسائل.
-            </div>
+            <div class="field">
 
-            <div class="choices">
+                <label for="voice_type">
+                    نوع الصوت
+                </label>
 
-                <div class="choice">
-                    <input
-                        type="radio"
-                        id="female"
-                        name="voice_type"
+                <select
+                    id="voice_type"
+                    name="voice_type"
+                >
+
+                    <option
                         value="female"
-                        {% if settings and settings["voice_type"] == "female" %}checked{% endif %}
+                        {% if settings and settings['voice_type'] == 'female' %}selected{% endif %}
                     >
+                        صوت أنثوي
+                    </option>
 
-                    <label for="female">
-                        <span class="choice-icon">👩</span>
-                        <span class="choice-name">صوت فتاة</span>
-                        <span class="choice-note">صوت ناعم وواضح</span>
-                    </label>
-                </div>
-
-
-                <div class="choice">
-                    <input
-                        type="radio"
-                        id="male"
-                        name="voice_type"
+                    <option
                         value="male"
-                        {% if settings and settings["voice_type"] == "male" %}checked{% endif %}
+                        {% if settings and settings['voice_type'] == 'male' %}selected{% endif %}
                     >
+                        صوت ذكوري
+                    </option>
 
-                    <label for="male">
-                        <span class="choice-icon">👨</span>
-                        <span class="choice-name">صوت شاب</span>
-                        <span class="choice-note">صوت واضح وطبيعي</span>
-                    </label>
-                </div>
+                </select>
 
             </div>
 
-        </div>
-
-
-        <div class="card">
 
             <div class="switch-row">
 
                 <div class="switch-text">
-                    <strong>🔊 تشغيل الصوت</strong>
-                    <span>قراءة الرسائل بصوت تلقائيًا.</span>
+                    <strong>تفعيل الصوت</strong>
+                    <small>
+                        السماح بالميزات الصوتية داخل الدردشة.
+                    </small>
                 </div>
 
                 <label class="switch">
+
                     <input
                         type="checkbox"
                         name="voice_enabled"
                         value="1"
-                        {% if settings and settings["voice_enabled"] %}checked{% endif %}
+                        {% if settings and settings['voice_enabled'] %}checked{% endif %}
                     >
 
                     <span class="slider"></span>
+
                 </label>
 
             </div>
@@ -342,105 +315,132 @@
 
         <div class="card">
 
-            <div class="card-title">
-                🌍 لغة الدردشة
+            <div class="section-title">
+                <span>🌐</span>
+                <h2>اللغة</h2>
             </div>
 
-            <div class="card-description">
-                اختر اللغة التي يفضلها المساعد.
+            <div class="field">
+
+                <label for="language">
+                    لغة الدردشة
+                </label>
+
+                <select
+                    id="language"
+                    name="language"
+                >
+
+                    <option
+                        value="ar"
+                        {% if settings and settings['language'] == 'ar' %}selected{% endif %}
+                    >
+                        العربية
+                    </option>
+
+                    <option
+                        value="dz"
+                        {% if settings and settings['language'] == 'dz' %}selected{% endif %}
+                    >
+                        الدارجة الجزائرية 🇩🇿
+                    </option>
+
+                    <option
+                        value="fr"
+                        {% if settings and settings['language'] == 'fr' %}selected{% endif %}
+                    >
+                        Français
+                    </option>
+
+                    <option
+                        value="en"
+                        {% if settings and settings['language'] == 'en' %}selected{% endif %}
+                    >
+                        English
+                    </option>
+
+                </select>
+
             </div>
-
-            <select name="language" class="select">
-
-                <option
-                    value="ar"
-                    {% if settings and settings["language"] == "ar" %}selected{% endif %}
-                >
-                    العربية
-                </option>
-
-                <option
-                    value="fr"
-                    {% if settings and settings["language"] == "fr" %}selected{% endif %}
-                >
-                    Français
-                </option>
-
-                <option
-                    value="en"
-                    {% if settings and settings["language"] == "en" %}selected{% endif %}
-                >
-                    English
-                </option>
-
-            </select>
 
         </div>
 
 
         <div class="card">
 
-            <div class="card-title">
-                🎭 شخصية الرد
+            <div class="section-title">
+                <span>✨</span>
+                <h2>أسلوب الدردشة</h2>
             </div>
 
-            <div class="card-description">
-                كيف تحب أن تكون اقتراحات الذكاء الاصطناعي؟
+            <div class="field">
+
+                <label for="style">
+                    اختر الأسلوب
+                </label>
+
+                <select
+                    id="style"
+                    name="style"
+                >
+
+                    <option
+                        value="friendly"
+                        {% if settings and settings['style'] == 'friendly' %}selected{% endif %}
+                    >
+                        ودّي 😊
+                    </option>
+
+                    <option
+                        value="youthful"
+                        {% if settings and settings['style'] == 'youthful' %}selected{% endif %}
+                    >
+                        شبابي 😎
+                    </option>
+
+                    <option
+                        value="funny"
+                        {% if settings and settings['style'] == 'funny' %}selected{% endif %}
+                    >
+                        مرح 😂
+                    </option>
+
+                    <option
+                        value="professional"
+                        {% if settings and settings['style'] == 'professional' %}selected{% endif %}
+                    >
+                        احترافي 💼
+                    </option>
+
+                    <option
+                        value="darija"
+                        {% if settings and settings['style'] == 'darija' %}selected{% endif %}
+                    >
+                        جزائري 🇩🇿
+                    </option>
+
+                </select>
+
             </div>
-
-            <select name="style" class="select">
-
-                <option
-                    value="friendly"
-                    {% if settings and settings["style"] == "friendly" %}selected{% endif %}
-                >
-                    😊 ودّي
-                </option>
-
-                <option
-                    value="youthful"
-                    {% if settings and settings["style"] == "youthful" %}selected{% endif %}
-                >
-                    😎 شبابي
-                </option>
-
-                <option
-                    value="funny"
-                    {% if settings and settings["style"] == "funny" %}selected{% endif %}
-                >
-                    😂 طريف
-                </option>
-
-                <option
-                    value="professional"
-                    {% if settings and settings["style"] == "professional" %}selected{% endif %}
-                >
-                    💼 احترافي
-                </option>
-
-                <option
-                    value="darija"
-                    {% if settings and settings["style"] == "darija" %}selected{% endif %}
-                >
-                    🇩🇿 دارجة جزائرية
-                </option>
-
-            </select>
 
         </div>
 
 
-        <button class="save" type="submit">
-            حفظ إعدادات الدردشة
+        <button
+            type="submit"
+            class="save"
+        >
+            💾 حفظ الإعدادات
         </button>
 
-        <div class="info">
-            يمكنك تغيير هذه الإعدادات في أي وقت.
-        </div>
-
     </form>
+
+
+    <div class="note">
+        إعداداتك محفوظة في حسابك ويمكنك تغييرها في أي وقت.
+    </div>
 
 </div>
 
 </body>
-                      </html>
+</html>
