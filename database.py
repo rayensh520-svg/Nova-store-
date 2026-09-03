@@ -332,4 +332,12 @@ def init_database():
 
             status TEXT NOT NULL DEFAULT 'open',
 
-            created_at TIMESTAMP DEFAULT CURRENT
+            created_at TIMESTAMP DEFAULT CURRENT         CREATE TABLE IF NOT EXISTS chat_settings (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL UNIQUE,
+            voice_type TEXT NOT NULL DEFAULT 'female',
+            voice_enabled INTEGER NOT NULL DEFAULT 1,
+            language TEXT NOT NULL DEFAULT 'ar',
+            style TEXT NOT NULL DEFAULT 'friendly',
+            FOREIGN KEY (user_id) REFERENCES users(id)
+        );
