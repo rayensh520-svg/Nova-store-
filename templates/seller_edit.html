@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة المتجر | DZ MARKET</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f8f3ed;
+            color: #3b111d;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #5b0f24, #801b35);
+            color: white;
+            padding: 22px 18px;
+            border-radius: 0 0 25px 25px;
+        }
+
+        .back {
+            color: #f5d58a;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        h1 {
+            margin-top: 15px;
+            font-size: 25px;
+        }
+
+        .container {
+            padding: 20px 16px 35px;
+            max-width: 650px;
+            margin: auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 25px rgba(91, 15, 36, 0.08);
+        }
+
+        .section-title {
+            font-size: 17px;
+            font-weight: bold;
+            margin-bottom: 18px;
+            color: #5b0f24;
+        }
+
+        label {
+            display: block;
+            margin: 14px 0 7px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            border: 1px solid #e2d4c5;
+            border-radius: 13px;
+            padding: 13px;
+            font-size: 15px;
+            outline: none;
+            background: #fffdfa;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: #b99142;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 22px;
+            border: none;
+            border-radius: 14px;
+            padding: 15px;
+            background: linear-gradient(135deg, #6b1229, #921f3d);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:active {
+            transform: scale(.98);
+        }
+
+        .hint {
+            margin-top: 15px;
+            color: #777;
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        @media (max-width: 500px) {
+            .row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+    <a class="back" href="{{ url_for('auth.seller') }}">← العودة إلى المتجر</a>
+    <h1>🏪 إعدادات المتجر</h1>
+</header>
+
+<main class="container">
+
+    <div class="card">
+
+        <div class="section-title">
+            معلومات متجرك
+        </div>
+
+        <form method="POST">
+
+            <label for="name">اسم المتجر *</label>
+            <input
+                type="text"
+                id="name"
+                name="name"
+                value="{{ store.name if store else '' }}"
+                placeholder="مثال: Boutique DZ"
+                required
+            >
+
+            <label for="description">وصف المتجر</label>
+            <textarea
+                id="description"
+                name="description"
+                placeholder="اكتب نبذة قصيرة عن متجرك ومنتجاتك..."
+            >{{ store.description if store else '' }}</textarea>
+
+            <label for="phone">رقم الهاتف</label>
+            <input
+                type="tel"
+                id="phone"
+                name="phone"
+                value="{{ store.phone if store else user.phone or '' }}"
+                placeholder="05XXXXXXXX"
+            >
+
+            <div class="row">
+
+                <div>
+                    <label for="wilaya">الولاية</label>
+                    <input
+                        type="text"
+                        id="wilaya"
+                        name="wilaya"
+                        value="{{ store.wilaya if store else user.wilaya or '' }}"
+                        placeholder="مثال: وهران"
+                    >
+                </div>
+
+                <div>
+                    <label for="municipality">البلدية</label>
+                    <input
+                        type="text"
+                        id="municipality"
+                        name="municipality"
+                        value="{{ store.municipality if store else user.municipality or '' }}"
+                        placeholder="اسم البلدية"
+                    >
+                </div>
+
+            </div>
+
+            <button type="submit">
+                💾 حفظ معلومات المتجر
+            </button>
+
+        </form>
+
+        <p class="hint">
+            تأكد من صحة معلومات المتجر لأنها ستظهر للعملاء عند زيارة متجرك.
+        </p>
+
+    </div>
+
+</main>
+
+</body>
+</html>
