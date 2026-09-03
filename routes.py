@@ -17,15 +17,17 @@ from models import (
     User,
     Store,
     Message,
-    ChatSettings
+    ChatSettings,
+    Order,
+    Cart
 )
 
 auth = Blueprint("auth", __name__)
 
 
-# ============================================================
+# =========================================================
 # HELPERS
-# ============================================================
+# =========================================================
 
 def validate_password(password):
     if len(password) < 8:
@@ -39,16 +41,23 @@ def validate_password(password):
 
 def login_user(user, remember=False):
     session.clear()
-
     session["user_id"] = user["id"]
     session["role"] = user["role"]
-
     session.permanent = bool(remember)
 
 
-# ============================================================
+def current_user():
+    user_id = session.get("user_id")
+
+    if not user_id:
+        return None
+
+    return User.find_by_id(user_id)
+
+
+# =========================================================
 # REGISTER
-# ============================================================
+# =========================================================
 
 @auth.route("/register", methods=["GET", "POST"])
 def register():
@@ -108,10 +117,6 @@ def register():
             role = "buyer"
 
 
-        # -------------------------
-        # BASIC VALIDATION
-        # -------------------------
-
         if not full_name:
             flash(
                 "يرجى إدخال الاسم الكامل.",
@@ -120,6 +125,7 @@ def register():
             return redirect(
                 url_for("auth.register")
             )
+
 
         if not email:
             flash(
@@ -130,6 +136,7 @@ def register():
                 url_for("auth.register")
             )
 
+
         if not phone:
             flash(
                 "يرجى إدخال رقم الهاتف.",
@@ -138,6 +145,7 @@ def register():
             return redirect(
                 url_for("auth.register")
             )
+
 
         if not password:
             flash(
@@ -148,6 +156,7 @@ def register():
                 url_for("auth.register")
             )
 
+
         if not confirm_password:
             flash(
                 "يرجى تأكيد كلمة المرور.",
@@ -156,6 +165,7 @@ def register():
             return redirect(
                 url_for("auth.register")
             )
+
 
         if not accepted_terms:
             flash(
@@ -167,101 +177,72 @@ def register():
             )
 
 
-        # -------------------------
-        # PASSWORD
-        # -------------------------
-
         if not validate_password(password):
-
             flash(
                 "كلمة المرور يجب أن تحتوي على 8 أحرف على الأقل، وحرف واحد ورقم واحد.",
                 "error"
             )
-
             return redirect(
                 url_for("auth.register")
             )
 
 
         if password != confirm_password:
-
             flash(
                 "كلمتا المرور غير متطابقتين.",
                 "error"
             )
-
             return redirect(
                 url_for("auth.register")
             )
 
 
-        # -------------------------
-        # EMAIL CHECK
-        # -------------------------
-
-        existing_user = User.find_by_email(
-            email
-        )
+        existing_user = User.find_by_email(email)
 
         if existing_user:
-
             flash(
                 "هذا البريد الإلكتروني مسجل من قبل.",
                 "error"
             )
-
             return redirect(
                 url_for("auth.register")
             )
 
 
-        # -------------------------
-        # SELLER VALIDATION
-        # -------------------------
-
         if role == "seller":
 
             if not store_name:
-
                 flash(
                     "يرجى إدخال اسم المتجر.",
                     "error"
                 )
-
                 return redirect(
                     url_for("auth.register")
                 )
 
             if not activity_type:
-
                 flash(
                     "يرجى تحديد نوع النشاط.",
                     "error"
                 )
-
                 return redirect(
                     url_for("auth.register")
                 )
 
             if not wilaya:
-
                 flash(
                     "يرجى تحديد الولاية.",
                     "error"
                 )
-
                 return redirect(
                     url_for("auth.register")
                 )
 
 
-        # -------------------------
-        # CREATE USER
-        # -------------------------
-
         password_hash = generate_password_hash(
             password
         )
+
 
         user_id = User.create(
             full_name=full_name,
@@ -273,20 +254,14 @@ def register():
 
 
         if user_id is None:
-
             flash(
                 "تعذر إنشاء الحساب. ربما البريد الإلكتروني مستخدم.",
                 "error"
             )
-
             return redirect(
                 url_for("auth.register")
             )
 
-
-        # -------------------------
-        # CREATE SELLER STORE
-        # -------------------------
 
         if role == "seller":
 
@@ -298,6 +273,7 @@ def register():
                 wilaya=wilaya,
                 municipality=municipality
             )
+
 
             from database import get_connection
 
@@ -323,13 +299,8 @@ def register():
             connection.close()
 
 
-        # -------------------------
-        # LOGIN AFTER REGISTER
-        # -------------------------
+        user = User.find_by_id(user_id)
 
-        user = User.find_by_id(
-            user_id
-        )
 
         if user:
             login_user(
@@ -353,9 +324,9 @@ def register():
     )
 
 
-# ============================================================
+# =========================================================
 # LOGIN
-# ============================================================
+# =========================================================
 
 @auth.route("/login", methods=["GET", "POST"])
 def login():
@@ -388,9 +359,7 @@ def login():
             )
 
 
-        user = User.find_by_email(
-            email
-        )
+        user = User.find_by_email(email)
 
 
         if not user:
@@ -415,10 +384,7 @@ def login():
                 password
             )
 
-        except (
-            ValueError,
-            TypeError
-        ):
+        except (ValueError, TypeError):
 
             password_correct = False
 
@@ -446,6 +412,7 @@ def login():
             "success"
         )
 
+
         return redirect(
             url_for("home")
         )
@@ -456,9 +423,9 @@ def login():
     )
 
 
-# ============================================================
+# =========================================================
 # LOGOUT
-# ============================================================
+# =========================================================
 
 @auth.route("/logout")
 def logout():
@@ -475,16 +442,189 @@ def logout():
     )
 
 
-# ============================================================
+# =========================================================
+# ACCOUNT
+# =========================================================
+
+@auth.route("/account")
+def account():
+
+    user_id = session.get("user_id")
+
+
+    if not user_id:
+
+        flash(
+            "سجّل الدخول أولًا للوصول إلى حسابك.",
+            "error"
+        )
+
+        return redirect(
+            url_for("auth.login")
+        )
+
+
+    user = User.find_by_id(user_id)
+
+
+    if not user:
+
+        session.clear()
+
+        flash(
+            "الحساب غير موجود.",
+            "error"
+        )
+
+        return redirect(
+            url_for("auth.login")
+        )
+
+
+    return render_template(
+        "account.html",
+        user=user
+    )
+
+
+# =========================================================
+# ORDERS
+# =========================================================
+
+@auth.route("/orders")
+def orders():
+
+    user_id = session.get("user_id")
+
+
+    if not user_id:
+
+        flash(
+            "سجّل الدخول أولًا للوصول إلى طلباتك.",
+            "error"
+        )
+
+        return redirect(
+            url_for("auth.login")
+        )
+
+
+    user_orders = Order.by_user(
+        user_id
+    )
+
+
+    return render_template(
+        "orders.html",
+        orders=user_orders
+    )
+
+
+# =========================================================
+# CART
+# =========================================================
+
+@auth.route("/cart")
+def cart():
+
+    user_id = session.get("user_id")
+
+
+    if not user_id:
+
+        flash(
+            "سجّل الدخول أولًا للوصول إلى السلة.",
+            "error"
+        )
+
+        return redirect(
+            url_for("auth.login")
+        )
+
+
+    items = Cart.get_items(
+        user_id
+    )
+
+
+    total = 0
+
+
+    for item in items:
+
+        price = float(
+            item["price"] or 0
+        )
+
+        discount = float(
+            item["discount"] or 0
+        )
+
+        quantity = int(
+            item["quantity"] or 0
+        )
+
+
+        final_price = (
+            price -
+            (price * discount / 100)
+        )
+
+
+        total += (
+            final_price *
+            quantity
+        )
+
+
+    return render_template(
+        "cart.html",
+        items=items,
+        total=round(total, 2)
+    )
+
+
+# =========================================================
+# CARDS
+# =========================================================
+
+@auth.route("/cards")
+def cards():
+
+    user_id = session.get("user_id")
+
+
+    if not user_id:
+
+        flash(
+            "سجّل الدخول أولًا للوصول إلى بطاقاتك.",
+            "error"
+        )
+
+        return redirect(
+            url_for("auth.login")
+        )
+
+
+    # نظام بطاقات المكافآت سيتم ربطه
+    # بجدول المكافآت الخاص بالمستخدم.
+    user_cards = []
+
+
+    return render_template(
+        "cards.html",
+        cards=user_cards
+    )
+
+
+# =========================================================
 # MESSAGES
-# ============================================================
+# =========================================================
 
 @auth.route("/messages")
 def messages():
 
-    user_id = session.get(
-        "user_id"
-    )
+    user_id = session.get("user_id")
 
 
     if not user_id:
@@ -510,9 +650,9 @@ def messages():
     )
 
 
-# ============================================================
+# =========================================================
 # SEND MESSAGE
-# ============================================================
+# =========================================================
 
 @auth.route(
     "/messages/send",
@@ -520,9 +660,7 @@ def messages():
 )
 def send_message():
 
-    user_id = session.get(
-        "user_id"
-    )
+    user_id = session.get("user_id")
 
 
     if not user_id:
@@ -601,9 +739,9 @@ def send_message():
     )
 
 
-# ============================================================
+# =========================================================
 # CHAT SETTINGS
-# ============================================================
+# =========================================================
 
 @auth.route(
     "/chat-settings",
@@ -611,9 +749,7 @@ def send_message():
 )
 def chat_settings():
 
-    user_id = session.get(
-        "user_id"
-    )
+    user_id = session.get("user_id")
 
 
     if not user_id:
@@ -666,6 +802,7 @@ def chat_settings():
             "success"
         )
 
+
         return redirect(
             url_for("auth.chat_settings")
         )
@@ -679,4 +816,4 @@ def chat_settings():
     return render_template(
         "chat_settings.html",
         settings=settings
-            )
+    )
