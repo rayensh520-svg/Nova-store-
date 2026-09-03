@@ -2,18 +2,45 @@ import sqlite3
 from database import get_connection
 
 
+# =========================================================
+# USER
+# =========================================================
+
 class User:
+
     @staticmethod
-    def create(full_name, email, password, role="buyer"):
+    def create(
+        full_name,
+        email,
+        password,
+        role="buyer",
+        phone="",
+        profile_image=""
+    ):
         connection = get_connection()
 
         try:
             cursor = connection.execute(
                 """
-                INSERT INTO users (full_name, email, password, role)
-                VALUES (?, ?, ?, ?)
+                INSERT INTO users
+                (
+                    full_name,
+                    email,
+                    password,
+                    role,
+                    phone,
+                    profile_image
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
                 """,
-                (full_name, email, password, role)
+                (
+                    full_name,
+                    email,
+                    password,
+                    role,
+                    phone,
+                    profile_image
+                )
             )
 
             connection.commit()
@@ -57,114 +84,152 @@ class User:
         connection.close()
         return user
 
-
-class Product:
     @staticmethod
-    def create(
-        store_id,
-        name,
-        description="",
-        price=0,
-        quantity=0,
-        category="",
-        image=""
+    def update_profile(
+        user_id,
+        full_name=None,
+        phone=None,
+        profile_image=None
     ):
         connection = get_connection()
 
-        cursor = connection.execute(
-            """
-            INSERT INTO products
-            (
-                store_id,
-                name,
-                description,
-                price,
-                quantity,
-                category,
-                image
-            )
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-            """,
-            (
-                store_id,
-                name,
-                description,
-                price,
-                quantity,
-                category,
-                image
-            )
-        )
+        fields = []
+        values = []
 
-        connection.commit()
-        product_id = cursor.lastrowid
+        if full_name is not None:
+            fields.append("full_name = ?")
+            values.append(full_name)
+
+        if phone is not None:
+            fields.append("phone = ?")
+            values.append(phone)
+
+        if profile_image is not None:
+            fields.append("profile_image = ?")
+            values.append(profile_image)
+
+        if fields:
+            values.append(user_id)
+
+            connection.execute(
+                f"""
+                UPDATE users
+                SET {", ".join(fields)}
+                WHERE id = ?
+                """,
+                values
+            )
+
+            connection.commit()
+
         connection.close()
 
-        return product_id
-
     @staticmethod
-    def all():
+    def update_settings(
+        user_id,
+        language=None,
+        dark_mode=None,
+        notifications_enabled=None
+    ):
         connection = get_connection()
 
-        products = connection.execute(
-            """
-            SELECT *
-            FROM products
-            ORDER BY created_at DESC
-            """
-        ).fetchall()
+        fields = []
+        values = []
+
+        if language is not None:
+            fields.append("language = ?")
+            values.append(language)
+
+        if dark_mode is not None:
+            fields.append("dark_mode = ?")
+            values.append(int(bool(dark_mode)))
+
+        if notifications_enabled is not None:
+            fields.append("notifications_enabled = ?")
+            values.append(int(bool(notifications_enabled)))
+
+        if fields:
+            values.append(user_id)
+
+            connection.execute(
+                f"""
+                UPDATE users
+                SET {", ".join(fields)}
+                WHERE id = ?
+                """,
+                values
+            )
+
+            connection.commit()
 
         connection.close()
-        return products
 
     @staticmethod
-    def find_by_id(product_id):
+    def verify_phone(user_id):
         connection = get_connection()
 
-        product = connection.execute(
+        connection.execute(
             """
-            SELECT *
-            FROM products
+            UPDATE users
+            SET phone_verified = 1
             WHERE id = ?
             """,
-            (product_id,)
-        ).fetchone()
-
-        connection.close()
-        return product
-
-
-class Store:
-    @staticmethod
-    def create(user_id, name, description="", phone="", wilaya=""):
-        connection = get_connection()
-
-        cursor = connection.execute(
-            """
-            INSERT INTO stores
-            (
-                user_id,
-                name,
-                description,
-                phone,
-                wilaya
-            )
-            VALUES (?, ?, ?, ?, ?)
-            """,
-            (
-                user_id,
-                name,
-                description,
-                phone,
-                wilaya
-            )
+            (user_id,)
         )
 
         connection.commit()
-        store_id = cursor.lastrowid
         connection.close()
 
-        return store_id
+
+# =========================================================
+# STORE
+# =========================================================
+
+class Store:
+
+    @staticmethod
+    def create(
+        user_id,
+        name,
+        description="",
+        phone="",
+        wilaya="",
+        municipality=""
+    ):
+        connection = get_connection()
+
+        try:
+            cursor = connection.execute(
+                """
+                INSERT INTO stores
+                (
+                    user_id,
+                    name,
+                    description,
+                    phone,
+                    wilaya,
+                    municipality
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    user_id,
+                    name,
+                    description,
+                    phone,
+                    wilaya,
+                    municipality
+                )
+            )
+
+            connection.commit()
+            return cursor.lastrowid
+
+        except sqlite3.IntegrityError:
+            return None
+
+        finally:
+            connection.close()
 
     @staticmethod
     def find_by_user_id(user_id):
@@ -182,162 +247,51 @@ class Store:
         connection.close()
         return store
 
-
-class Favorite:
     @staticmethod
-    def add(user_id, product_id):
+    def find_by_id(store_id):
         connection = get_connection()
 
-        try:
-            connection.execute(
-                """
-                INSERT INTO favorites (user_id, product_id)
-                VALUES (?, ?)
-                """,
-                (user_id, product_id)
-            )
-
-            connection.commit()
-            return True
-
-        except sqlite3.IntegrityError:
-            return False
-
-        finally:
-            connection.close()
-
-    @staticmethod
-    def remove(user_id, product_id):
-        connection = get_connection()
-
-        connection.execute(
+        store = connection.execute(
             """
-            DELETE FROM favorites
-            WHERE user_id = ?
-            AND product_id = ?
+            SELECT *
+            FROM stores
+            WHERE id = ?
             """,
-            (user_id, product_id)
-        )
-
-        connection.commit()
-        connection.close()
-
-
-class Cart:
-    @staticmethod
-    def add(user_id, product_id, quantity=1):
-        connection = get_connection()
-
-        existing = connection.execute(
-            """
-            SELECT id, quantity
-            FROM cart_items
-            WHERE user_id = ?
-            AND product_id = ?
-            """,
-            (user_id, product_id)
+            (store_id,)
         ).fetchone()
 
-        if existing:
-            connection.execute(
-                """
-                UPDATE cart_items
-                SET quantity = quantity + ?
-                WHERE id = ?
-                """,
-                (quantity, existing["id"])
-            )
-        else:
-            connection.execute(
-                """
-                INSERT INTO cart_items
-                (user_id, product_id, quantity)
-                VALUES (?, ?, ?)
-                """,
-                (user_id, product_id, quantity)
-            )
-
-        connection.commit()
         connection.close()
+        return store
 
     @staticmethod
-    def get_items(user_id):
+    def update(
+        store_id,
+        name=None,
+        description=None,
+        phone=None,
+        wilaya=None,
+        municipality=None,
+        logo=None,
+        cover_image=None,
+        opening_hours=None
+    ):
         connection = get_connection()
 
-        items = connection.execute(
-            """
-            SELECT
-                cart_items.id,
-                cart_items.quantity,
-                products.name,
-                products.price,
-                products.image
-            FROM cart_items
-            JOIN products
-                ON products.id = cart_items.product_id
-            WHERE cart_items.user_id = ?
-            ORDER BY cart_items.created_at DESC
-            """,
-            (user_id,)
-        ).fetchall()
+        fields = []
+        values = []
 
-        connection.close()
-        return items
+        data = {
+            "name": name,
+            "description": description,
+            "phone": phone,
+            "wilaya": wilaya,
+            "municipality": municipality,
+            "logo": logo,
+            "cover_image": cover_image,
+            "opening_hours": opening_hours
+        }
 
-
-class Order:
-    @staticmethod
-    def create(user_id, total, delivery_address=""):
-        connection = get_connection()
-
-        cursor = connection.execute(
-            """
-            INSERT INTO orders
-            (
-                user_id,
-                total,
-                delivery_address
-            )
-            VALUES (?, ?, ?)
-            """,
-            (
-                user_id,
-                total,
-                delivery_address
-            )
-        )
-
-        connection.commit()
-        order_id = cursor.lastrowid
-        connection.close()
-
-        return order_id
-
-
-class Complaint:
-    @staticmethod
-    def create(user_id, subject, message):
-        connection = get_connection()
-
-        cursor = connection.execute(
-            """
-            INSERT INTO complaints
-            (
-                user_id,
-                subject,
-                message
-            )
-            VALUES (?, ?, ?)
-            """,
-            (
-                user_id,
-                subject,
-                message
-            )
-        )
-
-        connection.commit()
-        complaint_id = cursor.lastrowid
-        connection.close()
-
-        return complaint_id
+        for field, value in data.items():
+            if value is not None:
+                fields.append(f"{field} = ?")
+                values.append(value)
