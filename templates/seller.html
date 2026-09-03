@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجري | DZ MARKET 🇩🇿</title>
+
+    <title>متجري | DZ MARKET</title>
 
     <style>
         * {
@@ -14,161 +15,208 @@
 
         body {
             font-family: Arial, sans-serif;
-            background: #f7f1ec;
-            color: #35151f;
+            background: #f8f3ed;
+            color: #3b111d;
             min-height: 100vh;
-            padding-bottom: 85px;
         }
 
         .header {
-            background: linear-gradient(135deg, #541827, #7b263b);
+            background: linear-gradient(135deg, #5b0f24, #8c1d3b);
             color: white;
-            padding: 22px 18px;
-            border-radius: 0 0 25px 25px;
+            padding: 20px 17px 24px;
+            border-radius: 0 0 26px 26px;
         }
 
         .top {
             display: flex;
             align-items: center;
-            gap: 12px;
+            justify-content: space-between;
         }
 
         .back {
-            width: 40px;
-            height: 40px;
-            border: 0;
-            border-radius: 50%;
-            background: rgba(255,255,255,.15);
-            color: white;
-            font-size: 22px;
+            color: #f5d58a;
+            text-decoration: none;
+            font-size: 14px;
         }
 
-        .store-logo {
-            width: 58px;
-            height: 58px;
-            border-radius: 18px;
-            background: #d4af37;
-            color: #541827;
+        .store-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 15px;
+            background: rgba(255,255,255,.14);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 25px;
-            font-weight: bold;
+        }
+
+        h1 {
+            margin-top: 16px;
+            font-size: 26px;
+        }
+
+        .subtitle {
+            margin-top: 7px;
+            color: #f6dfad;
+            font-size: 13px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: auto;
+            padding: 18px 15px 100px;
+        }
+
+        .store-card {
+            background: white;
+            border-radius: 20px;
+            padding: 18px;
+            box-shadow: 0 8px 25px rgba(91,15,36,.08);
+            margin-bottom: 16px;
+        }
+
+        .store-head {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+
+        .logo {
+            width: 62px;
+            height: 62px;
+            border-radius: 18px;
+            background: #f5e5c7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
             overflow: hidden;
         }
 
-        .store-logo img {
+        .logo img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        .store-info {
-            flex: 1;
-        }
-
-        .store-info h1 {
+        .store-name {
             font-size: 20px;
-            margin-bottom: 5px;
+            font-weight: bold;
         }
 
-        .store-info p {
-            font-size: 12px;
-            opacity: .8;
+        .store-location {
+            margin-top: 5px;
+            color: #777;
+            font-size: 13px;
         }
 
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin-top: 18px;
-        }
-
-        .stat {
-            background: rgba(255,255,255,.1);
-            border-radius: 14px;
-            padding: 12px 5px;
-            text-align: center;
-        }
-
-        .stat strong {
-            display: block;
-            font-size: 18px;
-            color: #f0d778;
-        }
-
-        .stat span {
-            font-size: 10px;
-            opacity: .75;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: auto;
-            padding: 18px 14px;
+        .verified {
+            display: inline-block;
+            margin-top: 7px;
+            padding: 5px 9px;
+            border-radius: 20px;
+            background: #f7efd9;
+            color: #8a6418;
+            font-size: 11px;
+            font-weight: bold;
         }
 
         .actions {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
-            margin-bottom: 20px;
+            margin-top: 17px;
         }
 
         .action {
-            border: 0;
-            border-radius: 15px;
-            padding: 14px;
-            background: white;
-            color: #541827;
+            text-decoration: none;
+            text-align: center;
+            padding: 13px 8px;
+            border-radius: 13px;
+            font-size: 14px;
             font-weight: bold;
-            box-shadow: 0 5px 18px rgba(0,0,0,.06);
-            cursor: pointer;
         }
 
-        .action.primary {
-            background: #641d31;
+        .primary {
+            background: #6b1229;
             color: white;
         }
 
-        .section-title {
+        .secondary {
+            background: #f5eee7;
+            color: #6b1229;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 9px;
+            margin-bottom: 18px;
+        }
+
+        .stat {
+            background: white;
+            border-radius: 16px;
+            padding: 15px 7px;
+            text-align: center;
+            box-shadow: 0 5px 18px rgba(91,15,36,.06);
+        }
+
+        .stat-number {
+            font-size: 21px;
+            font-weight: bold;
+            color: #6b1229;
+        }
+
+        .stat-label {
+            margin-top: 5px;
+            color: #777;
+            font-size: 11px;
+        }
+
+        .section-head {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin: 18px 2px 12px;
+            margin: 20px 2px 12px;
         }
 
-        .section-title h2 {
-            font-size: 17px;
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
         }
 
-        .section-title span {
+        .add {
+            text-decoration: none;
+            background: #b99142;
+            color: white;
+            padding: 9px 12px;
+            border-radius: 11px;
             font-size: 12px;
-            color: #8b6871;
+            font-weight: bold;
+        }
+
+        .products {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
         }
 
         .product {
             background: white;
-            border-radius: 18px;
-            padding: 12px;
-            margin-bottom: 10px;
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            box-shadow: 0 5px 18px rgba(0,0,0,.05);
+            border-radius: 17px;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(91,15,36,.07);
         }
 
         .product-image {
-            width: 78px;
-            height: 78px;
-            border-radius: 14px;
-            background: #eee3dc;
-            overflow: hidden;
+            height: 135px;
+            background: #eee4d8;
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0;
-            font-size: 30px;
+            font-size: 38px;
+            overflow: hidden;
         }
 
         .product-image img {
@@ -177,44 +225,50 @@
             object-fit: cover;
         }
 
-        .product-info {
-            flex: 1;
-            min-width: 0;
+        .product-body {
+            padding: 12px;
         }
 
-        .product-info h3 {
+        .product-name {
+            font-weight: bold;
             font-size: 14px;
-            margin-bottom: 7px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .price {
-            color: #641d31;
+            color: #6b1229;
+            font-size: 15px;
             font-weight: bold;
-            font-size: 14px;
+            margin-top: 7px;
         }
 
         .stock {
-            font-size: 11px;
-            color: #7b6870;
             margin-top: 5px;
+            color: #777;
+            font-size: 11px;
         }
 
         .edit {
-            border: 1px solid #dbc6bd;
-            background: #fffaf7;
-            color: #641d31;
+            display: block;
+            margin-top: 10px;
+            padding: 9px;
+            text-align: center;
             border-radius: 10px;
-            padding: 8px 10px;
-            font-size: 11px;
-            cursor: pointer;
+            background: #f5eee7;
+            color: #6b1229;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: bold;
         }
 
         .empty {
-            text-align: center;
             background: white;
             border-radius: 18px;
-            padding: 40px 20px;
-            color: #856b72;
+            padding: 30px 18px;
+            text-align: center;
+            box-shadow: 0 6px 20px rgba(91,15,36,.06);
         }
 
         .empty-icon {
@@ -222,36 +276,105 @@
             margin-bottom: 10px;
         }
 
-        .nav {
+        .empty-title {
+            font-weight: bold;
+            font-size: 17px;
+        }
+
+        .empty-text {
+            color: #777;
+            font-size: 13px;
+            margin-top: 7px;
+        }
+
+        .empty-button {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 12px 18px;
+            border-radius: 12px;
+            background: #6b1229;
+            color: white;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .no-store {
+            background: white;
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(91,15,36,.08);
+        }
+
+        .no-store-icon {
+            font-size: 50px;
+        }
+
+        .no-store h2 {
+            margin-top: 12px;
+            font-size: 20px;
+        }
+
+        .no-store p {
+            color: #777;
+            margin-top: 8px;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .create-store {
+            display: inline-block;
+            margin-top: 17px;
+            padding: 13px 20px;
+            border-radius: 13px;
+            background: #6b1229;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            height: 68px;
-            background: rgba(255,255,255,.97);
-            border-top: 1px solid #eadbd3;
+            height: 67px;
+            background: rgba(255,255,255,.96);
+            border-top: 1px solid #eadfd4;
             display: flex;
             justify-content: space-around;
             align-items: center;
-            z-index: 20;
+            z-index: 100;
         }
 
-        .nav a {
+        .nav-item {
             text-decoration: none;
-            color: #7b6870;
+            color: #777;
             font-size: 10px;
             text-align: center;
         }
 
-        .nav a span {
+        .nav-item span {
             display: block;
-            font-size: 21px;
+            font-size: 20px;
             margin-bottom: 3px;
         }
 
-        .nav a.active {
-            color: #641d31;
+        .nav-item.active {
+            color: #6b1229;
             font-weight: bold;
+        }
+
+        @media (max-width: 420px) {
+            .products {
+                gap: 9px;
+            }
+
+            .product-image {
+                height: 120px;
+            }
         }
     </style>
 </head>
@@ -261,53 +384,20 @@
 <header class="header">
 
     <div class="top">
+        <a class="back" href="{{ url_for('home') }}">
+            ← الرئيسية
+        </a>
 
-        <button class="back" onclick="history.back()">‹</button>
-
-        <div class="store-logo">
-            {% if store and store.logo %}
-                <img src="{{ store.logo }}" alt="">
-            {% else %}
-                🏪
-            {% endif %}
+        <div class="store-icon">
+            🏪
         </div>
-
-        <div class="store-info">
-
-            {% if store %}
-                <h1>{{ store.name }}</h1>
-                <p>متجري في DZ MARKET 🇩🇿</p>
-            {% else %}
-                <h1>إنشاء متجرك</h1>
-                <p>ابدأ البيع على DZ MARKET</p>
-            {% endif %}
-
-        </div>
-
     </div>
 
-    {% if store %}
+    <h1>متجري</h1>
 
-    <div class="stats">
-
-        <div class="stat">
-            <strong>{{ products|length }}</strong>
-            <span>المنتجات</span>
-        </div>
-
-        <div class="stat">
-            <strong>{{ store.total_sales or 0 }}</strong>
-            <span>المبيعات</span>
-        </div>
-
-        <div class="stat">
-            <strong>{{ store.trust_score or 0 }}</strong>
-            <span>الثقة</span>
-        </div>
-
+    <div class="subtitle">
+        إدارة المتجر والمنتجات الخاصة بك
     </div>
-
-    {% endif %}
 
 </header>
 
@@ -316,153 +406,249 @@
 
     {% if store %}
 
-        <div class="actions">
+        <section class="store-card">
 
-            <button
-                class="action primary"
-                onclick="location.href='{{ url_for('auth.seller_product_new') }}'"
+            <div class="store-head">
+
+                <div class="logo">
+                    {% if store.logo %}
+                        <img src="{{ store.logo }}" alt="شعار المتجر">
+                    {% else %}
+                        🏪
+                    {% endif %}
+                </div>
+
+                <div>
+
+                    <div class="store-name">
+                        {{ store.name }}
+                    </div>
+
+                    <div class="store-location">
+                        📍
+                        {{ store.wilaya or 'الجزائر' }}
+                        {% if store.municipality %}
+                            - {{ store.municipality }}
+                        {% endif %}
+                    </div>
+
+                    <span class="verified">
+                        {% if store.verification_status == 'verified' %}
+                            ✓ متجر موثّق
+                        {% else %}
+                            ⏳ قيد التحقق
+                        {% endif %}
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="actions">
+
+                <a
+                    class="action primary"
+                    href="{{ url_for('auth.seller_product_new') }}"
+                >
+                    ➕ إضافة منتج
+                </a>
+
+                <a
+                    class="action secondary"
+                    href="{{ url_for('auth.seller_edit') }}"
+                >
+                    ⚙️ تعديل المتجر
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <section class="stats">
+
+            <div class="stat">
+                <div class="stat-number">
+                    {{ products|length }}
+                </div>
+                <div class="stat-label">
+                    المنتجات
+                </div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-number">
+                    {{ store.total_sales or 0 }}
+                </div>
+                <div class="stat-label">
+                    المبيعات
+                </div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-number">
+                    {{ store.trust_score or 0 }}
+                </div>
+                <div class="stat-label">
+                    الثقة
+                </div>
+            </div>
+
+        </section>
+
+
+        <div class="section-head">
+
+            <div class="section-title">
+                📦 منتجاتي
+            </div>
+
+            <a
+                class="add"
+                href="{{ url_for('auth.seller_product_new') }}"
             >
-                ＋ إضافة منتج
-            </button>
+                + منتج
+            </a>
 
-            <button
-                class="action"
-                onclick="location.href='{{ url_for('auth.seller_edit') }}'"
-            >
-                ⚙️ تعديل المتجر
-            </button>
-
-        </div>
-
-
-        <div class="section-title">
-            <h2>منتجاتي</h2>
-            <span>{{ products|length }} منتج</span>
         </div>
 
 
         {% if products %}
 
-            {% for product in products %}
+            <section class="products">
 
-                <div class="product">
+                {% for product in products %}
 
-                    <div class="product-image">
+                    <article class="product">
 
-                        {% if product.images %}
-                            <img
-                                src="{{ product.images.split(',')[0] }}"
-                                alt="{{ product.name }}"
+                        <div class="product-image">
+
+                            {% if product.images %}
+                                <img
+                                    src="{{ product.images.split(',')[0].strip() }}"
+                                    alt="{{ product.name }}"
+                                >
+                            {% else %}
+                                📦
+                            {% endif %}
+
+                        </div>
+
+                        <div class="product-body">
+
+                            <div class="product-name">
+                                {{ product.name }}
+                            </div>
+
+                            <div class="price">
+                                {{ product.price }} دج
+                            </div>
+
+                            <div class="stock">
+                                المخزون: {{ product.quantity }}
+                            </div>
+
+                            <a
+                                class="edit"
+                                href="{{ url_for(
+                                    'auth.seller_product_edit',
+                                    product_id=product.id
+                                ) }}"
                             >
-                        {% else %}
-                            📦
-                        {% endif %}
+                                ✏️ تعديل
+                            </a>
 
-                    </div>
-
-                    <div class="product-info">
-
-                        <h3>{{ product.name }}</h3>
-
-                        <div class="price">
-                            {{ "%.2f"|format(product.price) }} دج
                         </div>
 
-                        <div class="stock">
-                            المخزون:
-                            {{ product.quantity }}
-                        </div>
+                    </article>
 
-                    </div>
+                {% endfor %}
 
-                    <button
-                        class="edit"
-                        onclick="location.href='{{ url_for('auth.seller_product_edit', product_id=product.id) }}'"
-                    >
-                        تعديل
-                    </button>
-
-                </div>
-
-            {% endfor %}
+            </section>
 
         {% else %}
 
-            <div class="empty">
+            <section class="empty">
 
-                <div class="empty-icon">📦</div>
+                <div class="empty-icon">
+                    📦
+                </div>
 
-                <h3>ما عندك حتى منتج</h3>
+                <div class="empty-title">
+                    ما عندك حتى منتج حاليا
+                </div>
 
-                <p style="margin:8px 0 18px;">
-                    أضف أول منتج وابدأ البيع.
-                </p>
+                <div class="empty-text">
+                    أضف أول منتج وابدأ في عرض منتجاتك للعملاء.
+                </div>
 
-                <button
-                    class="action primary"
-                    onclick="location.href='{{ url_for('auth.seller_product_new') }}'"
+                <a
+                    class="empty-button"
+                    href="{{ url_for('auth.seller_product_new') }}"
                 >
-                    ＋ إضافة أول منتج
-                </button>
+                    ➕ إضافة أول منتج
+                </a>
 
-            </div>
+            </section>
 
         {% endif %}
 
+
     {% else %}
 
-        <div class="empty">
+        <section class="no-store">
 
-            <div class="empty-icon">🏪</div>
+            <div class="no-store-icon">
+                🏪
+            </div>
 
-            <h3>أنشئ متجرك الآن</h3>
+            <h2>
+                أنشئ متجرك الآن
+            </h2>
 
-            <p style="margin:8px 0 18px;">
-                افتح متجرك واعرض منتجاتك للمشترين في الجزائر.
+            <p>
+                أنشئ واجهة متجرك وأضف معلوماتك،
+                وبعدها تقدر تبدأ بإضافة منتجاتك وبيعها عبر DZ MARKET 🇩🇿
             </p>
 
-            <button
-                class="action primary"
-                onclick="location.href='{{ url_for('auth.seller_edit') }}'"
+            <a
+                class="create-store"
+                href="{{ url_for('auth.seller_edit') }}"
             >
                 إنشاء المتجر
-            </button>
+            </a>
 
-        </div>
+        </section>
 
     {% endif %}
 
 </main>
 
 
-<nav class="nav">
+<nav class="bottom-nav">
 
-    <a href="{{ url_for('home') }}">
+    <a class="nav-item" href="{{ url_for('home') }}">
         <span>🏠</span>
         الرئيسية
     </a>
 
-    <a href="#">
-        <span>◈</span>
-        الاستكشاف
-    </a>
-
-    <a href="{{ url_for('auth.cart') }}">
-        <span>🛒</span>
-        السلة
-    </a>
-
-    <a href="{{ url_for('auth.messages') }}">
+    <a class="nav-item" href="{{ url_for('auth.messages') }}">
         <span>💬</span>
         الرسائل
     </a>
 
-    <a href="{{ url_for('auth.cards') }}">
-        <span>🎟️</span>
-        بطاقاتي
+    <a class="nav-item active" href="{{ url_for('auth.seller') }}">
+        <span>🏪</span>
+        متجري
+    </a>
+
+    <a class="nav-item" href="{{ url_for('auth.account') }}">
+        <span>👤</span>
+        حسابي
     </a>
 
 </nav>
 
 </body>
-  </html>
+</html>
