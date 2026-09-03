@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>طلباتي | DZ MARKET</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --burgundy: #721b3a;
+            --dark: #421024;
+            --gold: #c69b4d;
+            --cream: #faf7f2;
+            --white: #ffffff;
+            --text: #29151e;
+            --muted: #81737a;
+            --border: #eee3e6;
+            --green: #28734a;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: var(--cream);
+            color: var(--text);
+            padding-bottom: 78px;
+        }
+
+        button {
+            font-family: inherit;
+        }
+
+        .app {
+            width: 100%;
+            max-width: 650px;
+            margin: auto;
+        }
+
+        /* HEADER */
+
+        header {
+            padding: 14px 15px 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .back {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 11px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .title h1 {
+            color: var(--burgundy);
+            font-size: 19px;
+        }
+
+        .title p {
+            margin-top: 3px;
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        /* FLASH */
+
+        .flash {
+            margin: 0 15px 10px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: #edf8f0;
+            border: 1px solid #d5ead9;
+            color: #24643a;
+            font-size: 11px;
+        }
+
+        /* FILTERS */
+
+        .filters {
+            display: flex;
+            gap: 7px;
+            padding: 0 15px 12px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .filters::-webkit-scrollbar {
+            display: none;
+        }
+
+        .filter {
+            flex-shrink: 0;
+            border: 1px solid var(--border);
+            background: white;
+            color: var(--muted);
+            border-radius: 20px;
+            padding: 7px 11px;
+            font-size: 10px;
+            cursor: pointer;
+        }
+
+        .filter.active {
+            background: var(--burgundy);
+            border-color: var(--burgundy);
+            color: white;
+        }
+
+        /* ORDER */
+
+        .orders {
+            padding: 0 15px;
+        }
+
+        .order {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            margin-bottom: 10px;
+            overflow: hidden;
+        }
+
+        .order-head {
+            padding: 11px 12px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .order-number {
+            font-size: 11px;
+            font-weight: 900;
+        }
+
+        .date {
+            color: var(--muted);
+            font-size: 9px;
+            margin-top: 3px;
+        }
+
+        .status {
+            padding: 5px 8px;
+            border-radius: 8px;
+            font-size: 9px;
+            font-weight: 900;
+            white-space: nowrap;
+        }
+
+        .status.pending {
+            background: #fff5df;
+            color: #966c1d;
+        }
+
+        .status.confirmed {
+            background: #eeeafa;
+            color: #5c4d91;
+        }
+
+        .status.shipped,
+        .status.in_transit {
+            background: #edf4ff;
+            color: #35649b;
+        }
+
+        .status.delivered {
+            background: #eaf7ef;
+            color: var(--green);
+        }
+
+        .status.cancelled,
+        .status.returned {
+            background: #fff0f1;
+            color: #a52d45;
+        }
+
+        /* TRACKING */
+
+        .tracking {
+            padding: 14px 12px 7px;
+        }
+
+        .tracking-title {
+            font-size: 11px;
+            font-weight: 900;
+            margin-bottom: 13px;
+        }
+
+        .steps {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .line {
+            position: absolute;
+            top: 9px;
+            right: 8%;
+            left: 8%;
+            height: 2px;
+            background: #eadfe3;
+            z-index: 0;
+        }
+
+        .line-fill {
+            position: absolute;
+            top: 9px;
+            right: 8%;
+            height: 2px;
+            background: var(--gold);
+            z-index: 1;
+            transition: .3s;
+        }
+
+        .step {
+            position: relative;
+            z-index: 2;
+            width: 20%;
+            text-align: center;
+        }
+
+        .dot {
+            width: 19px;
+            height: 19px;
+            margin: auto;
+            border-radius: 50%;
+            background: #eadfe3;
+            border: 3px solid white;
+            box-shadow: 0 0 0 1px #eadfe3;
+        }
+
+        .step.done .dot,
+        .step.current .dot {
+            background: var(--gold);
+            box-shadow: 0 0 0 1px var(--gold);
+        }
+
+        .step.current .dot {
+            background: var(--burgundy);
+            box-shadow: 0 0 0 1px var(--burgundy);
+        }
+
+        .step-label {
+            margin-top: 7px;
+            color: var(--muted);
+            font-size: 8px;
+            line-height: 1.4;
+        }
+
+        .step.done .step-label,
+        .step.current .step-label {
+            color: var(--text);
+            font-weight: 800;
+        }
+
+        /* INFO */
+
+        .order-info {
+            padding: 7px 12px 12px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 7px;
+        }
+
+        .info-box {
+            background: #fbf7f8;
+            border-radius: 9px;
+            padding: 8px;
+        }
+
+        .info-box small {
+            display: block;
+            color: var(--muted);
+            font-size: 8px;
+            margin-bottom: 3px;
+        }
+
+        .info-box strong {
+            font-size: 10px;
+        }
+
+        .order-message {
+            margin: 0 12px 12px;
+            padding: 9px 10px;
+            border-radius: 9px;
+            background: #faf4e8;
+            color: #775c28;
+            font-size: 9px;
+            line-height: 1.6;
+        }
+
+        /* EMPTY */
+
+        .empty {
+            text-align: center;
+            padding: 65px 20px;
+            color: var(--muted);
+        }
+
+        .empty-icon {
+            font-size: 44px;
+            margin-bottom: 10px;
+        }
+
+        .empty h2 {
+            color: var(--burgundy);
+            font-size: 16px;
+            margin-bottom: 6px;
+        }
+
+        .empty p {
+            font-size: 10px;
+            line-height: 1.7;
+        }
+
+        .shop-btn {
+            margin-top: 13px;
+            border: 0;
+            background: var(--burgundy);
+            color: white;
+            border-radius: 10px;
+            padding: 10px 15px;
+            font-size: 10px;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        /* BOTTOM NAV */
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            height: 64px;
+            background: rgba(255,255,255,.97);
+            border-top: 1px solid var(--border);
+            z-index: 30;
+            box-shadow: 0 -5px 20px rgba(40,15,25,.06);
+        }
+
+        .nav-inner {
+            width: 100%;
+            max-width: 650px;
+            height: 100%;
+            margin: auto;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+        }
+
+        .nav-item {
+            border: 0;
+            background: transparent;
+            color: #87777e;
+            font-size: 9px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            cursor: pointer;
+        }
+
+        .nav-item span {
+            font-size: 20px;
+        }
+
+        @media (min-width: 700px) {
+            .order {
+                margin-bottom: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <header>
+
+        <button
+            class="back"
+            onclick="window.location.href='{{ url_for('home') }}'"
+        >
+            ←
+        </button>
+
+        <div class="title">
+            <h1>طلباتي 📦</h1>
+            <p>تتبع طلباتك خطوة بخطوة</p>
+        </div>
+
+    </header>
+
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="flash">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endwith %}
+
+
+    <!-- FILTERS -->
+
+    <div class="filters">
+
+        <button class="filter active" onclick="filterOrders('all', this)">
+            الكل
+        </button>
+
+        <button class="filter" onclick="filterOrders('pending', this)">
+            قيد التحضير
+        </button>
+
+        <button class="filter" onclick="filterOrders('shipped', this)">
+            تم الشحن
+        </button>
+
+        <button class="filter" onclick="filterOrders('delivered', this)">
+            تم التسليم
+        </button>
+
+    </div>
+
+
+    <!-- ORDERS -->
+
+    <main class="orders">
+
+        {% if orders %}
+
+            {% for order in orders %}
+
+                {% set status = order['status'] or 'pending' %}
+
+                {% if status == 'pending' %}
+                    {% set progress = 0 %}
+                    {% set status_text = 'قيد التحضير' %}
+                {% elif status == 'confirmed' %}
+                    {% set progress = 1 %}
+                    {% set status_text = 'تم تأكيد الطلب' %}
+                {% elif status == 'shipped' %}
+                    {% set progress = 2 %}
+                    {% set status_text = 'تم الشحن' %}
+                {% elif status == 'in_transit' %}
+                    {% set progress = 3 %}
+                    {% set status_text = 'خرج للتوصيل' %}
+                {% elif status == 'delivered' %}
+                    {% set progress = 4 %}
+                    {% set status_text = 'تم التسليم' %}
+                {% elif status == 'cancelled' %}
+                    {% set progress = -1 %}
+                    {% set status_text = 'ملغى' %}
+                {% elif status == 'returned' %}
+                    {% set progress = -1 %}
+                    {% set status_text = 'مرتجع' %}
+                {% else %}
+                    {% set progress = 0 %}
+                    {% set status_text = status %}
+                {% endif %}
+
+
+                <article
+                    class="order"
+                    data-status="{{ status }}"
+                >
+
+                    <div class="order-head">
+
+                        <div>
+                            <div class="order-number">
+                                الطلب #{{ order['id'] }}
+                            </div>
+
+                            <div class="date">
+                                {{ order['created_at'] }}
+                            </div>
+                        </div>
+
+                        <span class="status {{ status }}">
+                            {{ status_text }}
+                        </span>
+
+                    </div>
+
+
+                    <div class="tracking">
+
+                        <div class="tracking-title">
+                            تتبع الطلب
+                        </div>
+
+                        {% if progress >= 0 %}
+
+                            <div class="steps">
+
+                                <div class="line"></div>
+
+                                <div
+                                    class="line-fill"
+                                    style="width: {{ progress * 21 }}%;"
+                                ></div>
+
+
+                                <div class="step {% if progress >= 0 %}done{% endif %} {% if progress == 0 %}current{% endif %}">
+                                    <div class="dot"></div>
+                                    <div class="step-label">
+                                        تم الطلب
+                                    </div>
+                                </div>
+
+
+                                <div class="step {% if progress >= 1 %}done{% endif %} {% if progress == 1 %}current{% endif %}">
+                                    <div class="dot"></div>
+                                    <div class="step-label">
+                                        تم التأكيد
+                                    </div>
+                                </div>
+
+
+                                <div class="step {% if progress >= 2 %}done{% endif %} {% if progress == 2 %}current{% endif %}">
+                                    <div class="dot"></div>
+                                    <div class="step-label">
+                                        تم الشحن
+                                    </div>
+                                </div>
+
+
+                                <div class="step {% if progress >= 3 %}done{% endif %} {% if progress == 3 %}current{% endif %}">
+                                    <div class="dot"></div>
+                                    <div class="step-label">
+                                        مركز التوزيع
+                                    </div>
+                                </div>
+
+
+                                <div class="step {% if progress >= 4 %}done{% endif %} {% if progress == 4 %}current{% endif %}">
+                                    <div class="dot"></div>
+                                    <div class="step-label">
+                                        تم التسليم
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        {% else %}
+
+                            <div class="order-message">
+                                ⚠️ هذا الطلب {{ status_text }}.
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="order-info">
+
+                        <div class="info-box">
+
+                            <small>
+                                💰 المبلغ الإجمالي
+                            </small>
+
+                            <strong>
+                                {{ order['total_amount'] }} دج
+                            </strong>
+
+                        </div>
+
+
+                        <div class="info-box">
+
+                            <small>
+                                📍 الولاية
+                            </small>
+
+                            <strong>
+                                {{ order['delivery_wilaya'] or 'غير محددة' }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    {% if status == 'pending' %}
+
+                        <div class="order-message">
+                            ⏳ الطلب قيد التحضير — لم يتم شحنه بعد.
+                        </div>
+
+                    {% elif status == 'shipped' %}
+
+                        <div class="order-message">
+                            🚚 تم شحن طلبك وهو في الطريق.
+                        </div>
+
+                    {% elif status == 'in_transit' %}
+
+                        <div class="order-message">
+                            📦 الطرد قريب منك — خرج للتوصيل.
+                        </div>
+
+                    {% elif status == 'delivered' %}
+
+                        <div class="order-message">
+                            ✅ تم تسليم الطلب بنجاح. شكراً لثقتك في DZ MARKET.
+                        </div>
+
+                    {% endif %}
+
+                </article>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="empty">
+
+                <div class="empty-icon">
+                    📦
+                </div>
+
+                <h2>
+                    ما عندك حتى طلب
+                </h2>
+
+                <p>
+                    كي تدير أول طلبية، راح تلقاها هنا
+                    وتقدر تتبعها خطوة بخطوة.
+                </p>
+
+                <button
+                    class="shop-btn"
+                    onclick="window.location.href='{{ url_for('home') }}'"
+                >
+                    🛍️ ابدأ التسوق
+                </button>
+
+            </div>
+
+        {% endif %}
+
+    </main>
+
+</div>
+
+
+<!-- BOTTOM NAV -->
+
+<nav class="bottom-nav">
+
+    <div class="nav-inner">
+
+        <button
+            class="nav-item"
+            onclick="window.location.href='{{ url_for('home') }}'"
+        >
+            <span>🏠</span>
+            الرئيسية
+        </button>
+
+        <button
+            class="nav-item"
+            onclick="alert('◈ الاستكشاف قريبًا')"
+        >
+            <span>◈</span>
+            الاستكشاف
+        </button>
+
+        <button
+            class="nav-item"
+            onclick="alert('🛒 السلة قريبًا')"
+        >
+            <span>🛒</span>
+            السلة
+        </button>
+
+        <button
+            class="nav-item"
+            onclick="window.location.href='{{ url_for('auth.messages') }}'"
+        >
+            <span>💬</span>
+            الرسائل
+        </button>
+
+        <button
+            class="nav-item"
+            onclick="alert('🎟️ بطاقات الخصم والمكافآت قريبًا')"
+        >
+            <span>🎟️</span>
+            بطاقاتي
+        </button>
+
+    </div>
+
+</nav>
+
+
+<script>
+
+function filterOrders(status, button) {
+
+    document
+        .querySelectorAll(".filter")
+        .forEach(item => {
+            item.classList.remove("active");
+        });
+
+    button.classList.add("active");
+
+    document
+        .querySelectorAll(".order")
+        .forEach(order => {
+
+            const orderStatus =
+                order.dataset.status;
+
+            if (
+                status === "all" ||
+                orderStatus === status ||
+                (
+                    status === "shipped" &&
+                    orderStatus === "in_transit"
+                )
+            ) {
+                order.style.display = "";
+            } else {
+                order.style.display = "none";
+            }
+
+        });
+}
+
+</script>
+
+</body>
+  </html>
