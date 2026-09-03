@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>حسابي | DZ MARKET</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --burgundy: #721b3a;
+            --dark: #421024;
+            --gold: #c69b4d;
+            --cream: #faf7f2;
+            --white: #ffffff;
+            --text: #29151e;
+            --muted: #81737a;
+            --border: #eee3e6;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: var(--cream);
+            color: var(--text);
+            padding-bottom: 78px;
+        }
+
+        button,
+        input {
+            font-family: inherit;
+        }
+
+        .app {
+            width: 100%;
+            max-width: 650px;
+            margin: auto;
+        }
+
+        /* HEADER */
+
+        header {
+            padding: 14px 15px 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .back {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border);
+            background: white;
+            border-radius: 11px;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .header-title h1 {
+            color: var(--burgundy);
+            font-size: 19px;
+        }
+
+        .header-title p {
+            color: var(--muted);
+            font-size: 10px;
+            margin-top: 3px;
+        }
+
+        /* PROFILE */
+
+        .profile-card {
+            margin: 5px 15px 13px;
+            padding: 17px;
+            border-radius: 17px;
+            background: linear-gradient(
+                135deg,
+                var(--burgundy),
+                var(--dark)
+            );
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            box-shadow: 0 8px 25px rgba(66, 16, 36, .15);
+        }
+
+        .avatar {
+            width: 62px;
+            height: 62px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,.15);
+            border: 2px solid rgba(255,255,255,.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .profile-info {
+            min-width: 0;
+        }
+
+        .profile-info h2 {
+            font-size: 16px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .profile-info p {
+            margin-top: 5px;
+            font-size: 10px;
+            opacity: .8;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .role {
+            display: inline-block;
+            margin-top: 7px;
+            padding: 4px 8px;
+            border-radius: 20px;
+            background: rgba(198,155,77,.2);
+            color: #f4d997;
+            font-size: 9px;
+            font-weight: 800;
+        }
+
+        /* SECTIONS */
+
+        .section {
+            margin: 0 15px 12px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .item {
+            width: 100%;
+            min-height: 48px;
+            padding: 10px 12px;
+            border: 0;
+            border-bottom: 1px solid var(--border);
+            background: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-align: right;
+            cursor: pointer;
+        }
+
+        .item:last-child {
+            border-bottom: 0;
+        }
+
+        .item:hover {
+            background: #fcf7f8;
+        }
+
+        .icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 9px;
+            background: #f8edf1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            flex-shrink: 0;
+        }
+
+        .item-content {
+            flex: 1;
+        }
+
+        .item-content strong {
+            display: block;
+            font-size: 11px;
+        }
+
+        .item-content small {
+            display: block;
+            margin-top: 3px;
+            color: var(--muted);
+            font-size: 9px;
+        }
+
+        .arrow {
+            color: var(--gold);
+            font-size: 18px;
+        }
+
+        /* FLASH */
+
+        .flash {
+            margin: 0 15px 10px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            background: #edf8f0;
+            border: 1px solid #d5ead9;
+            color: #24643a;
+            font-size: 11px;
+        }
+
+        /* LOGOUT */
+
+        .logout {
+            width: 100%;
+            height: 45px;
+            border: 0;
+            border-radius: 12px;
+            background: #fff0f1;
+            color: #a52d45;
+            font-size: 12px;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        /* BOTTOM NAV */
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            height: 64px;
+            background: rgba(255,255,255,.97);
+            border-top: 1px solid var(--border);
+            z-index: 30;
+            box-shadow: 0 -5px 20px rgba(40,15,25,.06);
+        }
+
+        .nav-inner {
+            width: 100%;
+            max-width: 650px;
+            height: 100%;
+            margin: auto;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+        }
+
+        .nav-item {
+            border: 0;
+            background: transparent;
+            color: #87777e;
+            font-size: 9px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            cursor: pointer;
+        }
+
+        .nav-item span {
+            font-size: 20px;
+        }
+
+        .nav-item.active {
+            color: var(--burgundy);
+            font-weight: 900;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="app">
+
+    <header>
+
+        <button
+            class="back"
+            onclick="window.location.href='{{ url_for('home') }}'"
+        >
+            ←
+        </button>
+
+        <div class="header-title">
+            <h1>حسابي 👤</h1>
+            <p>إدارة حسابك في DZ MARKET</p>
+        </div>
+
+    </header>
+
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="flash">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endwith %}
+
+
+    <!-- PROFILE -->
+
+    <section class="profile-card">
+
+        <div class="avatar">
+            {% if user and user['avatar'] %}
+                <img
+                    src="{{ user['avatar'] }}"
+                    alt="الصورة الشخصية"
+                    style="width:100%;height:100%;object-fit:cover;border-radius:50%;"
+                >
+            {% else %}
+                👤
+            {% endif %}
+        </div>
+
+        <div class="profile-info">
+
+            <h2>
+                {{ user['full_name'] if user else 'مستخدم DZ MARKET' }}
+            </h2>
+
+            <p>
+                {{ user['email'] if user else '' }}
+            </p>
+
+            <span class="role">
+                {% if user and user['role'] == 'seller' %}
+                    🏪 بائع
+                {% else %}
+                    🛍️ مشتري
+                {% endif %}
+            </span>
+
+        </div>
+
+    </section>
+
+
+    <!-- SHOPPING -->
+
+    <section class="section">
+
+        <div class="section-title">
+            التسوق
+        </div>
+
+        <div class="card">
+
+            <button
+                class="item"
+                onclick="showMessage('📦 صفحة طلباتي قادمة')"
+            >
+
+                <div class="icon">
+                    📦
+                </div>
+
+                <div class="item-content">
+                    <strong>طلباتي</strong>
+                    <small>
+                        تابع حالة طلباتك من التحضير حتى التسليم
+                    </small>
+                </div>
+
+                <div class="arrow">‹</div>
+
+            </button>
+
+
+            <button
+                class="item"
+                onclick="showMessage('❤️ صفحة المفضلة قادمة')"
+            >
+
+                <div class="icon">
+                    ❤️
+                </div>
+
+                <div class="item-content">
+                    <strong>المفضلة</strong>
+                    <small>
+                        المنتجات والمتاجر التي أعجبتك
+                    </small>
+                </div>
+
+                <div class="arrow">‹</div>
+
+            </button>
+
+
+            <button
+                class="item"
+                onclick="showMessage('🎟️ بطاقات الخصم والمكافآت قادمة')"
+            >
+
+                <div class="icon">
+                    🎟️
+                </div>
+
+                <div class="item-content">
+                    <strong>بطاقاتي ومكافآتي</strong>
+                    <small>
+                        الخصومات، الهدايا، ومكافآت الطلبات
+                    </small>
+                </div>
+
+                <div class="arrow">‹</div>
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- SETTINGS -->
+
+    <section class="section">
+
+        <div class="section-title">
+            الحساب والإعدادات
+        </div>
+
+        <div class="card">
+
+            <button
+                class="item"
+                onclick="showMessage('⚙️ إعدادات الحساب قادمة')"
+            >
+
+                <div class="icon">
+                    ⚙️
+                </div>
+
+                <div class="item-content">
+                    <strong>الإعدادات</strong>
+                    <small>
+                        المعلومات الشخصية والتفضيلات
+                    </small>
+                </div>
+
+                <div class="arrow">‹</div>
+
+            </button>
+
+
+            <button
+                class="item"
+                onclick="window.location.href='{{ url_for('auth.chat_settings') }}'"
+            >
+
+                <div class="icon">
+                    🎙️
+                </div>
+
+                <div class="item-content">
+                    <strong>إعدادات الدردشة</strong>
+                    <small>
+                        الصوت، اللغة، وأسلوب الدردشة
+                    </small>
+                </div>
+
+                <div class="arrow">‹</div>
+
+            </button>
+
+
+            <button
+                class="item"
+                onclick="toggleDarkMode()"
+            >
+
+                <div class="icon">
+                    🌙
+                </div>
+
+                <div class="item-content">
+                    <strong>الوضع الليلي</strong>
+                    <small>
+                        تغيير مظهر التطبيق
+                    </small>
+                </div>
+
+                <div class="arrow">‹</div>
+
+            </button>
+
+
+            <button
+                class="item"
+                onclick="showMessage('🌐 إعدادات اللغة قادمة')"
+            >
+
+                <div class="icon">
+                    🌐
+                </div>
+
+                <div class="item-content">
+                    <strong>اللغة</strong>
+                    <small>
+                        العربية، الدارجة، Français، English
+                    </small>
+                </div>
+
+                <div class="arrow">‹</div>
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- HELP -->
+
+    <section class="section">
+
+        <div class="section-title">
+            المساعدة والأمان
+        </div>
+
+        <div class="card">
+
+            <button
+                class="item"
+                onclick="showMessage('🆘 مركز المساعدة قادم')"
+            >
+
+                <div class="icon">
+                    🆘
+                </div>
+
+                <div class="item-content">
+                    <strong>طلب المساعدة</strong>
+                    <small>
+                        تحتاج مساعدة؟ نحن هنا
+                    </small>
+                </div>
+
+                <div class="arrow">‹</div>
+
+            </button>
+
+
+            <button
+                class="item"
+                onclick="showMessage('📢 مركز الشكاوى قادم')"
+            >
+
+                <div class="icon">
+                    📢
+                </div>
+
+                <div class="item-content">
+                    <strong>تقديم شكوى</strong>
+                    <small>
+                        أرسل مشكلة أو بلّغ عن طلب
+                    </small>
+                </div>
+
+                <div class="arrow">‹</div>
+
+            </button>
+
+
+            <button
+                class="item"
+                onclick="showMessage('🔒 إعدادات الخصوصية والأمان قادمة')"
+            >
+
+                <div class="icon">
+                    🔒
+                </div>
+
+                <div class="item-content">
+                    <strong>الخصوصية والأمان</strong>
+                    <small>
+                        حماية معلوماتك وحسابك
+                    </small>
+                </div>
+
+                <div class="arrow">‹</div>
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- LOGOUT -->
+
+    {% if user %}
+
+    <section class="section">
+
+        <a href="{{ url_for('auth.logout') }}">
+            <button class="logout">
+                🚪 تسجيل الخروج
+            </button>
+        </a>
+
+    </section>
+
+    {% endif %}
+
+</div>
+
+
+<!-- BOTTOM NAV -->
+
+<nav class="bottom-nav">
+
+    <div class="nav-inner">
+
+        <button
+            class="nav-item"
+            onclick="window.location.href='{{ url_for('home') }}'"
+        >
+            <span>🏠</span>
+            الرئيسية
+        </button>
+
+        <button
+            class="nav-item"
+            onclick="showMessage('◈ الاستكشاف قريبًا')"
+        >
+            <span>◈</span>
+            الاستكشاف
+        </button>
+
+        <button
+            class="nav-item"
+            onclick="showMessage('🛒 السلة قريبًا')"
+        >
+            <span>🛒</span>
+            السلة
+        </button>
+
+        <button
+            class="nav-item"
+            onclick="window.location.href='{{ url_for('auth.messages') }}'"
+        >
+            <span>💬</span>
+            الرسائل
+        </button>
+
+        <button
+            class="nav-item"
+            onclick="showMessage('🎟️ بطاقات الخصم والمكافآت قريبًا')"
+        >
+            <span>🎟️</span>
+            بطاقاتي
+        </button>
+
+    </div>
+
+</nav>
+
+
+<script>
+
+function showMessage(message) {
+    alert(message);
+}
+
+
+function toggleDarkMode() {
+
+    const dark =
+        document.body.classList.toggle("dark");
+
+    localStorage.setItem(
+        "dzmarket_dark",
+        dark ? "1" : "0"
+    );
+
+    if (dark) {
+
+        document.body.style.background = "#160c11";
+        document.body.style.color = "#fff";
+
+    } else {
+
+        document.body.style.background = "";
+        document.body.style.color = "";
+    }
+}
+
+
+if (
+    localStorage.getItem("dzmarket_dark") === "1"
+) {
+    toggleDarkMode();
+}
+
+</script>
+
+</body>
+</html>
