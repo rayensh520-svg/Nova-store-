@@ -1,10 +1,14 @@
 import sqlite3
 from pathlib import Path
 from werkzeug.security import generate_password_hash
+import secrets
+import string
 
 
 # =========================================================
-# DATABASE CONFIG
+# DZ MARKET 🇩🇿
+# DATABASE CONFIGURATION
+# Production-ready SQLite foundation
 # =========================================================
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -12,8 +16,15 @@ DATABASE_PATH = BASE_DIR / "dzmarket.db"
 
 
 # =========================================================
-# CONNECTION
+# HELPERS
 # =========================================================
+
+def generate_code(prefix="DZ"):
+    alphabet = string.ascii_uppercase + string.digits
+    return prefix + "-" + "".join(
+        secrets.choice(alphabet) for _ in range(8)
+    )
+
 
 def get_connection():
     connection = sqlite3.connect(
@@ -23,11 +34,37 @@ def get_connection():
 
     connection.row_factory = sqlite3.Row
 
-    connection.execute(
-        "PRAGMA foreign_keys = ON"
-    )
+    connection.execute("PRAGMA foreign_keys = ON")
+    connection.execute("PRAGMA journal_mode = WAL")
+    connection.execute("PRAGMA synchronous = NORMAL")
+    connection.execute("PRAGMA busy_timeout = 30000")
 
     return connection
+
+
+def add_column_if_missing(
+    connection,
+    table_name,
+    column_name,
+    column_definition
+):
+    columns = connection.execute(
+        f"PRAGMA table_info({table_name})"
+    ).fetchall()
+
+    existing_columns = {
+        column["name"]
+        for column in columns
+    }
+
+    if column_name not in existing_columns:
+        connection.execute(
+            f"""
+            ALTER TABLE {table_name}
+            ADD COLUMN {column_name}
+            {column_definition}
+            """
+        )
 
 
 # =========================================================
@@ -881,7 +918,7 @@ def init_database():
 
 
         # =================================================
-        # INDEXES
+        # PERFORMANCE INDEXES
         # =================================================
 
         indexes = [
@@ -900,6 +937,12 @@ def init_database():
 
             """
             CREATE INDEX IF NOT EXISTS
+            idx_products_active
+            ON products(active)
+            """,
+
+            """
+            CREATE INDEX IF NOT EXISTS
             idx_orders_user
             ON orders(user_id)
             """,
@@ -912,14 +955,50 @@ def init_database():
 
             """
             CREATE INDEX IF NOT EXISTS
+            idx_order_items_order
+            ON order_items(order_id)
+            """,
+
+            """
+            CREATE INDEX IF NOT EXISTS
+            idx_order_items_store
+            ON order_items(store_id)
+            """,
+
+            """
+            CREATE INDEX IF NOT EXISTS
+            idx_messages_sender
+            ON messages(sender_id)
+            """,
+
+            """
+            CREATE INDEX IF NOT EXISTS
             idx_messages_receiver
             ON messages(receiver_id)
             """,
 
             """
             CREATE INDEX IF NOT EXISTS
+            idx_messages_conversation
+            ON messages(sender_id, receiver_id)
+            """,
+
+            """
+            CREATE INDEX IF NOT EXISTS
             idx_notifications_user
             ON notifications(user_id)
+            """,
+
+            """
+            CREATE INDEX IF NOT EXISTS
+            idx_complaints_status
+            ON complaints(status)
+            """,
+
+            """
+            CREATE INDEX IF NOT EXISTS
+            idx_reports_status
+            ON reports(status)
             """,
 
             """
@@ -938,6 +1017,18 @@ def init_database():
             CREATE INDEX IF NOT EXISTS
             idx_product_views_product
             ON product_views(product_id)
+            """,
+
+            """
+            CREATE INDEX IF NOT EXISTS
+            idx_store_followers_store
+            ON store_followers(store_id)
+            """,
+
+            """
+            CREATE INDEX IF NOT EXISTS
+            idx_cart_user
+            ON cart_items(user_id)
             """
         ]
 
@@ -947,7 +1038,114 @@ def init_database():
 
 
         # =================================================
-        # DEFAULT ADMIN
+        # SAFE MIGRATIONS
+        # =================================================
+
+        migrations = [
+
+            # USERS
+            ("users", "referral_code", "TEXT UNIQUE"),
+            ("users", "referred_by", "INTEGER"),
+            ("users", "avatar", "TEXT DEFAULT ''"),
+            ("users", "bio", "TEXT DEFAULT ''"),
+            ("users", "wilaya", "TEXT DEFAULT ''"),
+            ("users", "municipality", "TEXT DEFAULT ''"),
+            ("users", "phone_verified", "INTEGER DEFAULT 0"),
+            ("users", "language", "TEXT DEFAULT 'ar'"),
+            (
+                "users",
+                "seller_verification_status",
+                "TEXT DEFAULT 'pending'"
+            ),
+            (
+                "users",
+                "seller_activity_type",
+                "TEXT DEFAULT ''"
+            ),
+            (
+                "users",
+                "seller_verification_note",
+                "TEXT DEFAULT ''"
+            ),
+
+            # STORES
+            ("stores", "logo", "TEXT DEFAULT ''"),
+            ("stores", "cover_image", "TEXT DEFAULT ''"),
+            (
+                "stores",
+                "verification_status",
+                "TEXT DEFAULT 'pending'"
+            ),
+            ("stores", "trust_score", "REAL DEFAULT 0"),
+            ("stores", "total_sales", "INTEGER DEFAULT 0"),
+
+            # PRODUCTS
+            ("products", "discount", "REAL DEFAULT 0"),
+            ("products", "quantity", "INTEGER DEFAULT 0"),
+            ("products", "category", "TEXT DEFAULT ''"),
+            ("products", "brand", "TEXT DEFAULT ''"),
+            ("products", "images", "TEXT DEFAULT ''"),
+            ("products", "video", "TEXT DEFAULT ''"),
+            (
+                "products",
+                "delivery_wilayas",
+                "TEXT DEFAULT ''"
+            ),
+            ("products", "rating", "REAL DEFAULT 0"),
+            (
+                "products",
+                "reviews_count",
+                "INTEGER DEFAULT 0"
+            ),
+            ("products", "views", "INTEGER DEFAULT 0"),
+            ("products", "active", "INTEGER DEFAULT 1"),
+
+            # ORDERS
+            ("orders", "total_amount", "REAL DEFAULT 0"),
+            (
+                "orders",
+                "delivery_address",
+                "TEXT DEFAULT ''"
+            ),
+            (
+                "orders",
+                "delivery_wilaya",
+                "TEXT DEFAULT ''"
+            ),
+            (
+                "orders",
+                "delivery_phone",
+                "TEXT DEFAULT ''"
+            ),
+            (
+                "orders",
+                "status",
+                "TEXT DEFAULT 'pending'"
+            ),
+            (
+                "orders",
+                "updated_at",
+                "TIMESTAMP"
+            )
+        ]
+
+
+        for table, column, definition in migrations:
+
+            try:
+                add_column_if_missing(
+                    connection,
+                    table,
+                    column,
+                    definition
+                )
+
+            except sqlite3.OperationalError:
+                pass
+
+
+        # =================================================
+        # ADMIN ACCOUNT
         # =================================================
 
         admin = connection.execute(
@@ -986,143 +1184,11 @@ def init_database():
 
 
         # =================================================
-        # MIGRATIONS
+        # COMMIT
         # =================================================
 
-        migrations = [
-
-            (
-                "users",
-                "referral_code",
-                "TEXT UNIQUE"
-            ),
-
-            (
-                "users",
-                "referred_by",
-                "INTEGER"
-            ),
-
-            (
-                "users",
-                "avatar",
-                "TEXT DEFAULT ''"
-            ),
-
-            (
-                "users",
-                "bio",
-                "TEXT DEFAULT ''"
-            ),
-
-            (
-                "users",
-                "wilaya",
-                "TEXT DEFAULT ''"
-            ),
-
-            (
-                "users",
-                "municipality",
-                "TEXT DEFAULT ''"
-            ),
-
-            (
-                "users",
-                "phone_verified",
-                "INTEGER DEFAULT 0"
-            ),
-
-            (
-                "users",
-                "language",
-                "TEXT DEFAULT 'ar'"
-            ),
-
-            (
-                "orders",
-                "total_amount",
-                "REAL DEFAULT 0"
-            ),
-
-            (
-                "orders",
-                "delivery_address",
-                "TEXT DEFAULT ''"
-            ),
-
-            (
-                "orders",
-                "delivery_wilaya",
-                "TEXT DEFAULT ''"
-            ),
-
-            (
-                "orders",
-                "delivery_phone",
-                "TEXT DEFAULT ''"
-            ),
-
-            (
-                "orders",
-                "updated_at",
-                "TIMESTAMP"
-            ),
-
-            (
-                "products",
-                "views",
-                "INTEGER DEFAULT 0"
-            ),
-
-            (
-                "products",
-                "video",
-                "TEXT DEFAULT ''"
-            ),
-
-            (
-                "stores",
-                "trust_score",
-                "REAL DEFAULT 0"
-            ),
-
-            (
-                "stores",
-                "total_sales",
-                "INTEGER DEFAULT 0"
-            )
-        ]
-
-
-        for table, column, definition in migrations:
-
-            columns = connection.execute(
-                f"PRAGMA table_info({table})"
-            ).fetchall()
-
-            existing = {
-                row["name"]
-                for row in columns
-            }
-
-            if column not in existing:
-
-                try:
-
-                    connection.execute(
-                        f"""
-                        ALTER TABLE {table}
-                        ADD COLUMN {column}
-                        {definition}
-                        """
-                    )
-
-                except sqlite3.OperationalError:
-                    pass
-
-
         connection.commit()
+
 
     except Exception:
 
@@ -1130,15 +1196,20 @@ def init_database():
 
         raise
 
+
     finally:
 
         connection.close()
 
 
 # =========================================================
-# AUTO INIT
+# AUTO INITIALIZATION
 # =========================================================
 
 if __name__ == "__main__":
+
     init_database()
-    print("DZ MARKET database initialized successfully.")
+
+    print(
+        "DZ MARKET 🇩🇿 database initialized successfully."
+        )
