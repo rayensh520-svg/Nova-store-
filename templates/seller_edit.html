@@ -3,9 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>إدارة المتجر | DZ MARKET</title>
+
+    <title>إعدادات المتجر | DZ MARKET</title>
 
     <style>
+        :root {
+            --burgundy: #800020;
+            --burgundy-dark: #560014;
+            --burgundy-light: #a52a4a;
+            --gold: #c9a227;
+            --gold-light: #e4c766;
+
+            --bg: #faf6f2;
+            --surface: #ffffff;
+            --soft: #fcf8f9;
+            --text: #281d21;
+            --muted: #786c71;
+            --border: #eadfe3;
+
+            --success: #2e8b57;
+            --danger: #b3261e;
+
+            --shadow: 0 18px 55px rgba(70,0,25,.10);
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -13,111 +34,475 @@
         }
 
         body {
-            font-family: Arial, sans-serif;
-            background: #f8f3ed;
-            color: #3b111d;
             min-height: 100vh;
+            font-family:
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Tahoma,
+                Arial,
+                sans-serif;
+
+            color: var(--text);
+
+            background:
+                radial-gradient(
+                    circle at 5% 5%,
+                    rgba(201,162,39,.12),
+                    transparent 28%
+                ),
+                radial-gradient(
+                    circle at 95% 15%,
+                    rgba(128,0,32,.10),
+                    transparent 30%
+                ),
+                linear-gradient(
+                    145deg,
+                    #fffaf6,
+                    #f7eef1 55%,
+                    #fffaf6
+                );
         }
 
-        .header {
-            background: linear-gradient(135deg, #5b0f24, #801b35);
-            color: white;
-            padding: 22px 18px;
-            border-radius: 0 0 25px 25px;
+        body.dark-mode {
+            --bg: #12090c;
+            --surface: #1d1014;
+            --soft: #25151a;
+            --text: #f7eef1;
+            --muted: #bcaeb3;
+            --border: #3a252b;
+
+            background:
+                radial-gradient(
+                    circle at 5% 5%,
+                    rgba(201,162,39,.09),
+                    transparent 28%
+                ),
+                radial-gradient(
+                    circle at 95% 15%,
+                    rgba(165,42,74,.17),
+                    transparent 30%
+                ),
+                linear-gradient(
+                    145deg,
+                    #120509,
+                    #300913 55%,
+                    #100508
+                );
+        }
+
+        .page {
+            width: min(100%, 900px);
+            margin: auto;
+            padding: 18px;
+        }
+
+        /* ================= HEADER ================= */
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
         }
 
         .back {
-            color: #f5d58a;
+            width: 44px;
+            height: 44px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 14px;
+
+            background: var(--surface);
+            border: 1px solid var(--border);
+
+            color: var(--burgundy);
             text-decoration: none;
+
+            font-size: 22px;
+
+            box-shadow:
+                0 7px 20px rgba(70,0,25,.07);
+        }
+
+        .dark-mode .back {
+            color: var(--gold-light);
+        }
+
+        .title {
+            flex: 1;
+        }
+
+        .title h1 {
+            font-size: 22px;
+            color: var(--burgundy-dark);
+            margin-bottom: 4px;
+        }
+
+        .dark-mode .title h1 {
+            color: var(--gold-light);
+        }
+
+        .title p {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .logo {
+            width: 44px;
+            height: 44px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 14px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    var(--gold-light),
+                    var(--gold)
+                );
+
+            color: var(--burgundy-dark);
             font-size: 14px;
+            font-weight: 900;
         }
 
-        h1 {
-            margin-top: 15px;
-            font-size: 25px;
-        }
-
-        .container {
-            padding: 20px 16px 35px;
-            max-width: 650px;
-            margin: auto;
-        }
+        /* ================= CARD ================= */
 
         .card {
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 8px 25px rgba(91, 15, 36, 0.08);
+            background: rgba(255,255,255,.93);
+            border: 1px solid rgba(255,255,255,.75);
+            border-radius: 25px;
+
+            padding: 23px;
+
+            box-shadow: var(--shadow);
+        }
+
+        .dark-mode .card {
+            background: rgba(29,16,20,.95);
+            border-color: rgba(201,162,39,.14);
+        }
+
+        /* ================= SECTION ================= */
+
+        .section {
+            margin-bottom: 27px;
+        }
+
+        .section:last-of-type {
+            margin-bottom: 0;
         }
 
         .section-title {
-            font-size: 17px;
-            font-weight: bold;
-            margin-bottom: 18px;
-            color: #5b0f24;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-number {
+            width: 28px;
+            height: 28px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 9px;
+
+            background: rgba(128,0,32,.08);
+            color: var(--burgundy);
+
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .dark-mode .section-number {
+            background: rgba(201,162,39,.10);
+            color: var(--gold-light);
+        }
+
+        .section-title h2 {
+            font-size: 15px;
+        }
+
+        /* ================= FORM ================= */
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0,1fr));
+            gap: 14px;
+        }
+
+        .full {
+            grid-column: 1 / -1;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
         }
 
         label {
-            display: block;
-            margin: 14px 0 7px;
-            font-weight: bold;
-            font-size: 14px;
+            font-size: 12px;
+            font-weight: 800;
         }
 
         input,
-        textarea {
+        textarea,
+        select {
             width: 100%;
-            border: 1px solid #e2d4c5;
+
+            border: 1px solid var(--border);
             border-radius: 13px;
-            padding: 13px;
-            font-size: 15px;
+
+            background: var(--surface);
+            color: var(--text);
+
+            font-family: inherit;
+            font-size: 13px;
+
             outline: none;
-            background: #fffdfa;
+
+            transition: .2s ease;
         }
 
-        input:focus,
-        textarea:focus {
-            border-color: #b99142;
+        input,
+        select {
+            height: 48px;
+            padding: 0 13px;
         }
 
         textarea {
-            min-height: 120px;
+            min-height: 115px;
+            padding: 12px 13px;
             resize: vertical;
-        }
-
-        .row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        button {
-            width: 100%;
-            margin-top: 22px;
-            border: none;
-            border-radius: 14px;
-            padding: 15px;
-            background: linear-gradient(135deg, #6b1229, #921f3d);
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        button:active {
-            transform: scale(.98);
-        }
-
-        .hint {
-            margin-top: 15px;
-            color: #777;
-            font-size: 12px;
             line-height: 1.7;
         }
 
-        @media (max-width: 500px) {
-            .row {
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: var(--gold);
+            box-shadow:
+                0 0 0 4px rgba(201,162,39,.11);
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #a79a9f;
+        }
+
+        .hint {
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.5;
+        }
+
+        /* ================= STATUS ================= */
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            padding: 13px 14px;
+
+            border-radius: 15px;
+
+            background: var(--soft);
+            border: 1px solid var(--border);
+
+            margin-bottom: 18px;
+        }
+
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--gold);
+            flex-shrink: 0;
+        }
+
+        .status strong {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 2px;
+        }
+
+        .status span {
+            font-size: 10px;
+            color: var(--muted);
+        }
+
+        /* ================= MEDIA ================= */
+
+        .media-preview {
+            display: grid;
+            grid-template-columns: repeat(2,1fr);
+            gap: 10px;
+        }
+
+        .media-box {
+            min-height: 105px;
+
+            border-radius: 15px;
+            border: 1px dashed var(--border);
+
+            background: var(--soft);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            text-align: center;
+
+            padding: 12px;
+        }
+
+        .media-box span {
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.6;
+        }
+
+        /* ================= ACTIONS ================= */
+
+        .actions {
+            display: flex;
+            gap: 10px;
+
+            margin-top: 26px;
+            padding-top: 18px;
+
+            border-top: 1px solid var(--border);
+        }
+
+        .btn {
+            min-height: 51px;
+
+            border-radius: 14px;
+            padding: 0 20px;
+
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 800;
+
+            cursor: pointer;
+            text-decoration: none;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            transition: .2s ease;
+        }
+
+        .btn-primary {
+            flex: 1;
+
+            border: 0;
+
+            color: white;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--burgundy),
+                    var(--burgundy-light)
+                );
+
+            box-shadow:
+                0 10px 24px rgba(128,0,32,.22);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--burgundy);
+        }
+
+        .dark-mode .btn-secondary {
+            color: var(--gold-light);
+        }
+
+        /* ================= NOTE ================= */
+
+        .info {
+            display: flex;
+            gap: 10px;
+
+            margin-top: 18px;
+            padding: 13px;
+
+            border-radius: 15px;
+
+            background: rgba(201,162,39,.07);
+            border: 1px solid rgba(201,162,39,.20);
+        }
+
+        .info-icon {
+            font-size: 17px;
+        }
+
+        .info p {
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.7;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 650px) {
+
+            .page {
+                padding: 14px;
+            }
+
+            .card {
+                padding: 18px 15px;
+                border-radius: 21px;
+            }
+
+            .grid {
                 grid-template-columns: 1fr;
+            }
+
+            .full {
+                grid-column: auto;
+            }
+
+            .media-preview {
+                grid-template-columns: 1fr;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .title h1 {
+                font-size: 19px;
             }
         }
     </style>
@@ -125,86 +510,334 @@
 
 <body>
 
-<header class="header">
-    <a class="back" href="{{ url_for('auth.seller') }}">← العودة إلى المتجر</a>
-    <h1>🏪 إعدادات المتجر</h1>
-</header>
+<div class="page">
 
-<main class="container">
+    <!-- HEADER -->
+    <header class="topbar">
 
-    <div class="card">
+        <a
+            href="{{ url_for('auth.seller_dashboard') }}"
+            class="back"
+            aria-label="رجوع"
+        >
+            ‹
+        </a>
 
-        <div class="section-title">
-            معلومات متجرك
+        <div class="title">
+            <h1>إعدادات المتجر</h1>
+            <p>حدّث معلومات متجرك وخليه أكثر احترافية</p>
         </div>
 
-        <form method="POST">
+        <div class="logo">DZ</div>
 
-            <label for="name">اسم المتجر *</label>
-            <input
-                type="text"
-                id="name"
-                name="name"
-                value="{{ store.name if store else '' }}"
-                placeholder="مثال: Boutique DZ"
-                required
-            >
+    </header>
 
-            <label for="description">وصف المتجر</label>
-            <textarea
-                id="description"
-                name="description"
-                placeholder="اكتب نبذة قصيرة عن متجرك ومنتجاتك..."
-            >{{ store.description if store else '' }}</textarea>
 
-            <label for="phone">رقم الهاتف</label>
-            <input
-                type="tel"
-                id="phone"
-                name="phone"
-                value="{{ store.phone if store else user.phone or '' }}"
-                placeholder="05XXXXXXXX"
-            >
+    <main class="card">
 
-            <div class="row">
+        <!-- STATUS -->
+        <div class="status">
 
-                <div>
-                    <label for="wilaya">الولاية</label>
-                    <input
-                        type="text"
-                        id="wilaya"
-                        name="wilaya"
-                        value="{{ store.wilaya if store else user.wilaya or '' }}"
-                        placeholder="مثال: وهران"
-                    >
+            <span class="status-dot"></span>
+
+            <div>
+                <strong>
+                    حالة المتجر:
+                    {% if store and store.verification_status == 'approved' %}
+                        موثّق
+                    {% elif store and store.verification_status == 'rejected' %}
+                        مرفوض
+                    {% else %}
+                        قيد المراجعة
+                    {% endif %}
+                </strong>
+
+                <span>
+                    يمكنك تعديل معلومات المتجر في أي وقت.
+                </span>
+            </div>
+
+        </div>
+
+
+        <form
+            method="POST"
+            enctype="multipart/form-data"
+        >
+
+            <!-- ================= BASIC INFO ================= -->
+
+            <section class="section">
+
+                <div class="section-title">
+                    <span class="section-number">1</span>
+                    <h2>معلومات المتجر</h2>
                 </div>
 
-                <div>
-                    <label for="municipality">البلدية</label>
-                    <input
-                        type="text"
-                        id="municipality"
-                        name="municipality"
-                        value="{{ store.municipality if store else user.municipality or '' }}"
-                        placeholder="اسم البلدية"
-                    >
+                <div class="grid">
+
+                    <div class="field full">
+
+                        <label for="name">
+                            اسم المتجر *
+                        </label>
+
+                        <input
+                            id="name"
+                            name="name"
+                            type="text"
+                            maxlength="120"
+                            required
+                            value="{{ store.name if store else '' }}"
+                            placeholder="مثال: Boutique DZ"
+                        >
+
+                    </div>
+
+
+                    <div class="field full">
+
+                        <label for="description">
+                            وصف المتجر
+                        </label>
+
+                        <textarea
+                            id="description"
+                            name="description"
+                            maxlength="2000"
+                            placeholder="عرّف الزبائن بمتجرك والمنتجات التي تقدمها..."
+                        >{{ store.description if store else '' }}</textarea>
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label for="phone">
+                            رقم الهاتف
+                        </label>
+
+                        <input
+                            id="phone"
+                            name="phone"
+                            type="tel"
+                            value="{{ store.phone if store else '' }}"
+                            placeholder="05 XX XX XX XX"
+                        >
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label for="wilaya">
+                            الولاية
+                        </label>
+
+                        <input
+                            id="wilaya"
+                            name="wilaya"
+                            type="text"
+                            value="{{ store.wilaya if store else '' }}"
+                            placeholder="وهران"
+                        >
+
+                    </div>
+
+
+                    <div class="field full">
+
+                        <label for="municipality">
+                            البلدية
+                        </label>
+
+                        <input
+                            id="municipality"
+                            name="municipality"
+                            type="text"
+                            value="{{ store.municipality if store else '' }}"
+                            placeholder="اكتب البلدية"
+                        >
+
+                    </div>
+
                 </div>
+
+            </section>
+
+
+            <!-- ================= BRAND MEDIA ================= -->
+
+            <section class="section">
+
+                <div class="section-title">
+                    <span class="section-number">2</span>
+                    <h2>هوية المتجر</h2>
+                </div>
+
+                <div class="grid">
+
+                    <div class="field">
+
+                        <label for="logo">
+                            رابط شعار المتجر
+                        </label>
+
+                        <input
+                            id="logo"
+                            name="logo"
+                            type="url"
+                            value="{{ store.logo if store else '' }}"
+                            placeholder="https://..."
+                        >
+
+                        <span class="hint">
+                            رابط صورة الشعار.
+                        </span>
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label for="cover_image">
+                            رابط صورة الغلاف
+                        </label>
+
+                        <input
+                            id="cover_image"
+                            name="cover_image"
+                            type="url"
+                            value="{{ store.cover_image if store else '' }}"
+                            placeholder="https://..."
+                        >
+
+                        <span class="hint">
+                            صورة تظهر أعلى صفحة المتجر.
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="media-preview">
+
+                    <div class="media-box">
+                        <span>
+                            🏷️<br>
+                            شعار المتجر
+                        </span>
+                    </div>
+
+                    <div class="media-box">
+                        <span>
+                            🖼️<br>
+                            غلاف المتجر
+                        </span>
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= DELIVERY ================= -->
+
+            <section class="section">
+
+                <div class="section-title">
+                    <span class="section-number">3</span>
+                    <h2>معلومات التوصيل</h2>
+                </div>
+
+                <div class="field">
+
+                    <label for="delivery_info">
+                        معلومات إضافية
+                    </label>
+
+                    <textarea
+                        id="delivery_info"
+                        name="delivery_info"
+                        maxlength="1500"
+                        placeholder="مثال: التوصيل متوفر لجميع الولايات، مدة التوصيل 2 إلى 5 أيام..."
+                    >{{ store.delivery_info if store and store.delivery_info is defined else '' }}</textarea>
+
+                    <span class="hint">
+                        هذه المعلومة تساعد الزبون على فهم طريقة التوصيل.
+                    </span>
+
+                </div>
+
+            </section>
+
+
+            <!-- ================= CONTACT ================= -->
+
+            <section class="section">
+
+                <div class="section-title">
+                    <span class="section-number">4</span>
+                    <h2>التواصل مع الزبائن</h2>
+                </div>
+
+                <div class="info">
+
+                    <span class="info-icon">💬</span>
+
+                    <p>
+                        الزبائن يقدروا يتواصلوا معك من خلال نظام
+                        المحادثات داخل DZ MARKET. لاحقاً نضيف هنا
+                        ساعات العمل، الرد الآلي، وردود الذكاء الاصطناعي
+                        المقترحة.
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- ACTIONS -->
+
+            <div class="actions">
+
+                <a
+                    href="{{ url_for('auth.seller_dashboard') }}"
+                    class="btn btn-secondary"
+                >
+                    إلغاء
+                </a>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                >
+                    حفظ التعديلات
+                </button>
 
             </div>
 
-            <button type="submit">
-                💾 حفظ معلومات المتجر
-            </button>
-
         </form>
 
-        <p class="hint">
-            تأكد من صحة معلومات المتجر لأنها ستظهر للعملاء عند زيارة متجرك.
-        </p>
+    </main>
 
-    </div>
+</div>
 
-</main>
+
+<script>
+    /* توحيد الوضع الليلي مع باقي المشروع */
+    (function () {
+
+        const savedTheme =
+            localStorage.getItem("dzmarket-theme");
+
+        if (savedTheme === "dark") {
+            document.body.classList.add("dark-mode");
+        }
+
+    })();
+</script>
 
 </body>
 </html>
