@@ -408,3 +408,49 @@ def logout():
     )
 
     return redirect(url_for("home"))
+    # ============================================================
+# DZ MARKET - MESSAGES
+# ============================================================
+
+@auth.route("/messages")
+def messages():
+    user_id = session.get("user_id")
+
+    if not user_id:
+        flash("سجّل الدخول أولًا للوصول إلى الرسائل.", "error")
+        return redirect(url_for("auth.login"))
+
+    conversations = Message.conversation(user_id)
+
+    return render_template(
+        "messages.html",
+        conversations=conversations
+    )
+
+
+@auth.route("/messages/send", methods=["POST"])
+def send_message():
+    user_id = session.get("user_id")
+
+    if not user_id:
+        flash("يجب تسجيل الدخول أولًا.", "error")
+        return redirect(url_for("auth.login"))
+
+    receiver_id = request.form.get("receiver_id", type=int)
+    text = request.form.get("message", "").strip()
+
+    if not receiver_id or not text:
+        flash("الرسالة غير مكتملة.", "error")
+        return redirect(url_for("auth.messages"))
+
+    if receiver_id == user_id:
+        flash("لا يمكنك إرسال رسالة لنفسك.", "error")
+        return redirect(url_for("auth.messages"))
+
+    Message.create(
+        sender_id=user_id,
+        receiver_id=receiver_id,
+        body=text
+    )
+
+    return redirect(url_for("auth.messages"))
