@@ -8,14 +8,13 @@
 
     <style>
         :root {
-            --burgundy: #65152d;
-            --burgundy-dark: #3f0b1c;
+            --burgundy: #64152d;
+            --burgundy-dark: #3d0b1c;
             --gold: #c9a227;
-            --cream: #fffaf3;
-            --text: #241820;
-            --muted: #756b70;
-            --border: #eadfe2;
-            --white: #ffffff;
+            --cream: #fffaf4;
+            --text: #261b20;
+            --muted: #8b7c82;
+            --border: #eadfe3;
         }
 
         * {
@@ -25,139 +24,167 @@
         body {
             margin: 0;
             min-height: 100vh;
-            font-family: Arial, sans-serif;
-            background:
-                radial-gradient(circle at top right, rgba(201,162,39,.13), transparent 35%),
-                linear-gradient(135deg, #fffaf3, #f7eef1);
-            color: var(--text);
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 18px;
+            font-family: Arial, sans-serif;
+            background:
+                radial-gradient(
+                    circle at top right,
+                    rgba(201,162,39,.16),
+                    transparent 35%
+                ),
+                linear-gradient(
+                    135deg,
+                    #fffaf4,
+                    #f7edf1
+                );
+            color: var(--text);
         }
 
-        .login-wrapper {
+        .login-box {
             width: 100%;
-            max-width: 420px;
+            max-width: 410px;
+            background: rgba(255,255,255,.94);
+            border: 1px solid rgba(255,255,255,.8);
+            border-radius: 25px;
+            padding: 28px 23px;
+            box-shadow:
+                0 20px 55px rgba(61,11,28,.12);
         }
 
         .brand {
             text-align: center;
-            margin-bottom: 18px;
+            margin-bottom: 25px;
         }
 
-        .brand-logo {
-            width: 58px;
-            height: 58px;
+        .logo {
+            width: 62px;
+            height: 62px;
             margin: auto;
-            border-radius: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, var(--burgundy), var(--burgundy-dark));
+            border-radius: 19px;
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--burgundy),
+                    var(--burgundy-dark)
+                );
             color: var(--gold);
-            font-size: 25px;
+            font-size: 28px;
             font-weight: 900;
-            box-shadow: 0 12px 30px rgba(101,21,45,.20);
+            box-shadow:
+                0 10px 25px rgba(100,21,45,.22);
         }
 
         .brand h1 {
-            margin: 10px 0 3px;
-            font-size: 24px;
+            margin: 13px 0 4px;
             color: var(--burgundy);
+            font-size: 24px;
         }
 
         .brand p {
             margin: 0;
             color: var(--muted);
-            font-size: 13px;
+            font-size: 12px;
         }
 
-        .login-card {
-            background: rgba(255,255,255,.90);
-            border: 1px solid rgba(255,255,255,.8);
-            border-radius: 25px;
-            padding: 27px 23px;
-            box-shadow: 0 20px 55px rgba(63,11,28,.12);
-            backdrop-filter: blur(12px);
+        .welcome {
+            margin-bottom: 19px;
         }
 
-        .login-card h2 {
-            margin: 0 0 7px;
-            font-size: 21px;
+        .welcome h2 {
+            margin: 0 0 5px;
+            font-size: 18px;
         }
 
-        .subtitle {
+        .welcome p {
+            margin: 0;
             color: var(--muted);
-            font-size: 13px;
-            margin-bottom: 22px;
+            font-size: 11px;
         }
 
         .flash {
             padding: 11px 13px;
             border-radius: 12px;
-            margin-bottom: 14px;
-            font-size: 13px;
-            background: #fff0f0;
-            color: #8d1c2e;
-            border: 1px solid #f1cdd3;
+            margin-bottom: 12px;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .flash.error {
+            background: #fff0f2;
+            color: #a51d3c;
+            border: 1px solid #f3ccd5;
+        }
+
+        .flash.success {
+            background: #effaf3;
+            color: #267348;
+            border: 1px solid #ccebd7;
         }
 
         .field {
-            margin-bottom: 16px;
+            margin-bottom: 15px;
         }
 
         .field label {
             display: block;
             margin-bottom: 7px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
         }
 
-        .input-wrap {
+        .input-box {
             position: relative;
         }
 
-        .input-wrap input {
+        .input-box input {
             width: 100%;
             height: 49px;
+            padding: 0 43px 0 13px;
             border: 1px solid var(--border);
             border-radius: 14px;
-            padding: 0 14px;
-            font-size: 14px;
             outline: none;
             background: #fff;
+            font-size: 13px;
             transition: .2s;
         }
 
-        .input-wrap input:focus {
+        .input-box input:focus {
             border-color: var(--gold);
             box-shadow: 0 0 0 3px rgba(201,162,39,.10);
         }
 
-        .password-input {
-            padding-left: 48px !important;
+        .icon {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 17px;
         }
 
-        .toggle-password {
+        .password-toggle {
             position: absolute;
-            left: 10px;
+            left: 12px;
             top: 50%;
             transform: translateY(-50%);
             border: 0;
             background: transparent;
             cursor: pointer;
-            font-size: 18px;
-            color: #766c70;
+            font-size: 17px;
+            padding: 4px;
         }
 
         .options {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 10px;
-            margin: 4px 0 20px;
-            font-size: 12px;
+            margin: 4px 1px 18px;
+            font-size: 11px;
         }
 
         .remember {
@@ -179,15 +206,21 @@
 
         .login-btn {
             width: 100%;
-            height: 50px;
+            height: 51px;
             border: 0;
             border-radius: 15px;
-            background: linear-gradient(135deg, var(--burgundy), var(--burgundy-dark));
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--burgundy),
+                    var(--burgundy-dark)
+                );
             color: white;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 800;
             cursor: pointer;
-            box-shadow: 0 12px 25px rgba(101,21,45,.22);
+            box-shadow:
+                0 12px 25px rgba(100,21,45,.20);
             transition: .2s;
         }
 
@@ -199,22 +232,22 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            margin: 22px 0;
-            color: #a49a9e;
-            font-size: 11px;
+            margin: 20px 0;
+            color: #aaa;
+            font-size: 10px;
         }
 
         .divider::before,
         .divider::after {
             content: "";
-            flex: 1;
             height: 1px;
+            flex: 1;
             background: var(--border);
         }
 
         .register {
             text-align: center;
-            font-size: 13px;
+            font-size: 12px;
             color: var(--muted);
         }
 
@@ -224,37 +257,22 @@
             text-decoration: none;
         }
 
-        .back-home {
+        .home {
             display: block;
             text-align: center;
             margin-top: 17px;
             color: var(--muted);
+            font-size: 11px;
             text-decoration: none;
-            font-size: 12px;
         }
 
-        .back-home:hover {
+        .home:hover {
             color: var(--burgundy);
         }
 
-        @media (max-width: 480px) {
-            body {
-                padding: 14px;
-            }
-
-            .login-card {
+        @media (max-width: 400px) {
+            .login-box {
                 padding: 23px 18px;
-                border-radius: 21px;
-            }
-
-            .brand-logo {
-                width: 52px;
-                height: 52px;
-                border-radius: 16px;
-            }
-
-            .brand h1 {
-                font-size: 22px;
             }
         }
     </style>
@@ -262,127 +280,211 @@
 
 <body>
 
-<div class="login-wrapper">
+<div class="login-box">
 
     <div class="brand">
-        <div class="brand-logo">DZ</div>
-        <h1>DZ MARKET</h1>
-        <p>السوق الجزائري بين يديك 🇩🇿</p>
+
+        <div class="logo">
+            DZ
+        </div>
+
+        <h1>DZ MARKET 🇩🇿</h1>
+
+        <p>سوقك الجزائري في مكان واحد</p>
+
     </div>
 
-    <div class="login-card">
+
+    <div class="welcome">
 
         <h2>مرحبًا بعودتك 👋</h2>
-        <div class="subtitle">
-            سجّل الدخول للوصول إلى حسابك ومتجرك وطلباتك.
-        </div>
 
-        {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-                {% for category, message in messages %}
-                    <div class="flash">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
-        <form method="POST" action="{{ url_for('auth.login') }}">
-
-            <div class="field">
-                <label for="email">البريد الإلكتروني</label>
-
-                <div class="input-wrap">
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        placeholder="example@email.com"
-                        autocomplete="email"
-                        required
-                    >
-                </div>
-            </div>
-
-            <div class="field">
-                <label for="password">كلمة المرور</label>
-
-                <div class="input-wrap">
-                    <input
-                        type="password"
-                        id="password"
-                        name="password"
-                        class="password-input"
-                        placeholder="أدخل كلمة المرور"
-                        autocomplete="current-password"
-                        required
-                    >
-
-                    <button
-                        type="button"
-                        class="toggle-password"
-                        onclick="togglePassword()"
-                        aria-label="إظهار كلمة المرور"
-                    >
-                        👁️
-                    </button>
-                </div>
-            </div>
-
-            <div class="options">
-
-                <label class="remember">
-                    <input type="checkbox" name="remember">
-                    تذكرني
-                </label>
-
-                <a href="#" class="forgot" onclick="comingSoon(event)">
-                    نسيت كلمة المرور؟
-                </a>
-
-            </div>
-
-            <button type="submit" class="login-btn">
-                تسجيل الدخول
-            </button>
-
-        </form>
-
-        <div class="divider">
-            أو
-        </div>
-
-        <div class="register">
-            ليس لديك حساب؟
-            <a href="{{ url_for('auth.register') }}">
-                إنشاء حساب جديد
-            </a>
-        </div>
+        <p>
+            سجّل الدخول للوصول إلى حسابك ومتاجرك وطلباتك.
+        </p>
 
     </div>
 
-    <a href="{{ url_for('home') }}" class="back-home">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+
+        {% if messages %}
+
+            {% for category, message in messages %}
+
+                <div class="flash {{ category }}">
+                    {{ message }}
+                </div>
+
+            {% endfor %}
+
+        {% endif %}
+
+    {% endwith %}
+
+
+    <form
+        method="POST"
+        action="{{ url_for('auth.login') }}"
+    >
+
+        <div class="field">
+
+            <label for="email">
+                البريد الإلكتروني
+            </label>
+
+            <div class="input-box">
+
+                <span class="icon">✉️</span>
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="example@email.com"
+                    autocomplete="email"
+                    required
+                >
+
+            </div>
+
+        </div>
+
+
+        <div class="field">
+
+            <label for="password">
+                كلمة المرور
+            </label>
+
+            <div class="input-box">
+
+                <span class="icon">🔐</span>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="أدخل كلمة المرور"
+                    autocomplete="current-password"
+                    required
+                >
+
+                <button
+                    type="button"
+                    class="password-toggle"
+                    id="togglePassword"
+                    aria-label="إظهار كلمة المرور"
+                >
+                    👁️
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="options">
+
+            <label class="remember">
+
+                <input
+                    type="checkbox"
+                    name="remember"
+                >
+
+                تذكرني
+
+            </label>
+
+            <a
+                href="#"
+                class="forgot"
+                onclick="forgotPassword(); return false;"
+            >
+                نسيت كلمة المرور؟
+            </a>
+
+        </div>
+
+
+        <button
+            type="submit"
+            class="login-btn"
+        >
+            تسجيل الدخول
+        </button>
+
+    </form>
+
+
+    <div class="divider">
+        أو
+    </div>
+
+
+    <div class="register">
+
+        ما عندكش حساب؟
+
+        <a href="{{ url_for('auth.register') }}">
+            إنشاء حساب
+        </a>
+
+    </div>
+
+
+    <a
+        href="{{ url_for('home') }}"
+        class="home"
+    >
         ← العودة إلى الرئيسية
     </a>
 
 </div>
 
+
 <script>
-    function togglePassword() {
-        const password = document.getElementById("password");
 
-        if (password.type === "password") {
-            password.type = "text";
-        } else {
-            password.type = "password";
+    const passwordInput =
+        document.getElementById("password");
+
+    const togglePassword =
+        document.getElementById("togglePassword");
+
+
+    togglePassword.addEventListener(
+        "click",
+        function () {
+
+            if (passwordInput.type === "password") {
+
+                passwordInput.type = "text";
+
+                togglePassword.textContent = "🙈";
+
+            } else {
+
+                passwordInput.type = "password";
+
+                togglePassword.textContent = "👁️";
+
+            }
+
         }
+    );
+
+
+    function forgotPassword() {
+
+        alert(
+            "ميزة استرجاع كلمة المرور سنربطها لاحقًا برقم الهاتف وOTP 🔐📱"
+        );
+
     }
 
-    function comingSoon(event) {
-        event.preventDefault();
-        alert("ميزة استعادة كلمة المرور سنربطها لاحقًا مع التحقق بالهاتف 📱");
-    }
 </script>
 
 </body>
-                  </html>
+</html>
