@@ -20,22 +20,14 @@ from models import (
     ChatSettings
 )
 
-
 auth = Blueprint("auth", __name__)
 
 
-# =========================================================
+# ============================================================
 # HELPERS
-# =========================================================
+# ============================================================
 
 def validate_password(password):
-    """
-    Password security:
-    - Minimum 8 characters
-    - At least one letter
-    - At least one number
-    """
-
     if len(password) < 8:
         return False
 
@@ -45,32 +37,23 @@ def validate_password(password):
     return has_letter and has_number
 
 
-def login_user(user):
-    """
-    Store only necessary identity information
-    inside the session.
-    """
-
+def login_user(user, remember=False):
     session.clear()
 
     session["user_id"] = user["id"]
     session["role"] = user["role"]
 
-    session.permanent = True
+    session.permanent = bool(remember)
 
 
-# =========================================================
+# ============================================================
 # REGISTER
-# =========================================================
+# ============================================================
 
 @auth.route("/register", methods=["GET", "POST"])
 def register():
 
     if request.method == "POST":
-
-        # -------------------------------------------------
-        # Basic account information
-        # -------------------------------------------------
 
         full_name = request.form.get(
             "full_name",
@@ -106,10 +89,6 @@ def register():
             "accept_terms"
         )
 
-        # -------------------------------------------------
-        # Seller information
-        # -------------------------------------------------
-
         store_name = request.form.get(
             "store_name",
             ""
@@ -135,98 +114,120 @@ def register():
             ""
         ).strip()
 
-        # -------------------------------------------------
-        # Validate role
-        # -------------------------------------------------
+
+        # ----------------------------------------------------
+        # ROLE
+        # ----------------------------------------------------
 
         if role not in ("buyer", "seller"):
             role = "buyer"
 
-        # -------------------------------------------------
-        # Required fields
-        # -------------------------------------------------
+
+        # ----------------------------------------------------
+        # BASIC VALIDATION
+        # ----------------------------------------------------
 
         if not full_name:
             flash(
                 "يرجى إدخال الاسم الكامل.",
                 "error"
             )
-            return redirect(url_for("auth.register"))
+            return redirect(
+                url_for("auth.register")
+            )
+
 
         if not email:
             flash(
                 "يرجى إدخال البريد الإلكتروني.",
                 "error"
             )
-            return redirect(url_for("auth.register"))
+            return redirect(
+                url_for("auth.register")
+            )
+
 
         if not phone:
             flash(
                 "يرجى إدخال رقم الهاتف.",
                 "error"
             )
-            return redirect(url_for("auth.register"))
+            return redirect(
+                url_for("auth.register")
+            )
+
 
         if not password:
             flash(
                 "يرجى إدخال كلمة المرور.",
                 "error"
             )
-            return redirect(url_for("auth.register"))
+            return redirect(
+                url_for("auth.register")
+            )
+
 
         if not confirm_password:
             flash(
                 "يرجى تأكيد كلمة المرور.",
                 "error"
             )
-            return redirect(url_for("auth.register"))
+            return redirect(
+                url_for("auth.register")
+            )
 
-        # -------------------------------------------------
-        # Terms
-        # -------------------------------------------------
 
         if not accepted_terms:
             flash(
                 "يجب الموافقة على شروط الاستخدام.",
                 "error"
             )
-            return redirect(url_for("auth.register"))
+            return redirect(
+                url_for("auth.register")
+            )
 
-        # -------------------------------------------------
-        # Password validation
-        # -------------------------------------------------
 
         if not validate_password(password):
             flash(
-                "كلمة المرور يجب أن تحتوي على 8 أحرف على الأقل، "
-                "وحرف واحد ورقم واحد.",
+                "كلمة المرور يجب أن تحتوي على 8 أحرف على الأقل، وحرف واحد ورقم واحد.",
                 "error"
             )
-            return redirect(url_for("auth.register"))
+            return redirect(
+                url_for("auth.register")
+            )
+
 
         if password != confirm_password:
             flash(
                 "كلمتا المرور غير متطابقتين.",
                 "error"
             )
-            return redirect(url_for("auth.register"))
+            return redirect(
+                url_for("auth.register")
+            )
 
-        # -------------------------------------------------
-        # Check existing account
-        # -------------------------------------------------
 
-        existing_user = User.find_by_email(email)
+        # ----------------------------------------------------
+        # CHECK EMAIL
+        # ----------------------------------------------------
+
+        existing_user = User.find_by_email(
+            email
+        )
 
         if existing_user:
             flash(
                 "هذا البريد الإلكتروني مسجل من قبل.",
                 "error"
             )
-            return redirect(url_for("auth.register"))
+            return redirect(
+                url_for("auth.register")
+            )
 
-        # -------------------------------------------------
-        # Seller validation
-        # -------------------------------------------------
+
+        # ----------------------------------------------------
+        # SELLER VALIDATION
+        # ----------------------------------------------------
 
         if role == "seller":
 
@@ -235,33 +236,39 @@ def register():
                     "يرجى إدخال اسم المتجر.",
                     "error"
                 )
-                return redirect(url_for("auth.register"))
+                return redirect(
+                    url_for("auth.register")
+                )
+
 
             if not activity_type:
                 flash(
                     "يرجى تحديد نوع النشاط.",
                     "error"
                 )
-                return redirect(url_for("auth.register"))
+                return redirect(
+                    url_for("auth.register")
+                )
+
 
             if not wilaya:
                 flash(
                     "يرجى تحديد الولاية.",
                     "error"
                 )
-                return redirect(url_for("auth.register"))
+                return redirect(
+                    url_for("auth.register")
+                )
 
-        # -------------------------------------------------
-        # Hash password
-        # -------------------------------------------------
+
+        # ----------------------------------------------------
+        # CREATE USER
+        # ----------------------------------------------------
 
         password_hash = generate_password_hash(
             password
         )
 
-        # -------------------------------------------------
-        # Create user
-        # -------------------------------------------------
 
         user_id = User.create(
             full_name=full_name,
@@ -271,17 +278,20 @@ def register():
             phone=phone
         )
 
+
         if user_id is None:
             flash(
-                "تعذر إنشاء الحساب. "
-                "ربما البريد الإلكتروني مستخدم.",
+                "تعذر إنشاء الحساب. ربما البريد الإلكتروني مستخدم.",
                 "error"
             )
-            return redirect(url_for("auth.register"))
+            return redirect(
+                url_for("auth.register")
+            )
 
-        # -------------------------------------------------
-        # Seller setup
-        # -------------------------------------------------
+
+        # ----------------------------------------------------
+        # CREATE SELLER STORE
+        # ----------------------------------------------------
 
         if role == "seller":
 
@@ -293,6 +303,7 @@ def register():
                 wilaya=wilaya,
                 municipality=municipality
             )
+
 
             from database import get_connection
 
@@ -317,28 +328,42 @@ def register():
             connection.commit()
             connection.close()
 
-        # -------------------------------------------------
-        # Automatic login
-        # -------------------------------------------------
 
-        user = User.find_by_id(user_id)
+        # ----------------------------------------------------
+        # LOGIN AFTER REGISTER
+        # ----------------------------------------------------
+
+        user = User.find_by_id(
+            user_id
+        )
+
 
         if user:
-            login_user(user)
+            login_user(
+                user,
+                remember=True
+            )
+
 
         flash(
             "تم إنشاء حسابك بنجاح 🎉",
             "success"
         )
 
-        return redirect(url_for("home"))
 
-    return render_template("register.html")
+        return redirect(
+            url_for("home")
+        )
 
 
-# =========================================================
+    return render_template(
+        "register.html"
+    )
+
+
+# ============================================================
 # LOGIN
-# =========================================================
+# ============================================================
 
 @auth.route("/login", methods=["GET", "POST"])
 def login():
@@ -355,49 +380,90 @@ def login():
             ""
         )
 
+        remember = (
+            request.form.get("remember")
+            == "on"
+        )
+
+
         if not email or not password:
             flash(
                 "يرجى إدخال البريد الإلكتروني وكلمة المرور.",
                 "error"
             )
-            return redirect(url_for("auth.login"))
 
-        user = User.find_by_email(email)
+            return redirect(
+                url_for("auth.login")
+            )
+
+
+        user = User.find_by_email(
+            email
+        )
+
 
         if not user:
             flash(
                 "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
                 "error"
             )
-            return redirect(url_for("auth.login"))
+
+            return redirect(
+                url_for("auth.login")
+            )
+
 
         stored_password = user["password"]
 
-        if not check_password_hash(
-            stored_password,
-            password
-        ):
+
+        try:
+
+            password_correct = check_password_hash(
+                stored_password,
+                password
+            )
+
+        except (ValueError, TypeError):
+
+            password_correct = False
+
+
+        if not password_correct:
             flash(
                 "البريد الإلكتروني أو كلمة المرور غير صحيحة.",
                 "error"
             )
-            return redirect(url_for("auth.login"))
 
-        login_user(user)
+            return redirect(
+                url_for("auth.login")
+            )
+
+
+        login_user(
+            user,
+            remember=remember
+        )
+
 
         flash(
             "مرحبًا بك من جديد 👋",
             "success"
         )
 
-        return redirect(url_for("home"))
 
-    return render_template("login.html")
+        return redirect(
+            url_for("home")
+        )
 
 
-# =========================================================
+    return render_template(
+        "login.html"
+    )
+
+
+# ============================================================
 # LOGOUT
-# =========================================================
+# ============================================================
 
 @auth.route("/logout")
 def logout():
@@ -409,28 +475,39 @@ def logout():
         "success"
     )
 
-    return redirect(url_for("home"))
+    return redirect(
+        url_for("home")
+    )
 
 
-# =========================================================
+# ============================================================
 # MESSAGES
-# =========================================================
+# ============================================================
 
 @auth.route("/messages")
 def messages():
 
-    user_id = session.get("user_id")
+    user_id = session.get(
+        "user_id"
+    )
+
 
     if not user_id:
+
         flash(
             "سجّل الدخول أولًا للوصول إلى الرسائل.",
             "error"
         )
-        return redirect(url_for("auth.login"))
+
+        return redirect(
+            url_for("auth.login")
+        )
+
 
     conversations = Message.conversation(
         user_id
     )
+
 
     return render_template(
         "messages.html",
@@ -438,45 +515,85 @@ def messages():
     )
 
 
-# =========================================================
+# ============================================================
 # SEND MESSAGE
-# =========================================================
+# ============================================================
 
-@auth.route("/messages/send", methods=["POST"])
+@auth.route(
+    "/messages/send",
+    methods=["POST"]
+)
 def send_message():
 
-    user_id = session.get("user_id")
+    user_id = session.get(
+        "user_id"
+    )
+
 
     if not user_id:
+
         flash(
             "يجب تسجيل الدخول أولًا.",
             "error"
         )
-        return redirect(url_for("auth.login"))
+
+        return redirect(
+            url_for("auth.login")
+        )
+
 
     receiver_id = request.form.get(
         "receiver_id",
         type=int
     )
 
+
     text = request.form.get(
         "message",
         ""
     ).strip()
 
+
     if not receiver_id or not text:
+
         flash(
             "الرسالة غير مكتملة.",
             "error"
         )
-        return redirect(url_for("auth.messages"))
+
+        return redirect(
+            url_for("auth.messages")
+        )
+
 
     if receiver_id == user_id:
+
         flash(
             "لا يمكنك إرسال رسالة لنفسك.",
             "error"
         )
-        return redirect(url_for("auth.messages"))
+
+        return redirect(
+            url_for("auth.messages")
+        )
+
+
+    receiver = User.find_by_id(
+        receiver_id
+    )
+
+
+    if not receiver:
+
+        flash(
+            "المستخدم غير موجود.",
+            "error"
+        )
+
+        return redirect(
+            url_for("auth.messages")
+        )
+
 
     Message.create(
         sender_id=user_id,
@@ -484,14 +601,15 @@ def send_message():
         body=text
     )
 
+
     return redirect(
         url_for("auth.messages")
     )
 
 
-# =========================================================
+# ============================================================
 # CHAT SETTINGS
-# =========================================================
+# ============================================================
 
 @auth.route(
     "/chat-settings",
@@ -499,20 +617,22 @@ def send_message():
 )
 def chat_settings():
 
-    user_id = session.get("user_id")
+    user_id = session.get(
+        "user_id"
+    )
+
 
     if not user_id:
+
         flash(
             "سجّل الدخول أولًا.",
             "error"
         )
+
         return redirect(
             url_for("auth.login")
         )
 
-    # -----------------------------------------------------
-    # SAVE SETTINGS
-    # -----------------------------------------------------
 
     if request.method == "POST":
 
@@ -521,21 +641,26 @@ def chat_settings():
             "female"
         )
 
+
         voice_enabled = (
             request.form.get(
                 "voice_enabled"
-            ) == "1"
+            )
+            == "1"
         )
+
 
         language = request.form.get(
             "language",
             "ar"
         )
 
+
         style = request.form.get(
             "style",
             "friendly"
         )
+
 
         ChatSettings.update(
             user_id=user_id,
@@ -545,26 +670,24 @@ def chat_settings():
             style=style
         )
 
+
         flash(
             "تم حفظ إعدادات الدردشة بنجاح 🎙️✨",
             "success"
         )
 
+
         return redirect(
-            url_for(
-                "auth.chat_settings"
-            )
+            url_for("auth.chat_settings")
         )
 
-    # -----------------------------------------------------
-    # LOAD SETTINGS
-    # -----------------------------------------------------
 
     settings = ChatSettings.get(
         user_id
     )
 
+
     return render_template(
         "chat_settings.html",
         settings=settings
-            )
+        )
