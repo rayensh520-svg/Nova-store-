@@ -7,274 +7,520 @@
     <title>إنشاء حساب | DZ MARKET 🇩🇿</title>
 
     <style>
+        :root {
+            --burgundy: #800020;
+            --burgundy-dark: #560015;
+            --burgundy-soft: #a52a4a;
+            --gold: #c9a227;
+            --gold-light: #e6cd72;
+            --cream: #faf6f2;
+            --white: #ffffff;
+            --text: #261d20;
+            --muted: #756b70;
+            --border: #eadfe3;
+            --success: #287a4d;
+            --danger: #b3261e;
+            --shadow: 0 18px 55px rgba(70, 0, 25, .12);
+            --radius: 22px;
+        }
+
         * {
             box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
-            font-family: Arial, sans-serif;
-            background:
-                radial-gradient(circle at top right, rgba(128, 20, 50, .12), transparent 35%),
-                #f8f5f0;
-            color: #2b1720;
+            margin: 0;
             min-height: 100vh;
+            font-family:
+                "Noto Sans Arabic",
+                "Segoe UI",
+                Tahoma,
+                Arial,
+                sans-serif;
+            background:
+                radial-gradient(
+                    circle at 10% 10%,
+                    rgba(201, 162, 39, .13),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 90% 90%,
+                    rgba(128, 0, 32, .10),
+                    transparent 35%
+                ),
+                var(--cream);
+            color: var(--text);
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            width: 280px;
+            height: 280px;
+            border: 1px solid rgba(128, 0, 32, .08);
+            border-radius: 50%;
+            top: -130px;
+            left: -100px;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            width: 360px;
+            height: 360px;
+            border: 1px solid rgba(201, 162, 39, .10);
+            border-radius: 50%;
+            bottom: -190px;
+            right: -150px;
+            pointer-events: none;
         }
 
         .page {
             width: 100%;
-            max-width: 520px;
+            max-width: 760px;
             margin: auto;
-            padding: 18px 15px 35px;
+            padding: 28px 16px 50px;
+            position: relative;
+            z-index: 1;
         }
 
-        .top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
-
-        .back {
-            width: 38px;
-            height: 38px;
-            border: 1px solid #eadfe2;
-            border-radius: 12px;
-            background: white;
-            color: #6e1835;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-        }
+        /* ================================
+           HEADER
+        ================================= */
 
         .brand {
-            font-weight: 900;
-            color: #711936;
-            font-size: 18px;
-        }
-
-        .brand span {
-            color: #c49a45;
-        }
-
-        .hero {
             text-align: center;
-            margin: 8px 0 20px;
+            margin-bottom: 24px;
         }
 
-        .logo {
-            width: 58px;
-            height: 58px;
+        .brand-mark {
+            width: 64px;
+            height: 64px;
             margin: auto;
-            border-radius: 18px;
-            background: linear-gradient(145deg, #741936, #4c1024);
-            color: #e1bb69;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    var(--burgundy),
+                    var(--burgundy-dark)
+                );
+
+            color: var(--gold-light);
             font-size: 27px;
-            box-shadow: 0 10px 25px rgba(91, 20, 43, .18);
+            font-weight: 900;
+
+            box-shadow:
+                0 12px 30px rgba(128, 0, 32, .22),
+                inset 0 1px rgba(255, 255, 255, .12);
         }
 
-        h1 {
-            margin-top: 12px;
-            font-size: 25px;
+        .brand h1 {
+            margin: 12px 0 4px;
+            font-size: 27px;
+            color: var(--burgundy);
+            letter-spacing: -.5px;
         }
 
-        .subtitle {
-            color: #806f75;
-            margin-top: 6px;
+        .brand p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        /* ================================
+           CARD
+        ================================= */
+
+        .card {
+            background: rgba(255, 255, 255, .88);
+            border: 1px solid rgba(234, 223, 227, .95);
+            border-radius: var(--radius);
+            padding: 22px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(14px);
+        }
+
+        .section-title {
+            margin: 0 0 5px;
+            font-size: 19px;
+            color: var(--burgundy);
+        }
+
+        .section-subtitle {
+            margin: 0 0 20px;
+            color: var(--muted);
             font-size: 13px;
         }
 
-        .card {
-            background: rgba(255,255,255,.96);
-            border: 1px solid #eee3e5;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 12px 35px rgba(66, 24, 38, .08);
+        /* ================================
+           FLASH MESSAGES
+        ================================= */
+
+        .flash {
+            padding: 12px 14px;
+            border-radius: 14px;
+            margin-bottom: 14px;
+            font-size: 13px;
+            border: 1px solid transparent;
+        }
+
+        .flash-success {
+            background: rgba(40, 122, 77, .09);
+            color: var(--success);
+            border-color: rgba(40, 122, 77, .18);
+        }
+
+        .flash-danger {
+            background: rgba(179, 38, 30, .08);
+            color: var(--danger);
+            border-color: rgba(179, 38, 30, .16);
+        }
+
+        .flash-warning,
+        .flash-info {
+            background: rgba(201, 162, 39, .10);
+            color: #715700;
+            border-color: rgba(201, 162, 39, .20);
+        }
+
+        /* ================================
+           FORM
+        ================================= */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
         }
 
         .field {
-            margin-bottom: 13px;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
         }
 
-        label {
-            display: block;
+        .field label {
             font-size: 13px;
             font-weight: 700;
-            margin-bottom: 6px;
         }
 
-        input,
-        select,
-        textarea {
+        .field input,
+        .field select,
+        .field textarea {
             width: 100%;
-            border: 1px solid #e3d8db;
+            border: 1px solid var(--border);
             background: #fff;
-            border-radius: 11px;
-            padding: 12px 13px;
-            font-size: 14px;
-            color: #301a23;
+            color: var(--text);
+            border-radius: 14px;
+            padding: 13px 14px;
             outline: none;
-            transition: .2s;
+            font: inherit;
+            font-size: 14px;
+            transition: .2s ease;
         }
 
-        textarea {
-            min-height: 75px;
+        .field textarea {
+            min-height: 105px;
             resize: vertical;
         }
 
-        input:focus,
-        select:focus,
-        textarea:focus {
-            border-color: #9d4b68;
-            box-shadow: 0 0 0 3px rgba(157,75,104,.09);
+        .field input:focus,
+        .field select:focus,
+        .field textarea:focus {
+            border-color: var(--burgundy-soft);
+            box-shadow:
+                0 0 0 4px rgba(128, 0, 32, .07);
         }
 
-        .password-wrap {
-            position: relative;
+        .hint {
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.6;
         }
 
-        .password-wrap input {
-            padding-left: 45px;
-        }
+        /* ================================
+           ROLE SELECTOR
+        ================================= */
 
-        .toggle {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            border: 0;
-            background: transparent;
-            cursor: pointer;
-            font-size: 17px;
+        .role-title {
+            margin: 25px 0 10px;
+            font-size: 14px;
+            font-weight: 800;
         }
 
         .roles {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 9px;
-            margin-bottom: 15px;
+            gap: 10px;
         }
 
-        .role {
-            border: 1px solid #e4d9dc;
-            border-radius: 13px;
-            padding: 12px;
-            cursor: pointer;
-            text-align: center;
+        .role-option {
+            position: relative;
+        }
+
+        .role-option input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .role-card {
+            display: block;
+            padding: 15px;
+            border-radius: 17px;
+            border: 1px solid var(--border);
             background: #fff;
-            transition: .2s;
+            cursor: pointer;
+            transition: .2s ease;
         }
 
-        .role input {
-            display: none;
+        .role-card:hover {
+            transform: translateY(-1px);
+            border-color: rgba(128, 0, 32, .35);
         }
 
-        .role strong {
-            display: block;
-            font-size: 14px;
+        .role-option input:checked + .role-card {
+            border-color: var(--burgundy);
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(128, 0, 32, .07),
+                    rgba(201, 162, 39, .07)
+                );
+            box-shadow:
+                0 8px 22px rgba(128, 0, 32, .08);
         }
 
-        .role small {
-            display: block;
-            color: #8a777e;
-            margin-top: 4px;
+        .role-name {
+            font-weight: 800;
+            color: var(--burgundy);
+            margin-bottom: 4px;
+        }
+
+        .role-description {
             font-size: 11px;
-        }
-
-        .role.active {
-            border-color: #8a294b;
-            background: #fbf1f4;
-            box-shadow: 0 0 0 2px rgba(138,41,75,.07);
-        }
-
-        .seller-box {
-            display: none;
-            margin-top: 8px;
-            padding-top: 15px;
-            border-top: 1px solid #eee3e5;
-        }
-
-        .seller-title {
-            color: #711936;
-            font-size: 15px;
-            font-weight: 900;
-            margin-bottom: 12px;
-        }
-
-        .terms {
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            margin: 15px 0;
-            font-size: 12px;
-            color: #75666c;
+            color: var(--muted);
             line-height: 1.6;
         }
 
+        /* ================================
+           SELLER SECTION
+        ================================= */
+
+        .seller-section {
+            margin-top: 20px;
+            padding: 17px;
+            border-radius: 18px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(128, 0, 32, .055),
+                    rgba(201, 162, 39, .055)
+                );
+
+            border: 1px solid rgba(128, 0, 32, .11);
+        }
+
+        .seller-section.hidden {
+            display: none;
+        }
+
+        .seller-heading {
+            margin: 0 0 5px;
+            color: var(--burgundy);
+            font-size: 16px;
+            font-weight: 800;
+        }
+
+        .seller-note {
+            margin: 0 0 15px;
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        /* ================================
+           TERMS
+        ================================= */
+
+        .terms {
+            display: flex;
+            gap: 9px;
+            align-items: flex-start;
+            margin: 20px 0;
+            font-size: 12px;
+            line-height: 1.7;
+            color: var(--muted);
+        }
+
         .terms input {
-            width: 16px;
-            height: 16px;
-            margin-top: 2px;
+            margin-top: 4px;
+            accent-color: var(--burgundy);
         }
 
         .terms a {
-            color: #711936;
+            color: var(--burgundy);
             font-weight: 700;
+            text-decoration: none;
         }
+
+        /* ================================
+           BUTTON
+        ================================= */
 
         .submit {
             width: 100%;
             border: 0;
-            border-radius: 13px;
-            padding: 13px;
-            background: linear-gradient(135deg, #7a1c3d, #551129);
+            border-radius: 15px;
+            padding: 14px 18px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--burgundy),
+                    var(--burgundy-dark)
+                );
+
             color: white;
+            font: inherit;
             font-size: 15px;
-            font-weight: 900;
+            font-weight: 800;
             cursor: pointer;
-            box-shadow: 0 9px 20px rgba(91,17,43,.2);
+
+            box-shadow:
+                0 12px 25px rgba(128, 0, 32, .18);
+
+            transition: .2s ease;
+        }
+
+        .submit:hover {
+            transform: translateY(-1px);
+            box-shadow:
+                0 15px 30px rgba(128, 0, 32, .23);
+        }
+
+        .submit:active {
+            transform: translateY(0);
         }
 
         .login-link {
             text-align: center;
-            margin-top: 17px;
+            margin-top: 18px;
+            color: var(--muted);
             font-size: 13px;
-            color: #796970;
         }
 
         .login-link a {
-            color: #711936;
-            font-weight: 900;
+            color: var(--burgundy);
+            font-weight: 800;
             text-decoration: none;
         }
 
-        .flash {
-            padding: 11px 13px;
-            border-radius: 11px;
-            margin-bottom: 12px;
-            font-size: 13px;
-            background: #fff4f5;
-            color: #8a294b;
-            border: 1px solid #f0d7dd;
+        /* ================================
+           DARK MODE
+        ================================= */
+
+        body.dark-mode {
+            --cream: #12090c;
+            --white: #1d1014;
+            --text: #f7eef1;
+            --muted: #bcaeb3;
+            --border: #3a252b;
+
+            background:
+                radial-gradient(
+                    circle at 10% 10%,
+                    rgba(201, 162, 39, .08),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 90% 90%,
+                    rgba(128, 0, 32, .20),
+                    transparent 35%
+                ),
+                #12090c;
         }
 
-        @media (max-width: 380px) {
+        body.dark-mode .card {
+            background: rgba(29, 16, 20, .91);
+            border-color: var(--border);
+        }
+
+        body.dark-mode .field input,
+        body.dark-mode .field select,
+        body.dark-mode .field textarea,
+        body.dark-mode .role-card {
+            background: #25151a;
+            color: var(--text);
+            border-color: var(--border);
+        }
+
+        body.dark-mode .brand h1,
+        body.dark-mode .section-title,
+        body.dark-mode .role-name,
+        body.dark-mode .seller-heading {
+            color: var(--gold-light);
+        }
+
+        body.dark-mode .seller-section {
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(128, 0, 32, .20),
+                    rgba(201, 162, 39, .07)
+                );
+            border-color: #4a2932;
+        }
+
+        body.dark-mode .role-option input:checked + .role-card {
+            border-color: var(--gold);
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(128, 0, 32, .25),
+                    rgba(201, 162, 39, .08)
+                );
+        }
+
+        body.dark-mode .login-link a,
+        body.dark-mode .terms a {
+            color: var(--gold-light);
+        }
+
+        /* ================================
+           RESPONSIVE
+        ================================= */
+
+        @media (min-width: 640px) {
+
             .page {
-                padding: 14px 11px 25px;
+                padding-top: 45px;
             }
 
             .card {
-                padding: 16px;
+                padding: 30px;
             }
 
-            h1 {
-                font-size: 22px;
+            .form-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .full {
+                grid-column: 1 / -1;
+            }
+
+            .brand h1 {
+                font-size: 30px;
             }
         }
     </style>
@@ -284,257 +530,487 @@
 
 <div class="page">
 
-    <div class="top">
-        <a href="{{ url_for('home') }}" class="back">→</a>
-        <div class="brand">DZ <span>MARKET</span> 🇩🇿</div>
-        <div style="width:38px;"></div>
-    </div>
+    <!-- BRAND -->
+    <header class="brand">
+        <div class="brand-mark">DZ</div>
 
-    <div class="hero">
-        <div class="logo">🇩🇿</div>
-        <h1>إنشاء حساب</h1>
-        <p class="subtitle">انضم إلى DZ MARKET وابدأ تجربتك الآن</p>
-    </div>
+        <h1>DZ MARKET 🇩🇿</h1>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="flash">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-    {% endwith %}
+        <p>
+            سوق جزائري يجمع البائع والمشتري في مكان واحد
+        </p>
+    </header>
 
-    <div class="card">
 
-        <form method="POST" action="{{ url_for('auth.register') }}">
+    <!-- MAIN CARD -->
+    <main class="card">
 
-            <div class="field">
-                <label>الاسم الكامل</label>
-                <input
-                    type="text"
-                    name="full_name"
-                    placeholder="اكتب اسمك الكامل"
-                    required
-                >
-            </div>
+        <h2 class="section-title">
+            إنشاء حساب
+        </h2>
 
-            <div class="field">
-                <label>البريد الإلكتروني</label>
-                <input
-                    type="email"
-                    name="email"
-                    placeholder="example@email.com"
-                    required
-                >
-            </div>
+        <p class="section-subtitle">
+            أنشئي حسابك وابدئي رحلتك في DZ MARKET
+        </p>
 
-            <div class="field">
-                <label>رقم الهاتف</label>
-                <input
-                    type="tel"
-                    name="phone"
-                    placeholder="05 / 06 / 07 XX XX XX XX"
-                    required
-                >
-            </div>
 
-            <div class="field">
-                <label>كلمة المرور</label>
+        <!-- FLASH MESSAGES -->
 
-                <div class="password-wrap">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                {% for category, message in messages %}
+
+                    <div class="flash flash-{{ category }}">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <!-- FORM -->
+
+        <form
+            method="POST"
+            action="{{ url_for('auth.register') }}"
+            autocomplete="on"
+        >
+
+            <!-- PERSONAL INFO -->
+
+            <div class="form-grid">
+
+                <div class="field full">
+
+                    <label for="full_name">
+                        الاسم الكامل
+                    </label>
+
                     <input
-                        type="password"
+                        id="full_name"
+                        name="full_name"
+                        type="text"
+                        placeholder="أدخلي اسمك الكامل"
+                        autocomplete="name"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label for="email">
+                        البريد الإلكتروني
+                    </label>
+
+                    <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        placeholder="example@email.com"
+                        autocomplete="email"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label for="phone">
+                        رقم الهاتف
+                    </label>
+
+                    <input
+                        id="phone"
+                        name="phone"
+                        type="tel"
+                        placeholder="05 / 06 / 07 ..."
+                        autocomplete="tel"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label for="password">
+                        كلمة السر
+                    </label>
+
+                    <input
                         id="password"
                         name="password"
-                        placeholder="8 أحرف على الأقل"
+                        type="password"
+                        placeholder="••••••••"
+                        autocomplete="new-password"
                         required
                     >
 
-                    <button
-                        type="button"
-                        class="toggle"
-                        onclick="togglePassword('password', this)"
-                    >👁️</button>
+                    <span class="hint">
+                        8 أحرف على الأقل + حرف + رقم + رمز.
+                    </span>
+
                 </div>
-            </div>
 
-            <div class="field">
-                <label>تأكيد كلمة المرور</label>
 
-                <div class="password-wrap">
+                <div class="field">
+
+                    <label for="confirm_password">
+                        تأكيد كلمة السر
+                    </label>
+
                     <input
-                        type="password"
                         id="confirm_password"
                         name="confirm_password"
-                        placeholder="أعد كتابة كلمة المرور"
+                        type="password"
+                        placeholder="أعيدي كلمة السر"
+                        autocomplete="new-password"
                         required
                     >
 
-                    <button
-                        type="button"
-                        class="toggle"
-                        onclick="togglePassword('confirm_password', this)"
-                    >👁️</button>
                 </div>
+
             </div>
 
-            <label style="margin-top:17px;">نوع الحساب</label>
+
+            <!-- ACCOUNT TYPE -->
+
+            <div class="role-title">
+                نوع الحساب
+            </div>
 
             <div class="roles">
 
-                <label class="role active" id="buyerRole">
+                <div class="role-option">
+
                     <input
                         type="radio"
+                        id="buyer"
                         name="role"
                         value="buyer"
                         checked
-                        onchange="changeRole('buyer')"
                     >
-                    <strong>🛍️ مشتري</strong>
-                    <small>أشتري المنتجات وأتابع طلباتي</small>
-                </label>
 
-                <label class="role" id="sellerRole">
+                    <label
+                        class="role-card"
+                        for="buyer"
+                    >
+
+                        <div class="role-name">
+                            🛍️ مشتري
+                        </div>
+
+                        <div class="role-description">
+                            تصفح المنتجات، أضيفيها للسلة،
+                            واطلبي من المتاجر.
+                        </div>
+
+                    </label>
+
+                </div>
+
+
+                <div class="role-option">
+
                     <input
                         type="radio"
+                        id="seller"
                         name="role"
                         value="seller"
-                        onchange="changeRole('seller')"
                     >
-                    <strong>🏪 بائع</strong>
-                    <small>أنشئ متجري وأبيع منتجاتي</small>
+
+                    <label
+                        class="role-card"
+                        for="seller"
+                    >
+
+                        <div class="role-name">
+                            🏪 بائع
+                        </div>
+
+                        <div class="role-description">
+                            أنشئ متجرك واعرض منتجاتك
+                            بعد مراجعة الإدارة.
+                        </div>
+
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <!-- SELLER INFORMATION -->
+
+            <section
+                id="sellerSection"
+                class="seller-section hidden"
+            >
+
+                <h3 class="seller-heading">
+                    معلومات المتجر
+                </h3>
+
+                <p class="seller-note">
+                    حساب البائع يخضع للمراجعة قبل السماح
+                    بنشر المنتجات والبيع.
+                </p>
+
+
+                <div class="form-grid">
+
+                    <div class="field full">
+
+                        <label for="store_name">
+                            اسم المتجر
+                        </label>
+
+                        <input
+                            id="store_name"
+                            name="store_name"
+                            type="text"
+                            placeholder="مثال: Boutique DZ"
+                        >
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label for="activity_type">
+                            نوع النشاط
+                        </label>
+
+                        <input
+                            id="activity_type"
+                            name="activity_type"
+                            type="text"
+                            placeholder="ملابس، حلويات، حرف يدوية..."
+                        >
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label for="wilaya">
+                            الولاية
+                        </label>
+
+                        <input
+                            id="wilaya"
+                            name="wilaya"
+                            type="text"
+                            placeholder="مثال: وهران"
+                        >
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label for="municipality">
+                            البلدية
+                        </label>
+
+                        <input
+                            id="municipality"
+                            name="municipality"
+                            type="text"
+                            placeholder="مثال: بئر الجير"
+                        >
+
+                    </div>
+
+
+                    <div class="field full">
+
+                        <label for="verification_note">
+                            معلومات إضافية للإدارة
+                        </label>
+
+                        <textarea
+                            id="verification_note"
+                            name="verification_note"
+                            placeholder="أخبرينا باختصار عن نشاطك أو مشروعك..."
+                        ></textarea>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- REFERRAL -->
+
+            <div
+                class="field"
+                style="margin-top:18px;"
+            >
+
+                <label for="referral_code">
+                    كود الإحالة
+                    <span class="hint">
+                        (اختياري)
+                    </span>
                 </label>
 
-            </div>
-
-            <div class="seller-box" id="sellerBox">
-
-                <div class="seller-title">
-                    🏪 معلومات المتجر
-                </div>
-
-                <div class="field">
-                    <label>اسم المتجر</label>
-                    <input
-                        type="text"
-                        name="store_name"
-                        placeholder="مثال: Boutique Rayen"
-                    >
-                </div>
-
-                <div class="field">
-                    <label>نوع النشاط</label>
-                    <select name="activity_type">
-                        <option value="">اختر نوع النشاط</option>
-                        <option value="fashion">أزياء وملابس</option>
-                        <option value="beauty">تجميل وعناية</option>
-                        <option value="electronics">إلكترونيات</option>
-                        <option value="home">المنزل والديكور</option>
-                        <option value="food">أغذية</option>
-                        <option value="handmade">منتجات يدوية</option>
-                        <option value="other">نشاط آخر</option>
-                    </select>
-                </div>
-
-                <div class="field">
-                    <label>الولاية</label>
-                    <input
-                        type="text"
-                        name="wilaya"
-                        placeholder="اكتب ولايتك"
-                    >
-                </div>
-
-                <div class="field">
-                    <label>البلدية</label>
-                    <input
-                        type="text"
-                        name="municipality"
-                        placeholder="اكتب البلدية"
-                    >
-                </div>
-
-                <div class="field">
-                    <label>ملاحظة التحقق</label>
-                    <textarea
-                        name="verification_note"
-                        placeholder="معلومات إضافية عن نشاطك أو متجرك..."
-                    ></textarea>
-                </div>
+                <input
+                    id="referral_code"
+                    name="referral_code"
+                    type="text"
+                    placeholder="DZ..."
+                    autocomplete="off"
+                >
 
             </div>
+
+
+            <!-- TERMS -->
 
             <label class="terms">
+
                 <input
+                    id="terms"
+                    name="terms"
                     type="checkbox"
-                    name="accept_terms"
                     required
                 >
 
                 <span>
                     أوافق على
-                    <a href="#" onclick="return false;">شروط الاستخدام</a>
+                    <a href="#">
+                        شروط الاستخدام
+                    </a>
                     و
-                    <a href="#" onclick="return false;">سياسة الخصوصية</a>
+                    <a href="#">
+                        سياسة الخصوصية
+                    </a>
                     الخاصة بـ DZ MARKET.
                 </span>
+
             </label>
 
-            <button type="submit" class="submit">
-                إنشاء الحساب ✨
+
+            <!-- SUBMIT -->
+
+            <button
+                type="submit"
+                class="submit"
+            >
+                إنشاء الحساب
             </button>
 
         </form>
 
+
+        <!-- LOGIN -->
+
         <div class="login-link">
-            لديك حساب من قبل؟
-            <a href="{{ url_for('auth.login') }}">تسجيل الدخول</a>
+
+            عندك حساب من قبل؟
+
+            <a href="{{ url_for('auth.login') }}">
+                تسجيل الدخول
+            </a>
+
         </div>
 
-    </div>
+    </main>
 
 </div>
 
 
 <script>
+    const buyerRadio = document.getElementById("buyer");
+    const sellerRadio = document.getElementById("seller");
 
-function togglePassword(id, button) {
+    const sellerSection =
+        document.getElementById("sellerSection");
 
-    const input = document.getElementById(id);
+    const storeName =
+        document.getElementById("store_name");
 
-    if (input.type === "password") {
-        input.type = "text";
-        button.textContent = "🙈";
-    } else {
-        input.type = "password";
-        button.textContent = "👁️";
+    const activityType =
+        document.getElementById("activity_type");
+
+
+    function updateSellerSection() {
+
+        const isSeller =
+            sellerRadio.checked;
+
+        if (isSeller) {
+
+            sellerSection.classList.remove("hidden");
+
+            storeName.required = true;
+            activityType.required = true;
+
+        } else {
+
+            sellerSection.classList.add("hidden");
+
+            storeName.required = false;
+            activityType.required = false;
+
+        }
     }
-}
 
 
-function changeRole(role) {
+    buyerRadio.addEventListener(
+        "change",
+        updateSellerSection
+    );
 
-    const buyer = document.getElementById("buyerRole");
-    const seller = document.getElementById("sellerRole");
-    const sellerBox = document.getElementById("sellerBox");
+    sellerRadio.addEventListener(
+        "change",
+        updateSellerSection
+    );
 
-    buyer.classList.remove("active");
-    seller.classList.remove("active");
 
-    if (role === "seller") {
+    updateSellerSection();
 
-        seller.classList.add("active");
-        sellerBox.style.display = "block";
 
-    } else {
+    // ================================================
+    // Password confirmation
+    // ================================================
 
-        buyer.classList.add("active");
-        sellerBox.style.display = "none";
+    const password =
+        document.getElementById("password");
 
-    }
-}
+    const confirmPassword =
+        document.getElementById("confirm_password");
 
+
+    confirmPassword.addEventListener(
+        "input",
+        function () {
+
+            if (
+                confirmPassword.value &&
+                password.value !== confirmPassword.value
+            ) {
+
+                confirmPassword.setCustomValidity(
+                    "كلمتا السر غير متطابقتين."
+                );
+
+            } else {
+
+                confirmPassword.setCustomValidity("");
+            }
+        }
+    );
 </script>
 
 </body>
-</html>
+    </html>
