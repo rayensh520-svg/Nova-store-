@@ -13,333 +13,481 @@
             padding: 0;
         }
 
+        :root {
+            --burgundy: #721b3a;
+            --dark: #421024;
+            --gold: #c69b4d;
+            --cream: #faf7f2;
+            --white: #ffffff;
+            --text: #29151e;
+            --muted: #81737a;
+            --border: #eee3e6;
+        }
+
         body {
             font-family: Arial, sans-serif;
-            background: #fffaf3;
-            color: #261016;
-            padding-bottom: 80px;
+            background: var(--cream);
+            color: var(--text);
+            padding-bottom: 75px;
         }
 
-        body.dark {
-            background: #16070c;
-            color: #fff;
+        a {
+            color: inherit;
+            text-decoration: none;
         }
+
+        .app {
+            width: 100%;
+            max-width: 650px;
+            margin: auto;
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
 
         header {
-            position: sticky;
-            top: 0;
-            z-index: 20;
-            background: rgba(67, 12, 30, .96);
-            padding: 14px 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,.15);
+            padding: 13px 15px 8px;
+            background: var(--cream);
         }
 
-        .top {
-            max-width: 1100px;
-            margin: auto;
+        .header-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 12px;
+            gap: 10px;
         }
 
-        .logo {
-            color: #d8ad55;
-            font-size: 23px;
-            font-weight: bold;
-            white-space: nowrap;
+        .brand {
+            font-size: 20px;
+            font-weight: 900;
+            color: var(--burgundy);
         }
 
-        .actions {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        .brand span {
+            color: var(--gold);
         }
 
-        .icon-btn {
-            border: 1px solid rgba(216,173,85,.4);
-            background: rgba(255,255,255,.08);
-            color: white;
+        .profile-btn {
             width: 40px;
             height: 40px;
-            border-radius: 12px;
+            border-radius: 50%;
+            border: 2px solid #e4cfaa;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
             cursor: pointer;
-            font-size: 18px;
         }
 
         .search {
-            flex: 1;
-            max-width: 430px;
-            padding: 11px 15px;
-            border: none;
+            margin-top: 11px;
+            background: white;
+            border: 1px solid var(--border);
             border-radius: 13px;
-            outline: none;
-            background: rgba(255,255,255,.12);
-            color: white;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            height: 43px;
+            box-shadow: 0 4px 15px rgba(50, 20, 30, .04);
         }
 
-        .search::placeholder {
-            color: #ddd;
+        .search span {
+            font-size: 17px;
+            margin-left: 8px;
         }
+
+        .search input {
+            width: 100%;
+            border: 0;
+            outline: 0;
+            font-size: 13px;
+            background: transparent;
+            color: var(--text);
+        }
+
+        /* =========================
+           HERO
+        ========================= */
 
         .hero {
+            margin: 10px 15px 13px;
+            border-radius: 17px;
+            padding: 18px;
             background:
-                radial-gradient(circle at top left, #8a2444, transparent 40%),
-                linear-gradient(135deg, #3d0b1e, #6d1835);
+                linear-gradient(
+                    135deg,
+                    #721b3a,
+                    #4a1028
+                );
             color: white;
-            padding: 55px 20px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .hero-content {
-            max-width: 1100px;
-            margin: auto;
+        .hero::after {
+            content: "🇩🇿";
+            position: absolute;
+            left: 15px;
+            bottom: -13px;
+            font-size: 70px;
+            opacity: .12;
         }
 
         .hero h1 {
-            font-size: clamp(30px, 7vw, 55px);
-            margin-bottom: 15px;
-        }
-
-        .hero h1 span {
-            color: #d8ad55;
+            font-size: 21px;
+            margin-bottom: 7px;
         }
 
         .hero p {
-            color: #f5e6d2;
-            max-width: 650px;
-            line-height: 1.8;
-            margin-bottom: 25px;
+            font-size: 12px;
+            line-height: 1.7;
+            max-width: 390px;
+            opacity: .9;
         }
 
-        .btn {
+        .hero-btn {
             display: inline-block;
-            padding: 13px 20px;
-            border-radius: 13px;
-            text-decoration: none;
-            font-weight: bold;
-            margin-left: 7px;
+            margin-top: 12px;
+            background: var(--gold);
+            color: #3b2410;
+            padding: 8px 13px;
+            border-radius: 9px;
+            font-size: 11px;
+            font-weight: 900;
         }
 
-        .btn-primary {
-            background: #d8ad55;
-            color: #280914;
+        /* =========================
+           SECTIONS
+        ========================= */
+
+        .section {
+            padding: 0 15px;
+            margin-bottom: 15px;
         }
 
-        .btn-secondary {
-            border: 1px solid #d8ad55;
-            color: #d8ad55;
-        }
-
-        section {
-            max-width: 1100px;
-            margin: auto;
-            padding: 35px 18px;
-        }
-
-        .section-title {
+        .section-head {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            justify-content: space-between;
+            margin-bottom: 9px;
         }
 
-        .section-title h2 {
-            font-size: 23px;
+        .section-head h2 {
+            font-size: 16px;
         }
+
+        .section-head a {
+            color: var(--burgundy);
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        /* =========================
+           CATEGORIES
+        ========================= */
 
         .categories {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .categories::-webkit-scrollbar {
+            display: none;
         }
 
         .category {
+            min-width: 72px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 9px 6px;
             text-align: center;
-            padding: 20px 10px;
-            border-radius: 18px;
-            background: #fff;
-            box-shadow: 0 5px 25px rgba(50,10,20,.08);
-            cursor: pointer;
-            transition: .2s;
         }
 
-        .category:hover {
-            transform: translateY(-3px);
+        .category-icon {
+            width: 34px;
+            height: 34px;
+            margin: auto auto 5px;
+            border-radius: 10px;
+            background: #f8edf1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
         }
 
-        .category div {
-            font-size: 32px;
-            margin-bottom: 8px;
+        .category span {
+            display: block;
+            font-size: 10px;
+            font-weight: 700;
         }
+
+        /* =========================
+           PRODUCTS
+        ========================= */
 
         .products {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
         }
 
         .product {
             background: white;
-            border-radius: 18px;
+            border: 1px solid var(--border);
+            border-radius: 14px;
             overflow: hidden;
-            box-shadow: 0 5px 25px rgba(50,10,20,.08);
+            box-shadow: 0 4px 14px rgba(45, 15, 28, .04);
         }
 
         .product-img {
-            height: 150px;
+            height: 145px;
+            background: linear-gradient(
+                135deg,
+                #eadde1,
+                #f8f4ef
+            );
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #f3e8d8;
-            font-size: 55px;
-        }
-
-        .product-info {
-            padding: 14px;
-        }
-
-        .product-info h3 {
-            margin-bottom: 8px;
-            font-size: 16px;
-        }
-
-        .price {
-            color: #8c1738;
-            font-size: 18px;
-            font-weight: bold;
+            font-size: 48px;
+            position: relative;
         }
 
         .badge {
-            display: inline-block;
-            margin-top: 8px;
-            padding: 5px 8px;
-            border-radius: 8px;
-            background: #f1e3bd;
-            color: #674b13;
-            font-size: 11px;
+            position: absolute;
+            top: 7px;
+            right: 7px;
+            background: var(--burgundy);
+            color: white;
+            border-radius: 7px;
+            padding: 4px 6px;
+            font-size: 9px;
+            font-weight: 800;
         }
+
+        .heart {
+            position: absolute;
+            top: 7px;
+            left: 7px;
+            width: 28px;
+            height: 28px;
+            border: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,.9);
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .product-info {
+            padding: 9px;
+        }
+
+        .product-name {
+            font-size: 13px;
+            font-weight: 800;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .store {
+            color: var(--muted);
+            font-size: 10px;
+            margin-top: 4px;
+        }
+
+        .price-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 8px;
+        }
+
+        .price {
+            color: var(--burgundy);
+            font-size: 14px;
+            font-weight: 900;
+        }
+
+        .add {
+            border: 0;
+            background: var(--burgundy);
+            color: white;
+            width: 29px;
+            height: 29px;
+            border-radius: 9px;
+            font-size: 17px;
+            cursor: pointer;
+        }
+
+        /* =========================
+           SELLER BANNER
+        ========================= */
 
         .seller-banner {
-            margin-top: 10px;
-            padding: 35px 25px;
-            border-radius: 22px;
-            background: linear-gradient(135deg, #430c1e, #711a38);
-            color: white;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 13px;
+            display: flex;
+            align-items: center;
+            gap: 11px;
         }
 
-        .seller-banner h2 {
-            color: #d8ad55;
-            margin-bottom: 10px;
+        .seller-icon {
+            width: 43px;
+            height: 43px;
+            border-radius: 12px;
+            background: #f5e9ed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+        }
+
+        .seller-banner strong {
+            font-size: 13px;
+            display: block;
         }
 
         .seller-banner p {
-            color: #eee;
-            line-height: 1.7;
-            margin-bottom: 18px;
+            color: var(--muted);
+            font-size: 10px;
+            margin-top: 3px;
         }
 
-        .dark .category,
-        .dark .product {
-            background: #281019;
+        /* =========================
+           AI BUTTON
+        ========================= */
+
+        .ai-btn {
+            position: fixed;
+            right: max(18px, calc(50% - 300px));
+            bottom: 77px;
+            width: 48px;
+            height: 48px;
+            border: 0;
+            border-radius: 50%;
+            background: linear-gradient(
+                145deg,
+                var(--gold),
+                #9d722c
+            );
             color: white;
+            font-size: 21px;
+            box-shadow: 0 8px 25px rgba(95, 63, 20, .25);
+            z-index: 20;
+            cursor: pointer;
         }
 
-        .dark .category,
-        .dark .product {
-            box-shadow: 0 5px 25px rgba(0,0,0,.25);
-        }
-
-        .dark .product-img {
-            background: #35151f;
-        }
-
-        .dark .price {
-            color: #d8ad55;
-        }
+        /* =========================
+           BOTTOM NAV
+        ========================= */
 
         .bottom-nav {
             position: fixed;
             bottom: 0;
-            left: 0;
             right: 0;
-            height: 70px;
-            z-index: 30;
+            left: 0;
+            height: 64px;
+            background: rgba(255,255,255,.97);
+            border-top: 1px solid var(--border);
             display: flex;
-            justify-content: space-around;
+            justify-content: center;
+            z-index: 30;
+            box-shadow: 0 -5px 20px rgba(40, 15, 25, .06);
+        }
+
+        .nav-inner {
+            width: 100%;
+            max-width: 650px;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+        }
+
+        .nav-item {
+            border: 0;
+            background: transparent;
+            color: #87777e;
+            font-size: 9px;
+            display: flex;
+            flex-direction: column;
             align-items: center;
-            background: rgba(40,7,17,.97);
-            border-top: 1px solid rgba(216,173,85,.25);
-        }
-
-        .bottom-nav a {
-            color: #aaa;
-            text-decoration: none;
-            text-align: center;
-            font-size: 10px;
-        }
-
-        .bottom-nav a div {
-            font-size: 21px;
-            margin-bottom: 3px;
-        }
-
-        .bottom-nav a.active {
-            color: #d8ad55;
-        }
-
-        .ai {
-            position: fixed;
-            right: 18px;
-            bottom: 88px;
-            z-index: 31;
-            width: 58px;
-            height: 58px;
-            border-radius: 50%;
-            border: 2px solid #d8ad55;
-            background: #5b1230;
-            color: white;
-            font-size: 25px;
+            justify-content: center;
+            gap: 3px;
             cursor: pointer;
-            box-shadow: 0 8px 25px rgba(0,0,0,.25);
         }
 
-        footer {
-            text-align: center;
-            padding: 30px 15px;
-            background: #280914;
-            color: #bbb;
+        .nav-item span {
+            font-size: 20px;
+        }
+
+        .nav-item.active {
+            color: var(--burgundy);
+            font-weight: 900;
+        }
+
+        /* =========================
+           PROFILE MENU
+        ========================= */
+
+        .profile-menu {
+            display: none;
+            position: fixed;
+            top: 62px;
+            right: max(15px, calc(50% - 310px));
+            width: 235px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 7px;
+            z-index: 50;
+            box-shadow: 0 15px 40px rgba(40, 10, 25, .15);
+        }
+
+        .profile-menu.show {
+            display: block;
+        }
+
+        .profile-title {
+            padding: 9px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 4px;
+        }
+
+        .profile-title strong {
+            display: block;
             font-size: 13px;
         }
 
-        footer strong {
-            color: #d8ad55;
+        .profile-title small {
+            color: var(--muted);
+            font-size: 10px;
         }
 
-        @media (max-width: 800px) {
-            .categories {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .products {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .search {
-                display: none;
-            }
+        .menu-item {
+            width: 100%;
+            border: 0;
+            background: transparent;
+            padding: 10px 9px;
+            border-radius: 9px;
+            text-align: right;
+            font-size: 12px;
+            cursor: pointer;
         }
 
-        @media (max-width: 430px) {
-            .products {
-                gap: 10px;
-            }
+        .menu-item:hover {
+            background: #faf3f5;
+        }
 
+        @media (min-width: 700px) {
             .product-img {
-                height: 125px;
-            }
-
-            .hero {
-                padding: 40px 18px;
+                height: 160px;
             }
         }
     </style>
@@ -347,306 +495,587 @@
 
 <body>
 
-<header>
-    <div class="top">
+<div class="app">
 
-        <div class="logo">
-            DZ MARKET 🇩🇿
-        </div>
+    <!-- HEADER -->
 
-        <input
-            class="search"
-            id="searchInput"
-            type="search"
-            placeholder="🔎 ابحث عن منتج..."
-            oninput="searchProducts()"
-        >
+    <header>
 
-        <div class="actions">
+        <div class="header-row">
+
+            <div class="brand">
+                DZ <span>MARKET</span> 🇩🇿
+            </div>
+
             <button
-                class="icon-btn"
-                onclick="toggleDark()"
-                title="الوضع الليلي"
-            >
-                🌙
-            </button>
-
-            <a
-                href="{{ url_for('auth.login') }}"
-                class="icon-btn"
-                style="display:flex;align-items:center;justify-content:center;text-decoration:none;"
+                class="profile-btn"
+                onclick="toggleProfile()"
+                aria-label="الحساب"
             >
                 👤
-            </a>
+            </button>
+
         </div>
 
+        <div class="search">
+            <span>🔎</span>
+            <input
+                type="search"
+                id="searchInput"
+                placeholder="ابحث عن منتج أو متجر..."
+                oninput="searchProducts()"
+            >
+        </div>
+
+    </header>
+
+
+    <!-- PROFILE MENU -->
+
+    <div class="profile-menu" id="profileMenu">
+
+        <div class="profile-title">
+            <strong>👤 حسابي</strong>
+            <small>إدارة حسابك وإعداداتك</small>
+        </div>
+
+        <button class="menu-item" onclick="goAccount()">
+            👤 الحساب
+        </button>
+
+        <button class="menu-item" onclick="goSettings()">
+            ⚙️ الإعدادات
+        </button>
+
+        <button class="menu-item" onclick="toggleDarkMode()">
+            🌙 الوضع الليلي / النهاري
+        </button>
+
+        <button class="menu-item" onclick="showMessage('🌐 إعدادات اللغات قريبًا')">
+            🌐 اللغة
+        </button>
+
+        <button class="menu-item" onclick="showMessage('🆘 سيتم فتح مركز المساعدة قريبًا')">
+            🆘 طلب المساعدة
+        </button>
+
+        <button class="menu-item" onclick="showMessage('📢 سيتم فتح مركز الشكاوى قريبًا')">
+            📢 تقديم شكوى
+        </button>
+
     </div>
-</header>
 
 
-<section class="hero">
+    <!-- HERO -->
 
-    <div class="hero-content">
+    <section class="hero">
 
-        <h1>
-            كل ما تحتاجه في
-            <span>DZ MARKET</span> 🇩🇿
-        </h1>
+        <h1>كل ما تحتاجه… في سوق جزائري واحد 🇩🇿</h1>
 
         <p>
-            سوق جزائري يجمع المشترين والبائعين في مكان واحد.
-            اكتشف المنتجات، تواصل مع البائعين وابدأ تجارتك بسهولة.
+            اكتشف منتجات من متاجر جزائرية،
+            قارن الأسعار، واطلب بسهولة وأمان.
         </p>
 
         <a
-            href="{{ url_for('auth.register') }}"
-            class="btn btn-primary"
-        >
-            إنشاء حساب 🚀
-        </a>
-
-        <a
             href="#products"
-            class="btn btn-secondary"
+            class="hero-btn"
         >
             اكتشف المنتجات
         </a>
 
-    </div>
-
-</section>
+    </section>
 
 
-<section>
+    <!-- CATEGORIES -->
 
-    <div class="section-title">
-        <h2>🧭 التصنيفات</h2>
-    </div>
+    <section class="section">
 
-    <div class="categories">
-
-        <div class="category" onclick="filterCategory('all')">
-            <div>🛍️</div>
-            الكل
+        <div class="section-head">
+            <h2>التصنيفات</h2>
+            <a href="#">عرض الكل</a>
         </div>
 
-        <div class="category" onclick="filterCategory('fashion')">
-            <div>👕</div>
-            أزياء
+        <div class="categories">
+
+            <div class="category">
+                <div class="category-icon">👗</div>
+                <span>أزياء</span>
+            </div>
+
+            <div class="category">
+                <div class="category-icon">📱</div>
+                <span>إلكترونيات</span>
+            </div>
+
+            <div class="category">
+                <div class="category-icon">💄</div>
+                <span>تجميل</span>
+            </div>
+
+            <div class="category">
+                <div class="category-icon">🏠</div>
+                <span>المنزل</span>
+            </div>
+
+            <div class="category">
+                <div class="category-icon">🎁</div>
+                <span>هدايا</span>
+            </div>
+
+            <div class="category">
+                <div class="category-icon">🧶</div>
+                <span>يدوي</span>
+            </div>
+
         </div>
 
-        <div class="category" onclick="filterCategory('electronics')">
-            <div>📱</div>
-            إلكترونيات
+    </section>
+
+
+    <!-- PRODUCTS -->
+
+    <section class="section" id="products">
+
+        <div class="section-head">
+
+            <h2>منتجات مقترحة</h2>
+
+            <a href="#">
+                المزيد
+            </a>
+
         </div>
 
-        <div class="category" onclick="filterCategory('home')">
-            <div>🏠</div>
-            المنزل
+
+        <div class="products" id="productGrid">
+
+            <article
+                class="product"
+                data-name="حقيبة نسائية"
+                data-store="متجر لمسة"
+            >
+
+                <div class="product-img">
+
+                    👜
+
+                    <span class="badge">
+                        🇩🇿 جزائري
+                    </span>
+
+                    <button class="heart">
+                        ♡
+                    </button>
+
+                </div>
+
+                <div class="product-info">
+
+                    <div class="product-name">
+                        حقيبة نسائية أنيقة
+                    </div>
+
+                    <div class="store">
+                        متجر لمسة ⭐ 4.8
+                    </div>
+
+                    <div class="price-row">
+
+                        <div class="price">
+                            3,500 دج
+                        </div>
+
+                        <button
+                            class="add"
+                            onclick="addToCart('حقيبة نسائية أنيقة')"
+                        >
+                            +
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <article
+                class="product"
+                data-name="سماعات لاسلكية"
+                data-store="DZ Tech"
+            >
+
+                <div class="product-img">
+
+                    🎧
+
+                    <span class="badge">
+                        -15%
+                    </span>
+
+                    <button class="heart">
+                        ♡
+                    </button>
+
+                </div>
+
+                <div class="product-info">
+
+                    <div class="product-name">
+                        سماعات لاسلكية
+                    </div>
+
+                    <div class="store">
+                        DZ Tech ⭐ 4.7
+                    </div>
+
+                    <div class="price-row">
+
+                        <div class="price">
+                            4,200 دج
+                        </div>
+
+                        <button
+                            class="add"
+                            onclick="addToCart('سماعات لاسلكية')"
+                        >
+                            +
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <article
+                class="product"
+                data-name="عطر فاخر"
+                data-store="Parfum DZ"
+            >
+
+                <div class="product-img">
+
+                    🌸
+
+                    <span class="badge">
+                        🔥 رائج
+                    </span>
+
+                    <button class="heart">
+                        ♡
+                    </button>
+
+                </div>
+
+                <div class="product-info">
+
+                    <div class="product-name">
+                        عطر فاخر
+                    </div>
+
+                    <div class="store">
+                        Parfum DZ ⭐ 4.9
+                    </div>
+
+                    <div class="price-row">
+
+                        <div class="price">
+                            5,900 دج
+                        </div>
+
+                        <button
+                            class="add"
+                            onclick="addToCart('عطر فاخر')"
+                        >
+                            +
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <article
+                class="product"
+                data-name="ديكور منزلي"
+                data-store="Home DZ"
+            >
+
+                <div class="product-img">
+
+                    🏺
+
+                    <span class="badge">
+                        جديد
+                    </span>
+
+                    <button class="heart">
+                        ♡
+                    </button>
+
+                </div>
+
+                <div class="product-info">
+
+                    <div class="product-name">
+                        قطعة ديكور منزلية
+                    </div>
+
+                    <div class="store">
+                        Home DZ ⭐ 4.6
+                    </div>
+
+                    <div class="price-row">
+
+                        <div class="price">
+                            2,800 دج
+                        </div>
+
+                        <button
+                            class="add"
+                            onclick="addToCart('قطعة ديكور منزلية')"
+                        >
+                            +
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </article>
+
         </div>
 
-    </div>
-
-</section>
+    </section>
 
 
-<section id="products">
+    <!-- SELLER -->
 
-    <div class="section-title">
-        <h2>🔥 منتجات مميزة</h2>
-    </div>
+    <section class="section">
 
-    <div class="products" id="productGrid">
+        <div class="seller-banner">
 
-        <article class="product" data-name="هاتف ذكي" data-category="electronics">
-            <div class="product-img">📱</div>
-            <div class="product-info">
-                <h3>هاتف ذكي</h3>
-                <div class="price">45,000 دج</div>
-                <span class="badge">🇩🇿 منتج جزائري</span>
+            <div class="seller-icon">
+                🏪
             </div>
-        </article>
 
-        <article class="product" data-name="حقيبة نسائية" data-category="fashion">
-            <div class="product-img">👜</div>
-            <div class="product-info">
-                <h3>حقيبة نسائية</h3>
-                <div class="price">3,500 دج</div>
-                <span class="badge">⭐ متجر موثوق</span>
+            <div>
+                <strong>
+                    عندك مشروع صغير؟
+                </strong>
+
+                <p>
+                    افتح متجرك على DZ MARKET ووصل لزبائن أكثر.
+                </p>
             </div>
-        </article>
 
-        <article class="product" data-name="ديكور منزلي" data-category="home">
-            <div class="product-img">🏺</div>
-            <div class="product-info">
-                <h3>ديكور منزلي</h3>
-                <div class="price">2,800 دج</div>
-                <span class="badge">🇩🇿 محلي</span>
-            </div>
-        </article>
+        </div>
 
-        <article class="product" data-name="ساعة ذكية" data-category="electronics">
-            <div class="product-img">⌚</div>
-            <div class="product-info">
-                <h3>ساعة ذكية</h3>
-                <div class="price">6,900 دج</div>
-                <span class="badge">🔥 الأكثر طلبًا</span>
-            </div>
-        </article>
+    </section>
 
-    </div>
-
-</section>
+</div>
 
 
-<section>
-
-    <div class="seller-banner">
-
-        <h2>🏪 عندك مشروع؟</h2>
-
-        <p>
-            افتح متجرك على DZ MARKET ووصل منتجاتك لزبائن من مختلف
-            ولايات الجزائر.
-        </p>
-
-        <a
-            href="{{ url_for('auth.register') }}"
-            class="btn btn-primary"
-        >
-            ابدأ كبائع
-        </a>
-
-    </div>
-
-</section>
-
+<!-- AI -->
 
 <button
-    class="ai"
-    onclick="openAI()"
-    title="مساعد DZ MARKET"
+    class="ai-btn"
+    onclick="showMessage('🤖 مساعد DZ MARKET سيكون معك قريبًا!')"
 >
     ✨
 </button>
 
 
+<!-- BOTTOM NAV -->
+
 <nav class="bottom-nav">
 
-    <a href="{{ url_for('home') }}" class="active">
-        <div>🏠</div>
-        الرئيسية
-    </a>
+    <div class="nav-inner">
 
-    <a href="#products">
-        <div>◈</div>
-        استكشاف
-    </a>
+        <button class="nav-item active">
+            <span>🏠</span>
+            الرئيسية
+        </button>
 
-    <a href="#">
-        <div>🛒</div>
-        السلة
-    </a>
+        <button
+            class="nav-item"
+            onclick="showMessage('◈ الاستكشاف قريبًا')"
+        >
+            <span>◈</span>
+            الاستكشاف
+        </button>
 
-    <a href="{{ url_for('auth.messages') }}">
-        <div>💬</div>
-        الرسائل
-    </a>
+        <button
+            class="nav-item"
+            onclick="showMessage('🛒 السلة قريبًا')"
+        >
+            <span>🛒</span>
+            السلة
+        </button>
 
-    <a href="{{ url_for('auth.login') }}">
-        <div>👤</div>
-        حسابي
-    </a>
+        <button
+            class="nav-item"
+            onclick="window.location.href='{{ url_for('auth.messages') }}'"
+        >
+            <span>💬</span>
+            الرسائل
+        </button>
+
+        <button
+            class="nav-item"
+            onclick="goCards()"
+        >
+            <span>🎟️</span>
+            بطاقاتي
+        </button>
+
+    </div>
 
 </nav>
 
 
-<footer>
-    <strong>DZ MARKET 🇩🇿</strong>
-    <br><br>
-    منصتك الجزائرية للتجارة والبيع والشراء.
-</footer>
-
-
 <script>
 
-    function toggleDark() {
+function toggleProfile() {
 
-        document.body.classList.toggle("dark");
+    const menu =
+        document.getElementById("profileMenu");
 
-        localStorage.setItem(
-            "dz_dark_mode",
-            document.body.classList.contains("dark")
-        );
+    menu.classList.toggle("show");
+}
+
+
+document.addEventListener(
+    "click",
+    function(event) {
+
+        const menu =
+            document.getElementById("profileMenu");
+
+        const button =
+            document.querySelector(".profile-btn");
+
+        if (
+            !menu.contains(event.target) &&
+            !button.contains(event.target)
+        ) {
+            menu.classList.remove("show");
+        }
     }
+);
 
 
-    if (
-        localStorage.getItem("dz_dark_mode")
-        === "true"
-    ) {
-        document.body.classList.add("dark");
-    }
+function searchProducts() {
 
-
-    function searchProducts() {
-
-        const query =
-            document
-                .getElementById("searchInput")
-                .value
-                .toLowerCase()
-                .trim();
-
-        const products =
-            document.querySelectorAll(".product");
-
-        products.forEach(product => {
-
-            const name =
-                product.dataset.name.toLowerCase();
-
-            product.style.display =
-                name.includes(query)
-                    ? "block"
-                    : "none";
-        });
-    }
-
-
-    function filterCategory(category) {
-
-        const products =
-            document.querySelectorAll(".product");
-
-        products.forEach(product => {
-
-            if (
-                category === "all" ||
-                product.dataset.category === category
-            ) {
-                product.style.display = "block";
-            } else {
-                product.style.display = "none";
-            }
-
-        });
-
+    const value =
         document
-            .getElementById("products")
-            .scrollIntoView({
-                behavior: "smooth"
-            });
+        .getElementById("searchInput")
+        .value
+        .toLowerCase()
+        .trim();
+
+    const products =
+        document.querySelectorAll(".product");
+
+    products.forEach(product => {
+
+        const name =
+            product.dataset.name.toLowerCase();
+
+        const store =
+            product.dataset.store.toLowerCase();
+
+        product.style.display =
+            (
+                name.includes(value) ||
+                store.includes(value)
+            )
+            ? ""
+            : "none";
+    });
+}
+
+
+function addToCart(name) {
+
+    showMessage(
+        "🛒 تمت إضافة " + name + " إلى السلة"
+    );
+}
+
+
+function showMessage(message) {
+
+    alert(message);
+}
+
+
+function toggleDarkMode() {
+
+    document.body.classList.toggle("dark");
+
+    const dark =
+        document.body.classList.contains("dark");
+
+    localStorage.setItem(
+        "dzmarket_dark",
+        dark ? "1" : "0"
+    );
+
+    if (dark) {
+
+        document.body.style.background =
+            "#160c11";
+
+        document.body.style.color =
+            "#fff";
+
+    } else {
+
+        document.body.style.background =
+            "";
+
+        document.body.style.color =
+            "";
     }
+}
 
 
-    function openAI() {
+function goAccount() {
 
-        alert(
-            "✨ مساعد DZ MARKET\n\n" +
-            "المساعد الذكي الحقيقي سنربطوه لاحقًا."
-        );
-    }
+    showMessage(
+        "👤 صفحة الحساب سيتم ربطها قريبًا"
+    );
+}
+
+
+function goSettings() {
+
+    showMessage(
+        "⚙️ صفحة الإعدادات سيتم ربطها قريبًا"
+    );
+}
+
+
+function goCards() {
+
+    showMessage(
+        "🎟️ بطاقات الخصم والمكافآت قريبًا"
+    );
+}
+
+
+if (
+    localStorage.getItem("dzmarket_dark")
+    === "1"
+) {
+    toggleDarkMode();
+}
 
 </script>
 
