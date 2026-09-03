@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>بطاقاتي | DZ MARKET 🇩🇿</title>
+    <title>بطاقاتي | DZ MARKET</title>
 
     <style>
         * {
@@ -15,19 +14,19 @@
 
         body {
             font-family: Arial, sans-serif;
-            background: #f8f4ef;
-            color: #35151d;
-            padding-bottom: 90px;
+            background: #f8f5f2;
+            color: #35151f;
+            padding-bottom: 85px;
         }
 
-        .header {
-            background: linear-gradient(135deg, #4b0f1c, #741b2d);
+        header {
+            background: linear-gradient(135deg, #4b0f1d, #741d32);
             color: white;
             padding: 20px 18px;
             border-radius: 0 0 24px 24px;
         }
 
-        .header-row {
+        .top {
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -36,117 +35,125 @@
         .back {
             color: white;
             text-decoration: none;
-            font-size: 28px;
-        }
-
-        .header h1 {
             font-size: 22px;
         }
 
-        .container {
-            max-width: 650px;
-            margin: auto;
-            padding: 18px 14px;
+        h1 {
+            font-size: 23px;
         }
 
         .intro {
-            background: white;
-            border-radius: 20px;
-            padding: 18px;
-            margin-bottom: 16px;
-            box-shadow: 0 7px 20px rgba(0,0,0,.05);
+            padding: 20px 18px 10px;
         }
 
         .intro h2 {
-            font-size: 18px;
-            margin-bottom: 8px;
+            font-size: 20px;
+            margin-bottom: 6px;
         }
 
         .intro p {
             color: #777;
-            font-size: 13px;
-            line-height: 1.7;
+            font-size: 14px;
+        }
+
+        .cards {
+            padding: 10px 18px;
+            display: grid;
+            gap: 15px;
         }
 
         .card {
             position: relative;
             overflow: hidden;
-            background: linear-gradient(135deg, #64162a, #92283f);
+            background: linear-gradient(135deg, #5a1224, #8b2842);
             color: white;
-            border-radius: 22px;
+            border-radius: 20px;
             padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 10px 25px rgba(70,15,30,.18);
+            box-shadow: 0 8px 25px rgba(75, 15, 29, .18);
+        }
+
+        .card::after {
+            content: "";
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border: 1px solid rgba(212, 175, 55, .35);
+            border-radius: 50%;
+            left: -45px;
+            bottom: -55px;
         }
 
         .card-top {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .brand {
-            font-weight: bold;
-            color: #f2d27a;
+            align-items: flex-start;
+            gap: 10px;
         }
 
         .badge {
-            background: rgba(255,255,255,.15);
+            background: #d4af37;
+            color: #35151f;
             padding: 6px 10px;
             border-radius: 20px;
-            font-size: 11px;
+            font-weight: bold;
+            font-size: 12px;
         }
 
         .discount {
-            font-size: 36px;
-            font-weight: bold;
-            color: #f2d27a;
-            margin-bottom: 5px;
+            font-size: 34px;
+            font-weight: 900;
+            margin: 18px 0 5px;
         }
 
         .description {
+            color: #f4e9dc;
             font-size: 14px;
-            margin-bottom: 14px;
+            line-height: 1.6;
+        }
+
+        .code {
+            margin-top: 15px;
+            background: rgba(255,255,255,.12);
+            border: 1px dashed rgba(255,255,255,.5);
+            border-radius: 10px;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            letter-spacing: 2px;
         }
 
         .expiry {
-            font-size: 11px;
-            opacity: .8;
-            margin-bottom: 15px;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #f1dca4;
         }
 
         .use-btn {
-            border: 0;
-            background: #f2d27a;
-            color: #4b0f1c;
-            padding: 11px 18px;
+            width: 100%;
+            margin-top: 15px;
+            border: none;
+            padding: 12px;
             border-radius: 12px;
+            background: white;
+            color: #5a1224;
             font-weight: bold;
             cursor: pointer;
         }
 
+        .use-btn:disabled {
+            opacity: .55;
+            cursor: not-allowed;
+        }
+
         .empty {
             text-align: center;
-            background: white;
-            border-radius: 22px;
-            padding: 45px 20px;
-            margin-top: 20px;
-            box-shadow: 0 7px 20px rgba(0,0,0,.05);
+            padding: 55px 20px;
+            color: #777;
         }
 
         .empty-icon {
-            font-size: 55px;
-            margin-bottom: 14px;
-        }
-
-        .empty h2 {
-            margin-bottom: 8px;
-        }
-
-        .empty p {
-            color: #777;
-            line-height: 1.7;
+            font-size: 45px;
+            margin-bottom: 15px;
         }
 
         .bottom-nav {
@@ -154,190 +161,202 @@
             bottom: 0;
             right: 0;
             left: 0;
-            height: 72px;
-            background: rgba(255,255,255,.97);
-            border-top: 1px solid #eadfe1;
+            height: 70px;
+            background: white;
+            border-top: 1px solid #eee;
             display: flex;
             justify-content: space-around;
             align-items: center;
-            z-index: 100;
+            z-index: 1000;
         }
 
-        .nav-item {
+        .bottom-nav a {
             text-decoration: none;
-            color: #725d63;
+            color: #777;
             font-size: 11px;
             text-align: center;
         }
 
-        .nav-item span {
+        .bottom-nav a span {
             display: block;
-            font-size: 22px;
+            font-size: 21px;
             margin-bottom: 3px;
         }
 
-        .nav-item.active {
-            color: #68172a;
+        .bottom-nav .active {
+            color: #741d32;
             font-weight: bold;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 85px;
+            right: 18px;
+            left: 18px;
+            background: #35151f;
+            color: white;
+            padding: 13px;
+            border-radius: 12px;
+            text-align: center;
+            display: none;
+            z-index: 2000;
         }
     </style>
 </head>
 
 <body>
 
-<header class="header">
-
-    <div class="header-row">
-
-        <a href="{{ url_for('home') }}" class="back">
-            ‹
-        </a>
-
+<header>
+    <div class="top">
+        <a href="{{ url_for('home') }}" class="back">‹</a>
         <h1>🎟️ بطاقاتي</h1>
-
-        <div></div>
-
+        <div>🇩🇿</div>
     </div>
-
 </header>
 
-<main class="container">
+<section class="intro">
+    <h2>بطاقاتك ومكافآتك 🎁</h2>
+    <p>استعمل مكافآتك عند إتمام طلباتك.</p>
+</section>
 
-    <section class="intro">
+{% if cards %}
 
-        <h2>مكافآتك 🎁</h2>
+<div class="cards">
 
-        <p>
-            هنا تلقى بطاقات الخصم والمكافآت اللي ربحتها
-            من طلباتك ودعوات الأصدقاء.
-        </p>
+    {% for card in cards %}
+    <div class="card" id="card-{{ card.code }}">
 
-    </section>
-
-
-    {% if cards %}
-
-        {% for card in cards %}
-
-        <div class="card">
-
-            <div class="card-top">
-
-                <div class="brand">
-                    DZ MARKET 🇩🇿
-                </div>
-
-                <div class="badge">
-                    صالحة
-                </div>
-
-            </div>
-
-
-            <div class="discount">
-                {{ card['discount_percent'] }}%
-            </div>
-
-
-            <div class="description">
-                خصم خاص على مشترياتك 🎉
-            </div>
-
-
-            {% if card['expires_at'] %}
-
-            <div class="expiry">
-                تنتهي في: {{ card['expires_at'] }}
-            </div>
-
-            {% else %}
-
-            <div class="expiry">
-                بدون تاريخ انتهاء
-            </div>
-
-            {% endif %}
-
-
-            <button
-                class="use-btn"
-                type="button"
-                onclick="useCard('{{ card['code'] }}')">
-
-                استعمال البطاقة
-
-            </button>
-
+        <div class="card-top">
+            <strong>{{ card.title or "مكافأة DZ MARKET" }}</strong>
+            <span class="badge">
+                {{ card.reward_type or "خصم" }}
+            </span>
         </div>
 
-        {% endfor %}
+        <div class="discount">
+            {% if card.discount_percent %}
+                {{ card.discount_percent }}%
+            {% else %}
+                🎁
+            {% endif %}
+        </div>
 
-    {% else %}
+        <div class="description">
+            {{ card.description or "مكافأة خاصة لك من DZ MARKET." }}
+        </div>
 
-        <section class="empty">
+        <div class="code">
+            {{ card.code }}
+        </div>
 
-            <div class="empty-icon">
-                🎟️
-            </div>
+        {% if card.expires_at %}
+        <div class="expiry">
+            ⏳ صالحة إلى: {{ card.expires_at }}
+        </div>
+        {% endif %}
 
-            <h2>
-                ما عندك حتى بطاقة حاليا
-            </h2>
+        <button
+            class="use-btn"
+            onclick="useCard('{{ card.code }}', this)">
+            استعمال البطاقة
+        </button>
 
-            <p>
-                كمل طلباتك وشارك رابط الدعوة مع أصحابك
-                باش تجمع مكافآت وبطاقات خصم 🎁
-            </p>
+    </div>
+    {% endfor %}
 
-        </section>
+</div>
 
-    {% endif %}
+{% else %}
 
-</main>
+<div class="empty">
+    <div class="empty-icon">🎟️</div>
+    <h3>ما عندك حتى بطاقة حاليا</h3>
+    <p>كمل طلباتك واربح مكافآت أكثر! 🔥</p>
+</div>
 
+{% endif %}
+
+<div class="toast" id="toast"></div>
 
 <nav class="bottom-nav">
-
-    <a href="{{ url_for('home') }}" class="nav-item">
+    <a href="{{ url_for('home') }}">
         <span>🏠</span>
         الرئيسية
     </a>
 
-    <a href="#" class="nav-item">
+    <a href="#">
         <span>◈</span>
         الاستكشاف
     </a>
 
-    <a href="#" class="nav-item">
+    <a href="{{ url_for('auth.cart') }}">
         <span>🛒</span>
         السلة
     </a>
 
-    <a href="{{ url_for('auth.messages') }}" class="nav-item">
+    <a href="{{ url_for('auth.messages') }}">
         <span>💬</span>
         الرسائل
     </a>
 
-    <a href="#" class="nav-item active">
+    <a href="{{ url_for('auth.cards') }}" class="active">
         <span>🎟️</span>
         بطاقاتي
     </a>
-
 </nav>
 
-
 <script>
+async function useCard(code, button) {
 
-function useCard(code) {
+    button.disabled = true;
+    button.textContent = "جاري الاستعمال...";
 
-    alert(
-        "كود البطاقة: " +
-        code +
-        "\nسيتم تطبيقها عند تأكيد الطلب 🎟️"
-    );
+    try {
+        const formData = new FormData();
+        formData.append("code", code);
 
+        const response = await fetch(
+            "{{ url_for('auth.use_card') }}",
+            {
+                method: "POST",
+                body: formData
+            }
+        );
+
+        const data = await response.json();
+
+        showToast(data.message || "تمت العملية");
+
+        if (data.success) {
+            const card = document.getElementById("card-" + code);
+
+            if (card) {
+                card.style.opacity = "0.5";
+                button.textContent = "تم استعمال البطاقة ✓";
+                button.disabled = true;
+            }
+        } else {
+            button.disabled = false;
+            button.textContent = "استعمال البطاقة";
+        }
+
+    } catch (error) {
+        showToast("حدث خطأ، حاول مرة أخرى.");
+        button.disabled = false;
+        button.textContent = "استعمال البطاقة";
+    }
 }
 
+function showToast(message) {
+    const toast = document.getElementById("toast");
+
+    toast.textContent = message;
+    toast.style.display = "block";
+
+    setTimeout(() => {
+        toast.style.display = "none";
+    }, 2500);
+}
 </script>
 
 </body>
