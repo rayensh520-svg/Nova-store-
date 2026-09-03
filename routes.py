@@ -13,7 +13,12 @@ from werkzeug.security import (
     check_password_hash
 )
 
-from models import User, Store
+from models import (
+    User,
+    Store,
+    Message,
+    ChatSettings
+)
 
 
 auth = Blueprint("auth", __name__)
@@ -25,10 +30,10 @@ auth = Blueprint("auth", __name__)
 
 def validate_password(password):
     """
-    Minimum security rules:
-    - 8 characters
-    - at least one letter
-    - at least one number
+    Password security:
+    - Minimum 8 characters
+    - At least one letter
+    - At least one number
     """
 
     if len(password) < 8:
@@ -42,8 +47,8 @@ def validate_password(password):
 
 def login_user(user):
     """
-    Store only the necessary identity information
-    in the session.
+    Store only necessary identity information
+    inside the session.
     """
 
     session.clear()
@@ -289,9 +294,6 @@ def register():
                 municipality=municipality
             )
 
-            # Seller verification remains pending.
-            # The admin can verify the seller later.
-
             from database import get_connection
 
             connection = get_connection()
@@ -316,7 +318,7 @@ def register():
             connection.close()
 
         # -------------------------------------------------
-        # Login automatically
+        # Automatic login
         # -------------------------------------------------
 
         user = User.find_by_id(user_id)
@@ -408,19 +410,27 @@ def logout():
     )
 
     return redirect(url_for("home"))
-    # ============================================================
-# DZ MARKET - MESSAGES
-# ============================================================
+
+
+# =========================================================
+# MESSAGES
+# =========================================================
 
 @auth.route("/messages")
 def messages():
+
     user_id = session.get("user_id")
 
     if not user_id:
-        flash("سجّل الدخول أولًا للوصول إلى الرسائل.", "error")
+        flash(
+            "سجّل الدخول أولًا للوصول إلى الرسائل.",
+            "error"
+        )
         return redirect(url_for("auth.login"))
 
-    conversations = Message.conversation(user_id)
+    conversations = Message.conversation(
+        user_id
+    )
 
     return render_template(
         "messages.html",
@@ -428,23 +438,44 @@ def messages():
     )
 
 
+# =========================================================
+# SEND MESSAGE
+# =========================================================
+
 @auth.route("/messages/send", methods=["POST"])
 def send_message():
+
     user_id = session.get("user_id")
 
     if not user_id:
-        flash("يجب تسجيل الدخول أولًا.", "error")
+        flash(
+            "يجب تسجيل الدخول أولًا.",
+            "error"
+        )
         return redirect(url_for("auth.login"))
 
-    receiver_id = request.form.get("receiver_id", type=int)
-    text = request.form.get("message", "").strip()
+    receiver_id = request.form.get(
+        "receiver_id",
+        type=int
+    )
+
+    text = request.form.get(
+        "message",
+        ""
+    ).strip()
 
     if not receiver_id or not text:
-        flash("الرسالة غير مكتملة.", "error")
+        flash(
+            "الرسالة غير مكتملة.",
+            "error"
+        )
         return redirect(url_for("auth.messages"))
 
     if receiver_id == user_id:
-        flash("لا يمكنك إرسال رسالة لنفسك.", "error")
+        flash(
+            "لا يمكنك إرسال رسالة لنفسك.",
+            "error"
+        )
         return redirect(url_for("auth.messages"))
 
     Message.create(
@@ -453,4 +484,87 @@ def send_message():
         body=text
     )
 
-    return redirect(url_for("auth.messages"))
+    return redirect(
+        url_for("auth.messages")
+    )
+
+
+# =========================================================
+# CHAT SETTINGS
+# =========================================================
+
+@auth.route(
+    "/chat-settings",
+    methods=["GET", "POST"]
+)
+def chat_settings():
+
+    user_id = session.get("user_id")
+
+    if not user_id:
+        flash(
+            "سجّل الدخول أولًا.",
+            "error"
+        )
+        return redirect(
+            url_for("auth.login")
+        )
+
+    # -----------------------------------------------------
+    # SAVE SETTINGS
+    # -----------------------------------------------------
+
+    if request.method == "POST":
+
+        voice_type = request.form.get(
+            "voice_type",
+            "female"
+        )
+
+        voice_enabled = (
+            request.form.get(
+                "voice_enabled"
+            ) == "1"
+        )
+
+        language = request.form.get(
+            "language",
+            "ar"
+        )
+
+        style = request.form.get(
+            "style",
+            "friendly"
+        )
+
+        ChatSettings.update(
+            user_id=user_id,
+            voice_type=voice_type,
+            voice_enabled=voice_enabled,
+            language=language,
+            style=style
+        )
+
+        flash(
+            "تم حفظ إعدادات الدردشة بنجاح 🎙️✨",
+            "success"
+        )
+
+        return redirect(
+            url_for(
+                "auth.chat_settings"
+            )
+        )
+
+    # -----------------------------------------------------
+    # LOAD SETTINGS
+    # -----------------------------------------------------
+
+    settings = ChatSettings.get(
+        user_id
+    )
+
+    return render_template(
+        "chat_settings.html",
+        settings=settings
+            )
