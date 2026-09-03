@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>لوحة الإدارة | DZ MARKET</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Tahoma, sans-serif;
+            background: #f7f2ec;
+            color: #35101b;
+            min-height: 100vh;
+        }
+
+        a {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* =========================
+           HEADER
+        ========================== */
+
+        .header {
+            background: linear-gradient(135deg, #430b1b, #78152f);
+            color: white;
+            padding: 22px 18px 28px;
+            border-radius: 0 0 30px 30px;
+            box-shadow: 0 8px 25px rgba(67, 11, 27, .15);
+        }
+
+        .top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .brand {
+            font-size: 19px;
+            font-weight: bold;
+            letter-spacing: .2px;
+        }
+
+        .admin-badge {
+            padding: 7px 12px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, .13);
+            color: #f4d58e;
+            font-size: 11px;
+            font-weight: bold;
+            border: 1px solid rgba(255,255,255,.12);
+        }
+
+        h1 {
+            margin-top: 18px;
+            font-size: 26px;
+        }
+
+        .subtitle {
+            margin-top: 7px;
+            color: #ead5bb;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        /* =========================
+           MAIN
+        ========================== */
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            margin: auto;
+            padding: 18px 15px 45px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 22px 2px 12px;
+        }
+
+        /* =========================
+           STATS
+        ========================== */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 11px;
+        }
+
+        .stat {
+            background: white;
+            border-radius: 19px;
+            padding: 17px;
+            box-shadow: 0 7px 22px rgba(67,11,27,.07);
+            border: 1px solid #eee4da;
+            transition: transform .2s ease;
+        }
+
+        .stat:active {
+            transform: scale(.98);
+        }
+
+        .stat-icon {
+            font-size: 25px;
+        }
+
+        .stat-number {
+            margin-top: 9px;
+            font-size: 25px;
+            font-weight: bold;
+            color: #6d122b;
+        }
+
+        .stat-label {
+            margin-top: 4px;
+            color: #777;
+            font-size: 12px;
+        }
+
+        /* =========================
+           QUICK ACTIONS
+        ========================== */
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .quick {
+            background: white;
+            border-radius: 17px;
+            padding: 16px;
+            text-decoration: none;
+            color: #4b1221;
+            box-shadow: 0 6px 20px rgba(67,11,27,.06);
+            border: 1px solid #eee3d8;
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+
+        .quick:active {
+            transform: scale(.97);
+        }
+
+        .quick-icon {
+            font-size: 25px;
+        }
+
+        .quick-title {
+            margin-top: 9px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .quick-text {
+            margin-top: 4px;
+            color: #777;
+            font-size: 11px;
+        }
+
+        /* =========================
+           MONITORING PANEL
+        ========================== */
+
+        .panel {
+            background: white;
+            border-radius: 20px;
+            padding: 18px;
+            box-shadow: 0 7px 22px rgba(67,11,27,.07);
+            border: 1px solid #eee4da;
+        }
+
+        .row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 13px 0;
+            border-bottom: 1px solid #eee5dc;
+        }
+
+        .row:last-child {
+            border-bottom: none;
+        }
+
+        .row-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .row-icon {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            border-radius: 12px;
+            background: #f7eee5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+        }
+
+        .row-title {
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .row-desc {
+            color: #888;
+            font-size: 10px;
+            margin-top: 3px;
+            line-height: 1.5;
+        }
+
+        .number {
+            min-width: 34px;
+            text-align: center;
+            padding: 6px 9px;
+            border-radius: 20px;
+            background: #f4e5c7;
+            color: #765414;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .danger {
+            background: #f9e1e5;
+            color: #9b243c;
+        }
+
+        /* =========================
+           SYSTEM STATUS
+        ========================== */
+
+        .status-box {
+            margin-top: 16px;
+            background: #fff;
+            border-radius: 20px;
+            padding: 17px;
+            border: 1px solid #eee4da;
+            box-shadow: 0 7px 22px rgba(67,11,27,.06);
+        }
+
+        .status-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 13px;
+        }
+
+        .status-line {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 9px 0;
+            border-bottom: 1px solid #f0e8df;
+            font-size: 12px;
+        }
+
+        .status-line:last-child {
+            border-bottom: none;
+        }
+
+        .online {
+            color: #18864b;
+            font-weight: bold;
+        }
+
+        .online-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #27ae60;
+            border-radius: 50%;
+            margin-left: 5px;
+        }
+
+        /* =========================
+           LOGOUT
+        ========================== */
+
+        .logout {
+            display: block;
+            margin-top: 25px;
+            width: 100%;
+            padding: 14px;
+            border-radius: 15px;
+            text-align: center;
+            text-decoration: none;
+            background: #5c1026;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            box-shadow: 0 7px 18px rgba(92,16,38,.15);
+            transition: transform .2s ease;
+        }
+
+        .logout:active {
+            transform: scale(.98);
+        }
+
+        /* =========================
+           FOOTER
+        ========================== */
+
+        .footer {
+            text-align: center;
+            color: #999;
+            font-size: 11px;
+            margin-top: 22px;
+            line-height: 1.7;
+        }
+
+        /* =========================
+           TABLET / DESKTOP
+        ========================== */
+
+        @media (min-width: 650px) {
+
+            .container {
+                padding-left: 22px;
+                padding-right: 22px;
+            }
+
+            .stats {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .quick-actions {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .quick:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 25px rgba(67,11,27,.10);
+            }
+
+            .stat:hover {
+                transform: translateY(-3px);
+            }
+        }
+
+        @media (min-width: 900px) {
+
+            .header {
+                padding-left: calc((100% - 1000px) / 2 + 22px);
+                padding-right: calc((100% - 1000px) / 2 + 22px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="top">
+
+        <div class="brand">
+            DZ MARKET 🇩🇿
+        </div>
+
+        <div class="admin-badge">
+            🛡️ ADMIN
+        </div>
+
+    </div>
+
+    <h1>
+        لوحة الإدارة
+    </h1>
+
+    <div class="subtitle">
+        مركز التحكم ومراقبة المنصة بالكامل
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <!-- =========================
+         OVERVIEW
+    ========================== -->
+
+    <div class="section-title">
+        📊 نظرة عامة
+    </div>
+
+    <section class="stats">
+
+        <div class="stat">
+            <div class="stat-icon">👥</div>
+            <div class="stat-number">
+                {{ stats.users or 0 }}
+            </div>
+            <div class="stat-label">
+                المستخدمون
+            </div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-icon">🏪</div>
+            <div class="stat-number">
+                {{ stats.sellers or 0 }}
+            </div>
+            <div class="stat-label">
+                البائعون
+            </div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-icon">📦</div>
+            <div class="stat-number">
+                {{ stats.products or 0 }}
+            </div>
+            <div class="stat-label">
+                المنتجات
+            </div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-icon">🛒</div>
+            <div class="stat-number">
+                {{ stats.orders or 0 }}
+            </div>
+            <div class="stat-label">
+                الطلبات
+            </div>
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         QUICK MANAGEMENT
+    ========================== -->
+
+    <div class="section-title">
+        ⚡ الإدارة السريعة
+    </div>
+
+    <section class="quick-actions">
+
+        <a class="quick" href="#">
+            <div class="quick-icon">👥</div>
+            <div class="quick-title">
+                المستخدمون
+            </div>
+            <div class="quick-text">
+                إدارة الحسابات
+            </div>
+        </a>
+
+        <a class="quick" href="#">
+            <div class="quick-icon">🏪</div>
+            <div class="quick-title">
+                البائعون
+            </div>
+            <div class="quick-text">
+                مراجعة المتاجر
+            </div>
+        </a>
+
+        <a class="quick" href="#">
+            <div class="quick-icon">📦</div>
+            <div class="quick-title">
+                المنتجات
+            </div>
+            <div class="quick-text">
+                مراقبة المنتجات
+            </div>
+        </a>
+
+        <a class="quick" href="#">
+            <div class="quick-icon">🛒</div>
+            <div class="quick-title">
+                الطلبات
+            </div>
+            <div class="quick-text">
+                متابعة الطلبات
+            </div>
+        </a>
+
+    </section>
+
+
+    <!-- =========================
+         MONITORING
+    ========================== -->
+
+    <div class="section-title">
+        🛡️ مركز المراقبة
+    </div>
+
+    <section class="panel">
+
+        <div class="row">
+
+            <div class="row-left">
+
+                <div class="row-icon">
+                    ⏳
+                </div>
+
+                <div>
+                    <div class="row-title">
+                        متاجر بانتظار التحقق
+                    </div>
+
+                    <div class="row-desc">
+                        طلبات تسجيل البائعين
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="number">
+                {{ stats.pending_sellers or 0 }}
+            </div>
+
+        </div>
+
+
+        <div class="row">
+
+            <div class="row-left">
+
+                <div class="row-icon">
+                    📢
+                </div>
+
+                <div>
+                    <div class="row-title">
+                        الشكاوى
+                    </div>
+
+                    <div class="row-desc">
+                        شكاوى تحتاج للمراجعة
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="number danger">
+                {{ stats.complaints or 0 }}
+            </div>
+
+        </div>
+
+
+        <div class="row">
+
+            <div class="row-left">
+
+                <div class="row-icon">
+                    🚨
+                </div>
+
+                <div>
+                    <div class="row-title">
+                        البلاغات
+                    </div>
+
+                    <div class="row-desc">
+                        المنتجات والحسابات المبلغ عنها
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="number danger">
+                {{ stats.reports or 0 }}
+            </div>
+
+        </div>
+
+
+        <div class="row">
+
+            <div class="row-left">
+
+                <div class="row-icon">
+                    💬
+                </div>
+
+                <div>
+                    <div class="row-title">
+                        الرسائل
+                    </div>
+
+                    <div class="row-desc">
+                        نشاط المحادثات على المنصة
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="number">
+                {{ stats.messages or 0 }}
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         SYSTEM STATUS
+    ========================== -->
+
+    <div class="section-title">
+        ⚙️ حالة المنصة
+    </div>
+
+    <section class="status-box">
+
+        <div class="status-title">
+            حالة النظام
+        </div>
+
+        <div class="status-line">
+
+            <span>
+                الخادم
+            </span>
+
+            <span class="online">
+                <span class="online-dot"></span>
+                يعمل
+            </span>
+
+        </div>
+
+
+        <div class="status-line">
+
+            <span>
+                قاعدة البيانات
+            </span>
+
+            <span class="online">
+                <span class="online-dot"></span>
+                متصلة
+            </span>
+
+        </div>
+
+
+        <div class="status-line">
+
+            <span>
+                المنصة
+            </span>
+
+            <span class="online">
+                <span class="online-dot"></span>
+                نشطة
+            </span>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         LOGOUT
+    ========================== -->
+
+    <a class="logout" href="{{ url_for('auth.logout') }}">
+        🚪 تسجيل الخروج
+    </a>
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <div class="footer">
+        DZ MARKET 🇩🇿 — لوحة الإدارة
+        <br>
+        مركز التحكم وإدارة المنصة
+    </div>
+
+</main>
+
+</body>
+  </html>
