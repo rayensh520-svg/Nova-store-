@@ -1,1151 +1,241 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>إنشاء حساب — DZ MARKET</title>
+    <title>إنشاء حساب | VYORA STORE</title>
 
-    <style>
-        :root {
-            --burgundy: #800020;
-            --burgundy-dark: #570014;
-            --gold: #c9a227;
-            --gold-light: #e4c766;
-
-            --bg: #f7f1ed;
-            --surface: #fffaf7;
-            --text: #281f22;
-            --muted: #756b70;
-            --border: #eadde0;
-            --danger: #b3261e;
-            --success: #2e8b57;
-
-            --shadow: 0 18px 55px rgba(70, 0, 25, .12);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            min-height: 100vh;
-            padding: 28px 14px;
-
-            font-family:
-                system-ui,
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                Arial,
-                sans-serif;
-
-            color: var(--text);
-
-            background:
-                radial-gradient(
-                    circle at 10% 10%,
-                    rgba(128, 0, 32, .12),
-                    transparent 28%
-                ),
-                radial-gradient(
-                    circle at 90% 90%,
-                    rgba(201, 162, 39, .12),
-                    transparent 28%
-                ),
-                linear-gradient(
-                    135deg,
-                    #fffaf7,
-                    #f5eaed
-                );
-        }
-
-        body.dark-mode {
-            --bg: #12070b;
-            --surface: #1d0d13;
-            --text: #f8edf0;
-            --muted: #bcaeb3;
-            --border: #40232c;
-
-            background:
-                radial-gradient(
-                    circle at 10% 10%,
-                    rgba(128, 0, 32, .42),
-                    transparent 30%
-                ),
-                radial-gradient(
-                    circle at 90% 90%,
-                    rgba(201, 162, 39, .10),
-                    transparent 30%
-                ),
-                linear-gradient(
-                    135deg,
-                    #12070b,
-                    #280914,
-                    #16080d
-                );
-        }
-
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        .page {
-            width: min(100%, 680px);
-            margin: auto;
-        }
-
-        .topbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-
-            margin-bottom: 18px;
-        }
-
-        .brand {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-
-            color: var(--burgundy);
-            font-weight: 950;
-        }
-
-        body.dark-mode .brand {
-            color: var(--gold-light);
-        }
-
-        .brand-mark {
-            width: 40px;
-            height: 40px;
-
-            display: grid;
-            place-items: center;
-
-            border-radius: 13px;
-
-            color: white;
-
-            background:
-                linear-gradient(
-                    145deg,
-                    var(--burgundy),
-                    var(--burgundy-dark)
-                );
-
-            box-shadow:
-                0 8px 22px rgba(128, 0, 32, .22);
-        }
-
-        .brand-mark svg {
-            width: 22px;
-            height: 22px;
-
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 1.8;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .theme-btn {
-            width: 42px;
-            height: 42px;
-
-            display: grid;
-            place-items: center;
-
-            border: 1px solid var(--border);
-            border-radius: 13px;
-
-            background: var(--surface);
-            color: var(--text);
-        }
-
-        .theme-btn svg {
-            width: 20px;
-            height: 20px;
-
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 1.8;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .card {
-            background: rgba(255,250,247,.94);
-
-            border: 1px solid var(--border);
-            border-radius: 28px;
-
-            box-shadow: var(--shadow);
-
-            padding: 30px;
-        }
-
-        body.dark-mode .card {
-            background: rgba(29,13,19,.92);
-        }
-
-        .heading {
-            margin-bottom: 24px;
-        }
-
-        .heading h1 {
-            font-size: clamp(25px, 6vw, 34px);
-            margin-bottom: 7px;
-        }
-
-        .heading p {
-            color: var(--muted);
-            font-size: 14px;
-        }
-
-        .flash {
-            padding: 12px 14px;
-            margin-bottom: 16px;
-
-            border-radius: 13px;
-
-            font-size: 13px;
-            font-weight: 750;
-
-            background: rgba(179,38,30,.09);
-            color: var(--danger);
-
-            border: 1px solid rgba(179,38,30,.18);
-        }
-
-        .role-switch {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-
-            margin-bottom: 23px;
-        }
-
-        .role-option {
-            position: relative;
-        }
-
-        .role-option input {
-            position: absolute;
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .role-option label {
-            min-height: 62px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            padding: 10px;
-
-            border: 1px solid var(--border);
-            border-radius: 15px;
-
-            background: var(--surface);
-
-            color: var(--muted);
-
-            font-size: 14px;
-            font-weight: 900;
-
-            cursor: pointer;
-
-            transition: .2s ease;
-        }
-
-        .role-option input:checked + label {
-            color: var(--burgundy);
-
-            border-color: var(--burgundy);
-
-            background:
-                linear-gradient(
-                    135deg,
-                    rgba(128,0,32,.08),
-                    rgba(201,162,39,.08)
-                );
-
-            box-shadow:
-                0 7px 20px rgba(128,0,32,.08);
-        }
-
-        body.dark-mode .role-option input:checked + label {
-            color: var(--gold-light);
-            border-color: var(--gold);
-            background: rgba(128,0,32,.22);
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        .field {
-            margin-bottom: 15px;
-        }
-
-        .field.full {
-            grid-column: 1 / -1;
-        }
-
-        label.field-label {
-            display: block;
-
-            margin-bottom: 7px;
-
-            font-size: 13px;
-            font-weight: 850;
-        }
-
-        input,
-        select,
-        textarea {
-            width: 100%;
-
-            min-height: 47px;
-
-            padding: 11px 13px;
-
-            border: 1px solid var(--border);
-            border-radius: 13px;
-
-            outline: none;
-
-            background: var(--surface);
-            color: var(--text);
-
-            transition: .2s ease;
-        }
-
-        textarea {
-            min-height: 95px;
-            resize: vertical;
-        }
-
-        input:focus,
-        select:focus,
-        textarea:focus {
-            border-color: var(--burgundy);
-
-            box-shadow:
-                0 0 0 4px rgba(128,0,32,.07);
-        }
-
-        .password-wrap {
-            position: relative;
-        }
-
-        .password-wrap input {
-            padding-left: 50px;
-        }
-
-        .password-toggle {
-            position: absolute;
-
-            left: 7px;
-            top: 50%;
-
-            transform: translateY(-50%);
-
-            width: 36px;
-            height: 36px;
-
-            display: grid;
-            place-items: center;
-
-            border: 0;
-            background: transparent;
-
-            color: var(--muted);
-
-            cursor: pointer;
-        }
-
-        .password-toggle svg {
-            width: 22px;
-            height: 22px;
-
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 1.65;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .password-help {
-            margin-top: 7px;
-
-            color: var(--muted);
-
-            font-size: 11px;
-            line-height: 1.6;
-        }
-
-        .password-help strong {
-            color: var(--gold);
-        }
-
-        .seller-section {
-            display: none;
-
-            margin-top: 8px;
-            padding-top: 22px;
-
-            border-top: 1px solid var(--border);
-        }
-
-        .seller-section.active {
-            display: block;
-        }
-
-        .seller-title {
-            margin-bottom: 15px;
-
-            font-size: 18px;
-            font-weight: 950;
-
-            color: var(--burgundy);
-        }
-
-        body.dark-mode .seller-title {
-            color: var(--gold-light);
-        }
-
-        .verification-box {
-            margin-top: 4px;
-            padding: 17px;
-
-            border-radius: 17px;
-
-            border: 1px solid rgba(201,162,39,.25);
-
-            background:
-                linear-gradient(
-                    135deg,
-                    rgba(201,162,39,.08),
-                    rgba(128,0,32,.05)
-                );
-        }
-
-        .verification-box h3 {
-            margin-bottom: 6px;
-            font-size: 14px;
-        }
-
-        .verification-box p {
-            color: var(--muted);
-            font-size: 12px;
-            line-height: 1.7;
-        }
-
-        .document-choice {
-            display: grid;
-
-            grid-template-columns: 1fr 1fr;
-
-            gap: 9px;
-
-            margin-top: 13px;
-        }
-
-        .document-choice label {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-
-            min-height: 44px;
-
-            padding: 9px 11px;
-
-            border: 1px solid var(--border);
-            border-radius: 12px;
-
-            background: var(--surface);
-
-            font-size: 12px;
-            font-weight: 750;
-
-            cursor: pointer;
-        }
-
-        .document-choice input {
-            width: auto;
-            min-height: auto;
-        }
-
-        .document-note {
-            margin-top: 9px;
-
-            color: var(--muted);
-
-            font-size: 11px;
-            line-height: 1.6;
-        }
-
-        .terms {
-            display: flex;
-            align-items: flex-start;
-            gap: 9px;
-
-            margin: 18px 0;
-
-            color: var(--muted);
-
-            font-size: 12px;
-            line-height: 1.6;
-        }
-
-        .terms input {
-            width: 17px;
-            min-width: 17px;
-            height: 17px;
-            min-height: 17px;
-
-            margin-top: 2px;
-        }
-
-        .submit {
-            width: 100%;
-            min-height: 51px;
-
-            border: 0;
-            border-radius: 15px;
-
-            color: white;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    var(--burgundy),
-                    var(--burgundy-dark)
-                );
-
-            font-size: 15px;
-            font-weight: 950;
-
-            cursor: pointer;
-
-            box-shadow:
-                0 12px 28px rgba(128,0,32,.20);
-
-            transition: .2s ease;
-        }
-
-        .submit:hover {
-            transform: translateY(-2px);
-        }
-
-        .login-link {
-            margin-top: 19px;
-
-            text-align: center;
-
-            color: var(--muted);
-
-            font-size: 13px;
-        }
-
-        .login-link a {
-            color: var(--burgundy);
-            font-weight: 900;
-        }
-
-        body.dark-mode .login-link a {
-            color: var(--gold-light);
-        }
-
-        @media (max-width: 600px) {
-
-            body {
-                padding: 15px 10px 25px;
-            }
-
-            .card {
-                padding: 22px 16px;
-                border-radius: 23px;
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr;
-                gap: 0;
-            }
-
-            .field.full {
-                grid-column: auto;
-            }
-
-            .document-choice {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
 
-<div class="page">
+<main class="auth-page">
 
-    <div class="topbar">
+    <section class="auth-card">
 
-        <a
-            href="{{ url_for('auth.index') }}"
-            class="brand"
-        >
-            <span class="brand-mark">
-                <svg viewBox="0 0 24 24">
-                    <path d="M5 8.5 12 4l7 4.5v7L12 20l-7-4.5z"/>
-                    <path d="M8.5 10.5 12 8l3.5 2.5"/>
-                    <path d="M9 14h6"/>
-                </svg>
-            </span>
+        <div class="auth-logo">
+            <div class="v-icon">V</div>
 
-            DZ MARKET
-        </a>
-
-        <button
-            type="button"
-            class="theme-btn"
-            data-theme-toggle
-            aria-label="تغيير الوضع"
-            title="تغيير الوضع"
-        >
-            <svg
-                data-icon-moon
-                viewBox="0 0 24 24"
-            >
-                <path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"/>
-            </svg>
-
-            <svg
-                data-icon-sun
-                viewBox="0 0 24 24"
-                style="display:none"
-            >
-                <circle cx="12" cy="12" r="4"/>
-                <path d="M12 2v2"/>
-                <path d="M12 20v2"/>
-                <path d="m4.93 4.93 1.42 1.42"/>
-                <path d="m17.65 17.65 1.42 1.42"/>
-                <path d="M2 12h2"/>
-                <path d="M20 12h2"/>
-                <path d="m4.93 19.07 1.42-1.42"/>
-                <path d="m17.65 6.35 1.42-1.42"/>
-            </svg>
-        </button>
-
-    </div>
-
-    <section class="card">
-
-        <div class="heading">
-            <h1>إنشاء حساب</h1>
-            <p>
-                انضم إلى DZ MARKET وابدأ تجربتك في السوق الجزائري.
-            </p>
+            <div>
+                <strong>VYORA</strong>
+                <span>STORE</span>
+            </div>
         </div>
 
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="flash">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
-        <form
-            method="POST"
-            action="{{ url_for('auth.register') }}"
-            enctype="multipart/form-data"
-            id="registerForm"
-        >
-
-            <div class="role-switch">
-
-                <div class="role-option">
-                    <input
-                        type="radio"
-                        name="role"
-                        id="roleBuyer"
-                        value="buyer"
-                        checked
-                    >
-
-                    <label for="roleBuyer">
-                        مشتري
-                    </label>
-                </div>
-
-                <div class="role-option">
-                    <input
-                        type="radio"
-                        name="role"
-                        id="roleSeller"
-                        value="seller"
-                    >
-
-                    <label for="roleSeller">
-                        بائع / صاحبة مشروع
-                    </label>
-                </div>
-
-            </div>
-
-            <div class="form-grid">
-
-                <div class="field full">
-                    <label
-                        class="field-label"
-                        for="full_name"
-                    >
-                        الاسم الكامل
-                    </label>
-
-                    <input
-                        id="full_name"
-                        name="full_name"
-                        type="text"
-                        required
-                        autocomplete="name"
-                        placeholder="اكتبي اسمك الكامل"
-                    >
-                </div>
-
-                <div class="field">
-                    <label
-                        class="field-label"
-                        for="email"
-                    >
-                        البريد الإلكتروني
-                    </label>
-
-                    <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        required
-                        autocomplete="email"
-                        placeholder="example@email.com"
-                    >
-                </div>
-
-                <div class="field">
-                    <label
-                        class="field-label"
-                        for="phone"
-                    >
-                        رقم الهاتف
-                    </label>
-
-                    <input
-                        id="phone"
-                        name="phone"
-                        type="tel"
-                        autocomplete="tel"
-                        placeholder="05 / 06 / 07 ..."
-                    >
-                </div>
-
-                <div class="field">
-                    <label
-                        class="field-label"
-                        for="password"
-                    >
-                        كلمة المرور
-                    </label>
-
-                    <div class="password-wrap">
-
-                        <input
-                            id="password"
-                            name="password"
-                            type="password"
-                            required
-                            minlength="8"
-                            autocomplete="new-password"
-                            placeholder="8 أحرف أو أكثر"
-                        >
-
-                        <button
-                            type="button"
-                            class="password-toggle"
-                            data-password-toggle="password"
-                            aria-label="إظهار كلمة المرور"
-                            title="إظهار كلمة المرور"
-                        >
-                            <svg viewBox="0 0 24 24">
-
-                                <path
-                                    d="M3 12s3.2-5 9-5 9 5 9 5-3.2 5-9 5-9-5-9-5Z"
-                                />
-
-                                <path
-                                    d="M9 9.5c.8-.9 2.7-.9 3.6 0 .9.9.9 2.6 0 3.5-.9.9-2.8.9-3.6 0-.9-.9-.9-2.6 0-3.5Z"
-                                />
-
-                                <path d="M5.4 8.4 4.1 6.9"/>
-                                <path d="M8 7.3 7.2 5.5"/>
-                                <path d="M11 7 10.8 5"/>
-                                <path d="M13 7 13.2 5"/>
-                            </svg>
-                        </button>
-
-                    </div>
-
-                    <div class="password-help">
-                        يُفضّل استعمال كلمة مرور طويلة وتضمين
-                        <strong>حروفًا وأرقامًا ورموزًا</strong>
-                        لزيادة الأمان. هذا مجرد اقتراح وليس شرطًا.
-                    </div>
-                </div>
-
-                <div class="field">
-                    <label
-                        class="field-label"
-                        for="confirm_password"
-                    >
-                        تأكيد كلمة المرور
-                    </label>
-
-                    <div class="password-wrap">
-
-                        <input
-                            id="confirm_password"
-                            name="confirm_password"
-                            type="password"
-                            required
-                            minlength="8"
-                            autocomplete="new-password"
-                            placeholder="أعيدي كتابة كلمة المرور"
-                        >
-
-                        <button
-                            type="button"
-                            class="password-toggle"
-                            data-password-toggle="confirm_password"
-                            aria-label="إظهار كلمة المرور"
-                            title="إظهار كلمة المرور"
-                        >
-                            <svg viewBox="0 0 24 24">
-
-                                <path
-                                    d="M3 12s3.2-5 9-5 9 5 9 5-3.2 5-9 5-9-5-9-5Z"
-                                />
-
-                                <path
-                                    d="M9 9.5c.8-.9 2.7-.9 3.6 0 .9.9.9 2.6 0 3.5-.9.9-2.8.9-3.6 0- .9-.9-.9-2.6 0-3.5Z"
-                                />
-
-                                <path d="M5.4 8.4 4.1 6.9"/>
-                                <path d="M8 7.3 7.2 5.5"/>
-                                <path d="M11 7 10.8 5"/>
-                                <path d="M13 7 13.2 5"/>
-                            </svg>
-                        </button>
-
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- SELLER -->
-            <div
-                class="seller-section"
-                id="sellerSection"
-            >
-
-                <div class="seller-title">
-                    معلومات البائع
-                </div>
-
-                <div class="form-grid">
-
-                    <div class="field">
-                        <label
-                            class="field-label"
-                            for="store_name"
-                        >
-                            اسم المتجر / المشروع
-                        </label>
-
-                        <input
-                            id="store_name"
-                            name="store_name"
-                            type="text"
-                            placeholder="مثال: لمستي"
-                        >
-                    </div>
-
-                    <div class="field">
-                        <label
-                            class="field-label"
-                            for="activity_type"
-                        >
-                            نوع النشاط
-                        </label>
-
-                        <input
-                            id="activity_type"
-                            name="activity_type"
-                            type="text"
-                            placeholder="ملابس، حلويات، إكسسوارات..."
-                        >
-                    </div>
-
-                    <div class="field">
-                        <label
-                            class="field-label"
-                            for="wilaya"
-                        >
-                            الولاية
-                        </label>
-
-                        <input
-                            id="wilaya"
-                            name="wilaya"
-                            type="text"
-                            placeholder="الولاية"
-                        >
-                    </div>
-
-                    <div class="field">
-                        <label
-                            class="field-label"
-                            for="municipality"
-                        >
-                            البلدية
-                        </label>
-
-                        <input
-                            id="municipality"
-                            name="municipality"
-                            type="text"
-                            placeholder="البلدية"
-                        >
-                    </div>
-
-                    <div class="field full">
-                        <label
-                            class="field-label"
-                            for="verification_note"
-                        >
-                            ملاحظة التحقق
-                        </label>
-
-                        <textarea
-                            id="verification_note"
-                            name="verification_note"
-                            placeholder="اكتبي معلومات مختصرة تساعد الإدارة على التحقق من نشاطك."
-                        ></textarea>
-                    </div>
-
-                    <div class="field full">
-
-                        <div class="verification-box">
-
-                            <h3>
-                                وثيقة التحقق
-                            </h3>
-
-                            <p>
-                                للتحقق من هوية البائع فقط.
-                                لا تحتاجين إلى سجل تجاري.
-                                يمكن استعمال بطاقة التعريف الوطنية
-                                أو رخصة السياقة.
-                                الوثيقة ليست معروضة للمشترين.
-                            </p>
-
-                            <div class="document-choice">
-
-                                <label>
-                                    <input
-                                        type="radio"
-                                        name="verification_document_type"
-                                        value="national_id"
-                                    >
-
-                                    بطاقة التعريف الوطنية
-                                </label>
-
-                                <label>
-                                    <input
-                                        type="radio"
-                                        name="verification_document_type"
-                                        value="driving_license"
-                                    >
-
-                                    رخصة السياقة
-                                </label>
-
-                            </div>
-
-                            <div style="margin-top:12px;">
-
-                                <label
-                                    class="field-label"
-                                    for="verification_document"
-                                >
-                                    صورة الوثيقة
-                                </label>
-
-                                <input
-                                    id="verification_document"
-                                    name="verification_document"
-                                    type="file"
-                                    accept="image/jpeg,image/png,image/webp"
-                                >
-
-                            </div>
-
-                            <div class="document-note">
-                                تُستخدم الوثيقة لأغراض التحقق فقط
-                                ويجب حمايتها وعدم عرضها في صفحة المتجر.
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="field" style="margin-top:18px;">
-
-                <label
-                    class="field-label"
-                    for="referral_code"
-                >
-                    رمز الإحالة
-                    <span style="font-weight:500;color:var(--muted);">
-                        (اختياري)
-                    </span>
-                </label>
+        <div class="auth-heading">
+            <span>ابدأ تجربتك</span>
+            <h1>إنشاء حساب</h1>
+            <p>أنشئ حسابك واختر كيف تريد استخدام VYORA.</p>
+        </div>
+
+        <form class="auth-form" onsubmit="registerUser(event)">
+
+            <div class="form-group">
+                <label for="fullName">الاسم الكامل</label>
 
                 <input
-                    id="referral_code"
-                    name="referral_code"
+                    id="fullName"
+                    name="fullName"
                     type="text"
-                    placeholder="إذا عندك رمز إحالة"
-                >
+                    placeholder="أدخل اسمك الكامل"
+                    autocomplete="name"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label for="email">البريد الإلكتروني</label>
+
+                <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="example@email.com"
+                    autocomplete="email"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">كلمة المرور</label>
+
+                <input
+                    id="password"
+                    name="password"
+                    type="password"
+                    placeholder="أنشئ كلمة مرور قوية"
+                    autocomplete="new-password"
+                    minlength="8"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword">تأكيد كلمة المرور</label>
+
+                <input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type="password"
+                    placeholder="أعد إدخال كلمة المرور"
+                    autocomplete="new-password"
+                    minlength="8"
+                    required>
+            </div>
+
+            <div class="account-type">
+
+                <label>نوع الحساب</label>
+
+                <div class="account-options">
+
+                    <label class="account-option">
+                        <input
+                            type="radio"
+                            name="accountType"
+                            value="buyer"
+                            checked>
+
+                        <span>
+                            <strong>مشتري</strong>
+                            <small>اكتشف واشري المنتجات</small>
+                        </span>
+                    </label>
+
+                    <label class="account-option">
+                        <input
+                            type="radio"
+                            name="accountType"
+                            value="seller">
+
+                        <span>
+                            <strong>بائع</strong>
+                            <small>أنشئ متجرك وبع منتجاتك</small>
+                        </span>
+                    </label>
+
+                </div>
 
             </div>
 
-            <label class="terms">
+            <label class="terms-option">
 
                 <input
-                    id="terms"
-                    name="terms"
                     type="checkbox"
-                    required
-                >
+                    id="terms"
+                    required>
 
                 <span>
-                    أوافق على شروط استخدام DZ MARKET
-                    وسياسة الخصوصية.
+                    أوافق على شروط الاستخدام وسياسة الخصوصية.
                 </span>
 
             </label>
 
+            <p id="registerMessage"
+               class="form-message"></p>
+
             <button
                 type="submit"
-                class="submit"
-            >
+                class="auth-submit">
                 إنشاء الحساب
             </button>
 
         </form>
 
-        <div class="login-link">
-            عندك حساب من قبل؟
-            <a href="{{ url_for('auth.login') }}">
+        <div class="auth-footer">
+
+            <span>لديك حساب بالفعل؟</span>
+
+            <button
+                type="button"
+                class="text-button"
+                onclick="goToLogin()">
                 تسجيل الدخول
-            </a>
+            </button>
+
         </div>
 
     </section>
 
-</div>
+</main>
 
-<script src="{{ url_for('static', filename='app.js') }}"></script>
 
 <script>
-    const buyerRadio =
-        document.getElementById("roleBuyer");
 
-    const sellerRadio =
-        document.getElementById("roleSeller");
+function registerUser(event) {
 
-    const sellerSection =
-        document.getElementById("sellerSection");
+    event.preventDefault();
 
-    const storeName =
-        document.getElementById("store_name");
+    const name =
+        document.getElementById("fullName").value.trim();
 
-    function updateSellerFields() {
+    const email =
+        document.getElementById("email").value.trim();
 
-        const isSeller =
-            sellerRadio.checked;
+    const password =
+        document.getElementById("password").value;
 
-        sellerSection.classList.toggle(
-            "active",
-            isSeller
-        );
+    const confirmPassword =
+        document.getElementById("confirmPassword").value;
 
-        storeName.required = isSeller;
+    const message =
+        document.getElementById("registerMessage");
+
+    if (password.length < 8) {
+
+        message.textContent =
+            "كلمة المرور يجب أن تحتوي على 8 أحرف على الأقل.";
+
+        return;
     }
 
-    buyerRadio.addEventListener(
-        "change",
-        updateSellerFields
-    );
+    if (password !== confirmPassword) {
 
-    sellerRadio.addEventListener(
-        "change",
-        updateSellerFields
-    );
+        message.textContent =
+            "كلمتا المرور غير متطابقتين.";
 
-    updateSellerFields();
+        return;
+    }
 
-    /* Password confirmation */
-    document
-        .getElementById("registerForm")
-        .addEventListener(
-            "submit",
-            function (event) {
+    if (!name || !email) {
 
-                const password =
-                    document.getElementById(
-                        "password"
-                    ).value;
+        message.textContent =
+            "يرجى إكمال جميع المعلومات.";
 
-                const confirmation =
-                    document.getElementById(
-                        "confirm_password"
-                    ).value;
+        return;
+    }
 
-                if (password !== confirmation) {
+    const accountType =
+        document.querySelector(
+            'input[name="accountType"]:checked'
+        ).value;
 
-                    event.preventDefault();
+    message.textContent =
+        "جاري إنشاء الحساب...";
 
-                    alert(
-                        "كلمتا المرور غير متطابقتين."
-                    );
-                }
-            }
-        );
+    /*
+     * مؤقتاً فقط.
+     * لاحقاً نربط التسجيل بقاعدة البيانات
+     * وFlask API مع التحقق الحقيقي.
+     */
+
+    setTimeout(() => {
+
+        if (accountType === "seller") {
+            window.location.href = "/seller";
+        } else {
+            window.location.href = "/home";
+        }
+
+    }, 700);
+}
+
+
+function goToLogin() {
+    window.location.href = "/login";
+}
+
 </script>
 
 </body>
