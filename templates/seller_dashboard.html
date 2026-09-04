@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>لوحة البائع | VYORA STORE</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<main class="seller-dashboard">
+
+    <!-- HEADER -->
+    <header class="dashboard-header">
+
+        <div class="brand">
+
+            <div class="brand-mark">V</div>
+
+            <div class="brand-name">
+                <strong>VYORA</strong>
+                <span>STORE</span>
+            </div>
+
+        </div>
+
+        <div class="dashboard-actions">
+
+            <button
+                type="button"
+                class="icon-button"
+                onclick="openNotifications()"
+                aria-label="الإشعارات">
+                🔔
+            </button>
+
+            <button
+                type="button"
+                class="profile-button"
+                onclick="openProfile()">
+                حسابي
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- WELCOME -->
+    <section class="dashboard-welcome">
+
+        <div>
+
+            <span>لوحة التحكم</span>
+
+            <h1>
+                مرحباً بك في متجرك
+            </h1>
+
+            <p>
+                تابع منتجاتك وطلباتك وأداء متجرك من مكان واحد.
+            </p>
+
+        </div>
+
+        <button
+            type="button"
+            class="primary-action"
+            onclick="addProduct()">
+
+            + إضافة منتج
+
+        </button>
+
+    </section>
+
+
+    <!-- QUICK STATS -->
+    <section class="stats-grid">
+
+        <article class="stat-card">
+
+            <span>المبيعات</span>
+
+            <strong>
+                0 دج
+            </strong>
+
+            <small>
+                إجمالي المبيعات
+            </small>
+
+        </article>
+
+
+        <article class="stat-card">
+
+            <span>الطلبات</span>
+
+            <strong>
+                0
+            </strong>
+
+            <small>
+                جميع الطلبات
+            </small>
+
+        </article>
+
+
+        <article class="stat-card">
+
+            <span>المنتجات</span>
+
+            <strong>
+                0
+            </strong>
+
+            <small>
+                المنتجات المنشورة
+            </small>
+
+        </article>
+
+
+        <article class="stat-card">
+
+            <span>الرصيد</span>
+
+            <strong>
+                0 دج
+            </strong>
+
+            <small>
+                الرصيد المتاح
+            </small>
+
+        </article>
+
+    </section>
+
+
+    <!-- MAIN GRID -->
+    <section class="dashboard-grid">
+
+
+        <!-- SALES CHART -->
+        <article class="dashboard-card sales-chart-card">
+
+            <div class="card-heading">
+
+                <div>
+                    <span>الأداء</span>
+
+                    <h2>
+                        المبيعات
+                    </h2>
+                </div>
+
+                <select
+                    id="salesPeriod"
+                    onchange="changeSalesPeriod()">
+
+                    <option value="7">
+                        آخر 7 أيام
+                    </option>
+
+                    <option value="30">
+                        آخر 30 يوم
+                    </option>
+
+                    <option value="90">
+                        آخر 3 أشهر
+                    </option>
+
+                    <option value="365">
+                        آخر سنة
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="chart-container">
+
+                <canvas id="salesChart"></canvas>
+
+                <div
+                    id="chartEmpty"
+                    class="chart-empty">
+
+                    لا توجد مبيعات بعد
+
+                </div>
+
+            </div>
+
+        </article>
+
+
+        <!-- ORDERS -->
+        <article class="dashboard-card">
+
+            <div class="card-heading">
+
+                <div>
+                    <span>النشاط</span>
+
+                    <h2>
+                        آخر الطلبات
+                    </h2>
+                </div>
+
+                <button
+                    type="button"
+                    class="text-button"
+                    onclick="viewAllOrders()">
+
+                    عرض الكل
+
+                </button>
+
+            </div>
+
+
+            <div
+                id="recentOrders"
+                class="orders-list">
+
+                <div class="empty-state">
+
+                    <h3>
+                        لا توجد طلبات
+                    </h3>
+
+                    <p>
+                        ستظهر طلبات العملاء هنا عند وصولها.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </article>
+
+
+        <!-- PRODUCTS -->
+        <article class="dashboard-card">
+
+            <div class="card-heading">
+
+                <div>
+                    <span>المخزون</span>
+
+                    <h2>
+                        المنتجات
+                    </h2>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="text-button"
+                    onclick="viewProducts()">
+
+                    إدارة المنتجات
+
+                </button>
+
+            </div>
+
+
+            <div class="product-summary">
+
+                <div>
+                    <span>منتجات متاحة</span>
+                    <strong id="availableProducts">0</strong>
+                </div>
+
+                <div>
+                    <span>عند الطلب</span>
+                    <strong id="madeToOrderProducts">0</strong>
+                </div>
+
+                <div>
+                    <span>نفد المخزون</span>
+                    <strong id="outOfStockProducts">0</strong>
+                </div>
+
+            </div>
+
+        </article>
+
+
+        <!-- QUICK ACTIONS -->
+        <article class="dashboard-card">
+
+            <div class="card-heading">
+
+                <div>
+                    <span>اختصارات</span>
+
+                    <h2>
+                        إدارة المتجر
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="quick-actions">
+
+                <button
+                    type="button"
+                    onclick="addProduct()">
+
+                    <strong>
+                        إضافة منتج
+                    </strong>
+
+                    <span>
+                        نشر منتج جديد
+                    </span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    onclick="viewOrders()">
+
+                    <strong>
+                        الطلبات
+                    </strong>
+
+                    <span>
+                        متابعة طلبات العملاء
+                    </span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    onclick="openWallet()">
+
+                    <strong>
+                        المحفظة
+                    </strong>
+
+                    <span>
+                        الأرباح والعمولات
+                    </span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    onclick="openAnalytics()">
+
+                    <strong>
+                        الإحصائيات
+                    </strong>
+
+                    <span>
+                        تحليل أداء المتجر
+                    </span>
+
+                </button>
+
+            </div>
+
+        </article>
+
+    </section>
+
+
+    <!-- BOTTOM NAV -->
+    <nav class="seller-navigation">
+
+        <button
+            class="active"
+            onclick="goDashboard()">
+
+            <span>⌂</span>
+            <small>الرئيسية</small>
+
+        </button>
+
+
+        <button onclick="viewProducts()">
+
+            <span>□</span>
+            <small>المنتجات</small>
+
+        </button>
+
+
+        <button onclick="viewOrders()">
+
+            <span>≡</span>
+            <small>الطلبات</small>
+
+        </button>
+
+
+        <button onclick="openAnalytics()">
+
+            <span>⌁</span>
+            <small>الإحصائيات</small>
+
+        </button>
+
+
+        <button onclick="openProfile()">
+
+            <span>◯</span>
+            <small>حسابي</small>
+
+        </button>
+
+    </nav>
+
+</main>
+
+
+<script>
+
+function addProduct() {
+    window.location.href = "/seller/products/add";
+}
+
+
+function viewProducts() {
+    window.location.href = "/seller/products";
+}
+
+
+function viewOrders() {
+    window.location.href = "/seller/orders";
+}
+
+
+function viewAllOrders() {
+    window.location.href = "/seller/orders";
+}
+
+
+function openAnalytics() {
+    window.location.href = "/seller/analytics";
+}
+
+
+function openWallet() {
+    window.location.href = "/seller/wallet";
+}
+
+
+function openProfile() {
+    window.location.href = "/profile";
+}
+
+
+function openNotifications() {
+    window.location.href = "/notifications";
+}
+
+
+function goDashboard() {
+    window.location.href = "/seller/dashboard";
+}
+
+
+function changeSalesPeriod() {
+
+    const period =
+        document.getElementById("salesPeriod").value;
+
+    /*
+     * لاحقاً:
+     * نطلب البيانات الحقيقية من Flask API
+     * حسب الفترة المختارة.
+     */
+
+    console.log("Selected period:", period);
+}
+
+
+/*
+ * لا توجد أرقام وهمية هنا.
+ *
+ * الإحصائيات الحقيقية ستأتي من قاعدة البيانات:
+ *
+ * المبيعات
+ * الطلبات
+ * المنتجات
+ * الرصيد
+ * المخزون
+ * الرسم البياني
+ *
+ * ويتم حساب العمولة 7% في الخادم،
+ * وليس في الواجهة.
+ */
+
+</script>
+
+</body>
+  </html>
