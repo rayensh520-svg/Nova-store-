@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>403 | DZ MARKET</title>
+    <title>404 - الصفحة غير موجودة | DZ MARKET</title>
 
     <style>
         :root {
@@ -15,8 +14,6 @@
 
             --background: #f7f3f4;
             --surface: #ffffff;
-            --surface-soft: #fcf9fa;
-
             --text: #241d20;
             --muted: #756b70;
             --border: #eadfe3;
@@ -31,230 +28,189 @@
         body {
             margin: 0;
             min-height: 100vh;
-
+            font-family: Arial, "Segoe UI", sans-serif;
+            background:
+                radial-gradient(circle at 15% 20%, rgba(201,162,39,.12), transparent 28%),
+                radial-gradient(circle at 85% 80%, rgba(128,0,32,.10), transparent 30%),
+                var(--background);
+            color: var(--text);
             display: flex;
             align-items: center;
             justify-content: center;
-
-            padding: 20px;
-
-            font-family:
-                system-ui,
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                Tahoma,
-                Arial,
-                sans-serif;
-
-            color: var(--text);
-
-            background:
-                radial-gradient(
-                    circle at 10% 10%,
-                    rgba(128, 0, 32, .08),
-                    transparent 30%
-                ),
-                radial-gradient(
-                    circle at 90% 85%,
-                    rgba(201, 162, 39, .10),
-                    transparent 30%
-                ),
-                var(--background);
+            padding: 24px;
+            overflow: hidden;
+            transition: .25s ease;
         }
 
         body.dark-mode {
             --background: #12090c;
             --surface: #1d1014;
-            --surface-soft: #25151a;
             --text: #f7eef1;
             --muted: #bcaeb3;
             --border: #3a252b;
 
             background:
-                radial-gradient(
-                    circle at 10% 10%,
-                    rgba(128, 0, 32, .32),
-                    transparent 32%
-                ),
-                radial-gradient(
-                    circle at 90% 85%,
-                    rgba(201, 162, 39, .12),
-                    transparent 30%
-                ),
-                linear-gradient(
-                    145deg,
-                    #12090c,
-                    #1b0c11 55%,
-                    #10070a
-                );
+                radial-gradient(circle at 15% 20%, rgba(201,162,39,.10), transparent 28%),
+                radial-gradient(circle at 85% 80%, rgba(128,0,32,.25), transparent 30%),
+                linear-gradient(135deg, #12090c, #1d0d12 55%, #10070a);
+        }
+
+        .decoration {
+            position: fixed;
+            border: 1px solid rgba(201,162,39,.18);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .circle-one {
+            width: 280px;
+            height: 280px;
+            top: -130px;
+            right: -100px;
+        }
+
+        .circle-two {
+            width: 220px;
+            height: 220px;
+            bottom: -100px;
+            left: -80px;
         }
 
         .container {
-            width: min(620px, 100%);
+            width: 100%;
+            max-width: 620px;
+            position: relative;
+            z-index: 2;
         }
 
         .card {
-            position: relative;
-            overflow: hidden;
-
-            text-align: center;
-
-            background: var(--surface);
+            background: rgba(255,255,255,.92);
             border: 1px solid var(--border);
-
             border-radius: 30px;
-            padding: 45px 28px;
-
+            padding: 46px 28px;
+            text-align: center;
             box-shadow: var(--shadow);
+            backdrop-filter: blur(12px);
         }
 
-        .card::before {
-            content: "";
-
-            position: absolute;
-
-            width: 230px;
-            height: 230px;
-
-            border: 1px solid rgba(128, 0, 32, .08);
-            border-radius: 50%;
-
-            top: -130px;
-            left: -90px;
-
-            pointer-events: none;
-        }
-
-        .card::after {
-            content: "";
-
-            position: absolute;
-
-            width: 180px;
-            height: 180px;
-
-            border: 1px solid rgba(201, 162, 39, .10);
-            border-radius: 50%;
-
-            bottom: -100px;
-            right: -70px;
-
-            pointer-events: none;
-        }
-
-        .content {
-            position: relative;
-            z-index: 2;
+        body.dark-mode .card {
+            background: rgba(29,16,20,.94);
         }
 
         .brand {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-
+            gap: 9px;
+            margin-bottom: 22px;
             color: var(--primary);
-
-            font-weight: 950;
-            font-size: 19px;
-
-            margin-bottom: 28px;
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: .5px;
         }
 
         body.dark-mode .brand {
             color: var(--gold-light);
         }
 
+        .brand-mark {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 8px 20px rgba(128,0,32,.22);
+            font-size: 18px;
+        }
+
         .code {
-            font-size: clamp(70px, 18vw, 120px);
-            line-height: 1;
+            font-size: clamp(76px, 20vw, 150px);
+            line-height: .9;
+            font-weight: 900;
+            margin: 0;
 
-            font-weight: 950;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    var(--primary),
-                    var(--gold)
-                );
+            background: linear-gradient(
+                135deg,
+                var(--primary),
+                var(--gold)
+            );
 
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
 
-            margin-bottom: 15px;
+            letter-spacing: -7px;
         }
 
         h1 {
-            margin: 0 0 10px;
-            font-size: clamp(24px, 6vw, 34px);
+            margin: 22px 0 10px;
+            font-size: clamp(25px, 6vw, 36px);
         }
 
-        p {
-            color: var(--muted);
-            line-height: 1.8;
-            margin: 0 auto;
+        .description {
             max-width: 470px;
+            margin: 0 auto;
+            color: var(--muted);
+            font-size: 16px;
+            line-height: 1.8;
         }
 
-        .buttons {
+        .actions {
             display: flex;
             justify-content: center;
-            gap: 10px;
-
-            margin-top: 25px;
+            gap: 12px;
             flex-wrap: wrap;
+            margin-top: 30px;
         }
 
         .btn {
-            display: inline-block;
-
-            text-decoration: none;
-
+            min-width: 145px;
             padding: 13px 20px;
-
             border-radius: 14px;
-
-            font-weight: 850;
-        }
-
-        .primary {
-            color: white;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    var(--primary),
-                    var(--primary-dark)
-                );
-
-            box-shadow:
-                0 10px 25px rgba(128, 0, 32, .20);
-        }
-
-        .secondary {
-            color: var(--text);
-
-            background: var(--surface-soft);
             border: 1px solid var(--border);
+            text-decoration: none;
+            font-weight: 800;
+            transition: .2s ease;
+        }
+
+        .btn-primary {
+            color: white;
+            background: linear-gradient(
+                135deg,
+                var(--primary),
+                var(--primary-dark)
+            );
+            border-color: transparent;
+        }
+
+        .btn-secondary {
+            color: var(--primary);
+            background: var(--surface);
+        }
+
+        body.dark-mode .btn-secondary {
+            color: var(--gold-light);
+            background: #25151a;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
         }
 
         .theme-btn {
-            position: absolute;
+            position: fixed;
             top: 18px;
             left: 18px;
-
-            width: 43px;
-            height: 43px;
-
+            width: 42px;
+            height: 42px;
             border: 1px solid var(--border);
             border-radius: 13px;
-
-            background: var(--surface-soft);
+            background: var(--surface);
             color: var(--text);
-
             cursor: pointer;
             font-size: 18px;
+            z-index: 5;
         }
 
         @media (max-width: 480px) {
@@ -263,7 +219,11 @@
                 border-radius: 24px;
             }
 
-            .buttons {
+            .description {
+                font-size: 15px;
+            }
+
+            .actions {
                 flex-direction: column;
             }
 
@@ -276,109 +236,93 @@
 
 <body>
 
-<div class="container">
+    <div class="decoration circle-one"></div>
+    <div class="decoration circle-two"></div>
 
-    <section class="card">
+    <button
+        class="theme-btn"
+        id="themeToggle"
+        type="button"
+        aria-label="تغيير المظهر"
+    >
+        🌙
+    </button>
 
-        <button
-            id="themeBtn"
-            class="theme-btn"
-            type="button"
-            aria-label="تغيير المظهر"
-        >
-            🌙
-        </button>
-
-        <div class="content">
+    <main class="container">
+        <section class="card">
 
             <div class="brand">
-                🇩🇿 DZ MARKET
+                <span class="brand-mark">DZ</span>
+                MARKET
             </div>
 
-            <div class="code">
-                403
-            </div>
+            <p class="code">404</p>
 
-            <h1>
-                الوصول غير مسموح
-            </h1>
+            <h1>الصفحة غير موجودة</h1>
 
-            <p>
-                عذراً، ليس لديك الصلاحية للوصول إلى هذه الصفحة.
-                إذا كنت تعتقد أن هذا خطأ، تواصل مع فريق الدعم.
+            <p class="description">
+                يبدو أن الصفحة التي تبحث عنها غير موجودة،
+                أو أن الرابط تغيّر أو لم يعد متاحًا.
+                لا تقلق، نقدر نرجعوك للمكان الصحيح. 🇩🇿
             </p>
 
-            <div class="buttons">
-
+            <div class="actions">
                 <a
                     href="{{ url_for('auth.index') }}"
-                    class="btn primary"
+                    class="btn btn-primary"
                 >
-                    العودة للرئيسية
+                    🏠 الصفحة الرئيسية
                 </a>
 
                 {% if current_user_id %}
                     <a
                         href="{{ url_for('auth.account') }}"
-                        class="btn secondary"
+                        class="btn btn-secondary"
                     >
-                        حسابي
+                        👤 حسابي
                     </a>
                 {% else %}
                     <a
                         href="{{ url_for('auth.login') }}"
-                        class="btn secondary"
+                        class="btn btn-secondary"
                     >
-                        تسجيل الدخول
+                        🔐 تسجيل الدخول
                     </a>
                 {% endif %}
-
             </div>
 
-        </div>
+        </section>
+    </main>
 
-    </section>
+    <script>
+        const body = document.body;
+        const toggle = document.getElementById("themeToggle");
 
-</div>
+        function applyTheme() {
+            const theme = localStorage.getItem("dzmarket-theme");
 
-<script>
-    const body = document.body;
-    const themeBtn = document.getElementById("themeBtn");
-
-    function applyTheme() {
-
-        const theme =
-            localStorage.getItem("dzmarket-theme") || "light";
-
-        if (theme === "dark") {
-
-            body.classList.add("dark-mode");
-
-            themeBtn.textContent = "☀️";
-
-        } else {
-
-            body.classList.remove("dark-mode");
-
-            themeBtn.textContent = "🌙";
+            if (theme === "dark") {
+                body.classList.add("dark-mode");
+                toggle.textContent = "☀️";
+            } else {
+                body.classList.remove("dark-mode");
+                toggle.textContent = "🌙";
+            }
         }
-    }
 
-    themeBtn.addEventListener("click", function () {
+        toggle.addEventListener("click", () => {
+            const dark = body.classList.toggle("dark-mode");
 
-        const dark =
-            body.classList.contains("dark-mode");
+            localStorage.setItem(
+                "dzmarket-theme",
+                dark ? "dark" : "light"
+            );
 
-        localStorage.setItem(
-            "dzmarket-theme",
-            dark ? "light" : "dark"
-        );
+            toggle.textContent = dark ? "☀️" : "🌙";
+        });
 
         applyTheme();
-    });
-
-    applyTheme();
-</script>
+    </script>
 
 </body>
-  </html>
+</html>
