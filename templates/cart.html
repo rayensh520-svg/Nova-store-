@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>السلة | VYORA STORE</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="page-shell cart-page">
+
+    <!-- =========================
+         HEADER
+    ========================== -->
+    <header class="top-header">
+
+        <button class="icon-button"
+                type="button"
+                onclick="goBack()"
+                aria-label="رجوع">
+
+            <span class="ui-icon">‹</span>
+
+        </button>
+
+        <div class="brand-mini">
+
+            <strong>VYORA</strong>
+            <span>STORE</span>
+
+        </div>
+
+        <button class="icon-button"
+                type="button"
+                onclick="openNotifications()"
+                aria-label="الإشعارات">
+
+            <span class="ui-icon">○</span>
+
+        </button>
+
+    </header>
+
+
+    <!-- =========================
+         MAIN
+    ========================== -->
+    <main>
+
+        <section class="page-heading">
+
+            <div>
+
+                <span class="eyebrow">
+                    VYORA STORE
+                </span>
+
+                <h1>
+                    سلة التسوق
+                </h1>
+
+                <p>
+                    راجع منتجاتك قبل إتمام الطلب.
+                </p>
+
+            </div>
+
+            <span class="cart-count"
+                  id="cartCount">
+                {{ cart|length if cart else 0 }}
+            </span>
+
+        </section>
+
+
+        <!-- =========================
+             CART CONTENT
+        ========================== -->
+
+        {% if cart %}
+
+        <section class="cart-items-section">
+
+            <div class="section-title-row">
+
+                <h2>
+                    المنتجات
+                </h2>
+
+                <button class="text-button"
+                        type="button"
+                        onclick="clearCart()">
+
+                    إفراغ السلة
+
+                </button>
+
+            </div>
+
+
+            <div class="cart-items">
+
+                {% for item in cart %}
+
+                <article class="cart-item"
+                         data-product-id="{{ item.product_id }}">
+
+                    <!-- صورة المنتج -->
+
+                    <button class="cart-item-image"
+                            type="button"
+                            onclick="openProduct('{{ item.product_id }}')">
+
+                        {% if item.image %}
+
+                        <img src="{{ item.image }}"
+                             alt="{{ item.name|default('المنتج') }}">
+
+                        {% else %}
+
+                        <div class="media-placeholder">
+                            <span>V</span>
+                        </div>
+
+                        {% endif %}
+
+                    </button>
+
+
+                    <!-- معلومات المنتج -->
+
+                    <div class="cart-item-content">
+
+                        <div class="cart-item-top">
+
+                            <div>
+
+                                <span class="product-category">
+                                    {{ item.category|default('منتج') }}
+                                </span>
+
+                                <h3>
+                                    {{ item.name|default('اسم المنتج') }}
+                                </h3>
+
+                            </div>
+
+                            <button class="remove-item"
+                                    type="button"
+                                    onclick="removeItem('{{ item.product_id }}')"
+                                    aria-label="حذف المنتج">
+
+                                ×
+
+                            </button>
+
+                        </div>
+
+
+                        <!-- الخيارات -->
+
+                        {% if item.variant %}
+
+                        <div class="cart-item-option">
+
+                            {{ item.variant }}
+
+                        </div>
+
+                        {% endif %}
+
+
+                        <!-- السعر -->
+
+                        <div class="cart-item-price">
+
+                            <strong>
+                                {{ item.price|default('—') }}
+                            </strong>
+
+                            <span>
+                                دج
+                            </span>
+
+                        </div>
+
+
+                        <!-- الكمية -->
+
+                        <div class="cart-item-bottom">
+
+                            <div class="quantity-control">
+
+                                <button type="button"
+                                        onclick="changeItemQuantity(
+                                            '{{ item.product_id }}',
+                                            -1
+                                        )">
+
+                                    −
+
+                                </button>
+
+                                <input
+                                    type="number"
+                                    min="1"
+                                    value="{{ item.quantity|default(1) }}"
+                                    aria-label="كمية المنتج"
+                                    onchange="setItemQuantity(
+                                        '{{ item.product_id }}',
+                                        this.value
+                                    )">
+
+                                <button type="button"
+                                        onclick="changeItemQuantity(
+                                            '{{ item.product_id }}',
+                                            1
+                                        )">
+
+                                    +
+
+                                </button>
+
+                            </div>
+
+
+                            <span class="availability-label">
+
+                                {% if item.availability_mode == 'made_to_order' %}
+
+                                    عند الطلب
+
+                                {% else %}
+
+                                    من المخزون
+
+                                {% endif %}
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             DELIVERY INFO
+        ========================== -->
+
+        <section class="checkout-info-card">
+
+            <div class="section-title-row">
+
+                <h2>
+                    معلومات التوصيل
+                </h2>
+
+            </div>
+
+            <div class="form-group">
+
+                <label for="wilaya">
+                    الولاية
+                </label>
+
+                <select id="wilaya"
+                        class="form-control">
+
+                    <option value="">
+                        اختر الولاية
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="address">
+                    عنوان التوصيل
+                </label>
+
+                <textarea
+                    id="address"
+                    class="form-control"
+                    rows="3"
+                    placeholder="اكتب عنوان التوصيل بالتفصيل"></textarea>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="phone">
+                    رقم الهاتف
+                </label>
+
+                <input
+                    id="phone"
+                    class="form-control"
+                    type="tel"
+                    inputmode="tel"
+                    placeholder="رقم الهاتف">
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             ORDER SUMMARY
+        ========================== -->
+
+        <section class="order-summary">
+
+            <div class="section-title-row">
+
+                <h2>
+                    ملخص الطلب
+                </h2>
+
+            </div>
+
+
+            <div class="summary-row">
+
+                <span>
+                    مجموع المنتجات
+                </span>
+
+                <strong id="subtotal">
+                    —
+                </strong>
+
+                <span>
+                    دج
+                </span>
+
+            </div>
+
+
+            <div class="summary-row">
+
+                <span>
+                    التوصيل
+                </span>
+
+                <strong id="deliveryFee">
+                    —
+                </strong>
+
+                <span>
+                    دج
+                </span>
+
+            </div>
+
+
+            <div class="summary-divider"></div>
+
+
+            <div class="summary-total">
+
+                <span>
+                    الإجمالي
+                </span>
+
+                <strong id="total">
+                    —
+                </strong>
+
+                <span>
+                    دج
+                </span>
+
+            </div>
+
+
+            <p class="summary-note">
+                السعر النهائي والتوصيل يتم حسابهما والتحقق منهما من الخادم قبل تأكيد الطلب.
+            </p>
+
+        </section>
+
+
+        <!-- =========================
+             CHECKOUT ACTION
+        ========================== -->
+
+        <section class="cart-checkout-action">
+
+            <button class="primary-action"
+                    type="button"
+                    onclick="checkout()">
+
+                متابعة إلى إتمام الطلب
+
+            </button>
+
+        </section>
+
+
+        {% else %}
+
+
+        <!-- =========================
+             EMPTY CART
+        ========================== -->
+
+        <section class="empty-state cart-empty">
+
+            <div class="empty-icon">
+                V
+            </div>
+
+            <h2>
+                السلة فارغة
+            </h2>
+
+            <p>
+                لم تضف أي منتج إلى سلتك بعد.
+            </p>
+
+            <button class="primary-action"
+                    type="button"
+                    onclick="goShopping()">
+
+                اكتشف المنتجات
+
+            </button>
+
+        </section>
+
+        {% endif %}
+
+    </main>
+
+
+    <!-- =========================
+         BOTTOM NAV
+    ========================== -->
+
+    <nav class="bottom-nav">
+
+        <a href="/home"
+           class="nav-item">
+
+            <span class="nav-icon">⌂</span>
+            <span>الرئيسية</span>
+
+        </a>
+
+
+        <a href="/search"
+           class="nav-item">
+
+            <span class="nav-icon">⌕</span>
+            <span>البحث</span>
+
+        </a>
+
+
+        <a href="/favorites"
+           class="nav-item">
+
+            <span class="nav-icon">♡</span>
+            <span>المفضلة</span>
+
+        </a>
+
+
+        <a href="/cart"
+           class="nav-item active">
+
+            <span class="nav-icon">□</span>
+            <span>السلة</span>
+
+        </a>
+
+
+        <a href="/profile"
+           class="nav-item">
+
+            <span class="nav-icon">○</span>
+            <span>حسابي</span>
+
+        </a>
+
+    </nav>
+
+</div>
+
+
+<!-- =========================
+     JAVASCRIPT
+========================== -->
+
+<script>
+
+function goBack() {
+    window.history.back();
+}
+
+
+function goShopping() {
+    window.location.href = "/search";
+}
+
+
+function openProduct(productId) {
+
+    if (!productId) {
+        return;
+    }
+
+    window.location.href = "/product/" + productId;
+}
+
+
+function openNotifications() {
+    window.location.href = "/notifications";
+}
+
+
+function removeItem(productId) {
+
+    if (!productId) {
+        return;
+    }
+
+    alert(
+        "سيتم ربط حذف المنتج من السلة بالنظام الخلفي."
+    );
+}
+
+
+function clearCart() {
+
+    const confirmed = confirm(
+        "هل تريد إفراغ السلة؟"
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    alert(
+        "سيتم ربط إفراغ السلة بالنظام الخلفي."
+    );
+}
+
+
+function changeItemQuantity(productId, amount) {
+
+    const item =
+        document.querySelector(
+            '.cart-item[data-product-id="' +
+            productId +
+            '"]'
+        );
+
+    if (!item) {
+        return;
+    }
+
+    const input =
+        item.querySelector(
+            'input[type="number"]'
+        );
+
+    if (!input) {
+        return;
+    }
+
+    let quantity =
+        parseInt(input.value, 10) || 1;
+
+    quantity += amount;
+
+    if (quantity < 1) {
+        quantity = 1;
+    }
+
+    input.value = quantity;
+
+    setItemQuantity(
+        productId,
+        quantity
+    );
+}
+
+
+function setItemQuantity(productId, quantity) {
+
+    quantity =
+        parseInt(quantity, 10) || 1;
+
+    if (quantity < 1) {
+        quantity = 1;
+    }
+
+    /*
+        مهم:
+        التحقق النهائي من المخزون
+        والكمية يجب أن يتم في الخادم.
+    */
+
+    console.log(
+        "Cart quantity:",
+        productId,
+        quantity
+    );
+}
+
+
+function checkout() {
+
+    const wilaya =
+        document.getElementById("wilaya")?.value;
+
+    const address =
+        document.getElementById("address")?.value.trim();
+
+    const phone =
+        document.getElementById("phone")?.value.trim();
+
+
+    if (!wilaya) {
+
+        alert(
+            "يرجى اختيار الولاية."
+        );
+
+        return;
+    }
+
+
+    if (!address) {
+
+        alert(
+            "يرجى إدخال عنوان التوصيل."
+        );
+
+        return;
+    }
+
+
+    if (!phone) {
+
+        alert(
+            "يرجى إدخال رقم الهاتف."
+        );
+
+        return;
+    }
+
+
+    /*
+        سيتم تحويل المستخدم إلى
+        Checkout الحقيقي بعد ربط Backend.
+    */
+
+    alert(
+        "البيانات صحيحة. سيتم ربط صفحة إتمام الطلب بالنظام الخلفي."
+    );
+}
+
+</script>
+
+</body>
+  </html>
