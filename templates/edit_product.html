@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>تعديل المنتج | VYORA STORE</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<main class="seller-page">
+
+    <!-- HEADER -->
+    <header class="seller-header">
+
+        <div class="brand">
+
+            <div class="brand-mark">V</div>
+
+            <div class="brand-name">
+                <strong>VYORA</strong>
+                <span>STORE</span>
+            </div>
+
+        </div>
+
+        <button
+            type="button"
+            class="text-button"
+            onclick="goProducts()">
+            المنتجات
+        </button>
+
+    </header>
+
+
+    <!-- PAGE HEADING -->
+    <section class="seller-welcome">
+
+        <span>إدارة المنتجات</span>
+
+        <h1>تعديل المنتج</h1>
+
+        <p>
+            حدّث معلومات المنتج وطريقة توفره في متجرك.
+        </p>
+
+    </section>
+
+
+    <!-- EDIT FORM -->
+    <section class="seller-card">
+
+        <form
+            class="seller-form"
+            onsubmit="updateProduct(event)">
+
+            <!-- NAME -->
+            <div class="form-group">
+
+                <label for="productName">
+                    اسم المنتج
+                </label>
+
+                <input
+                    id="productName"
+                    name="productName"
+                    type="text"
+                    value="منتج تجريبي"
+                    maxlength="120"
+                    required>
+
+            </div>
+
+
+            <!-- DESCRIPTION -->
+            <div class="form-group">
+
+                <label for="productDescription">
+                    وصف المنتج
+                </label>
+
+                <textarea
+                    id="productDescription"
+                    name="productDescription"
+                    rows="5"
+                    maxlength="2000"
+                    required>وصف المنتج</textarea>
+
+            </div>
+
+
+            <!-- CATEGORY -->
+            <div class="form-group">
+
+                <label for="productCategory">
+                    التصنيف
+                </label>
+
+                <select
+                    id="productCategory"
+                    name="productCategory"
+                    required>
+
+                    <option value="fashion">
+                        الأزياء
+                    </option>
+
+                    <option value="beauty">
+                        الجمال
+                    </option>
+
+                    <option value="home">
+                        المنزل
+                    </option>
+
+                    <option value="technology">
+                        التقنية
+                    </option>
+
+                    <option value="gifts">
+                        الهدايا
+                    </option>
+
+                    <option value="food">
+                        الأغذية
+                    </option>
+
+                    <option value="handmade">
+                        منتجات يدوية
+                    </option>
+
+                    <option value="other">
+                        أخرى
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- PRICE -->
+            <div class="form-row">
+
+                <div class="form-group">
+
+                    <label for="productPrice">
+                        السعر
+                    </label>
+
+                    <input
+                        id="productPrice"
+                        name="productPrice"
+                        type="number"
+                        min="0"
+                        step="1"
+                        value="2500"
+                        required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="currency">
+                        العملة
+                    </label>
+
+                    <select
+                        id="currency"
+                        name="currency">
+
+                        <option value="DZD">
+                            دج
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <!-- AVAILABILITY -->
+            <div class="form-group">
+
+                <label>
+                    طريقة توفر المنتج
+                </label>
+
+                <div class="availability-options">
+
+                    <label class="availability-option">
+
+                        <input
+                            type="radio"
+                            name="availabilityMode"
+                            value="stock"
+                            checked
+                            onchange="updateAvailability()">
+
+                        <span>
+
+                            <strong>
+                                متوفر في المخزون
+                            </strong>
+
+                            <small>
+                                المنتج جاهز والكمية يتحكم فيها البائع.
+                            </small>
+
+                        </span>
+
+                    </label>
+
+
+                    <label class="availability-option">
+
+                        <input
+                            type="radio"
+                            name="availabilityMode"
+                            value="made_to_order"
+                            onchange="updateAvailability()">
+
+                        <span>
+
+                            <strong>
+                                عند الطلب
+                            </strong>
+
+                            <small>
+                                التفاصيل والكمية ووقت التحضير يمكن الاتفاق عليها مع الزبون.
+                            </small>
+
+                        </span>
+
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <!-- STOCK -->
+            <div
+                id="stockSettings"
+                class="conditional-section">
+
+                <div class="form-group">
+
+                    <label for="stockQuantity">
+                        الكمية المتوفرة
+                    </label>
+
+                    <input
+                        id="stockQuantity"
+                        name="stockQuantity"
+                        type="number"
+                        min="0"
+                        step="1"
+                        value="1">
+
+                </div>
+
+            </div>
+
+
+            <!-- MADE TO ORDER -->
+            <div
+                id="madeToOrderSettings"
+                class="conditional-section"
+                style="display:none;">
+
+                <div class="info-box">
+
+                    <strong>
+                        عند الطلب
+                    </strong>
+
+                    <p>
+                        هذا الخيار لا يفرض كمية أو مدة تحضير.
+                        البائع والزبون يتفقان على التفاصيل عبر المحادثة.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- DELIVERY -->
+            <div class="form-group">
+
+                <label for="deliveryInfo">
+                    معلومات التوصيل
+                </label>
+
+                <textarea
+                    id="deliveryInfo"
+                    name="deliveryInfo"
+                    rows="3"
+                    maxlength="800"
+                    placeholder="اكتب معلومات التوصيل المتاحة..."></textarea>
+
+            </div>
+
+
+            <!-- VISIBILITY -->
+            <div class="form-group">
+
+                <label>
+                    ظهور المنتج
+                </label>
+
+                <div class="visibility-options">
+
+                    <label class="visibility-option">
+
+                        <input
+                            type="radio"
+                            name="visibility"
+                            value="visible"
+                            checked>
+
+                        <span>
+                            ظاهر للزبائن
+                        </span>
+
+                    </label>
+
+
+                    <label class="visibility-option">
+
+                        <input
+                            type="radio"
+                            name="visibility"
+                            value="hidden">
+
+                        <span>
+                            مخفي
+                        </span>
+
+                    </label>
+
+                </div>
+
+            </div>
+
+
+            <!-- MESSAGE -->
+            <p
+                id="updateMessage"
+                class="form-message">
+            </p>
+
+
+            <!-- ACTIONS -->
+            <div class="form-actions">
+
+                <button
+                    type="button"
+                    class="secondary-action"
+                    onclick="goProducts()">
+                    إلغاء
+                </button>
+
+                <button
+                    type="submit"
+                    class="auth-submit">
+                    حفظ التعديلات
+                </button>
+
+            </div>
+
+        </form>
+
+    </section>
+
+</main>
+
+
+<script>
+
+function updateAvailability() {
+
+    const mode =
+        document.querySelector(
+            'input[name="availabilityMode"]:checked'
+        ).value;
+
+    const stockSettings =
+        document.getElementById("stockSettings");
+
+    const madeToOrderSettings =
+        document.getElementById("madeToOrderSettings");
+
+    const quantity =
+        document.getElementById("stockQuantity");
+
+
+    if (mode === "stock") {
+
+        stockSettings.style.display = "block";
+        madeToOrderSettings.style.display = "none";
+
+        quantity.required = true;
+
+    } else {
+
+        stockSettings.style.display = "none";
+        madeToOrderSettings.style.display = "block";
+
+        quantity.required = false;
+
+    }
+}
+
+
+function updateProduct(event) {
+
+    event.preventDefault();
+
+    const name =
+        document.getElementById("productName")
+        .value
+        .trim();
+
+    const description =
+        document.getElementById("productDescription")
+        .value
+        .trim();
+
+    const category =
+        document.getElementById("productCategory")
+        .value;
+
+    const price =
+        Number(
+            document.getElementById("productPrice").value
+        );
+
+    const mode =
+        document.querySelector(
+            'input[name="availabilityMode"]:checked'
+        ).value;
+
+    const message =
+        document.getElementById("updateMessage");
+
+
+    if (!name || !description || !category) {
+
+        message.textContent =
+            "يرجى إكمال معلومات المنتج.";
+
+        return;
+    }
+
+
+    if (!Number.isFinite(price) || price < 0) {
+
+        message.textContent =
+            "يرجى إدخال سعر صحيح.";
+
+        return;
+    }
+
+
+    if (mode === "stock") {
+
+        const quantity =
+            Number(
+                document.getElementById("stockQuantity").value
+            );
+
+        if (!Number.isInteger(quantity) || quantity < 0) {
+
+            message.textContent =
+                "يرجى إدخال كمية صحيحة.";
+
+            return;
+        }
+    }
+
+
+    message.textContent =
+        "جاري حفظ التعديلات...";
+
+
+    /*
+     * لاحقاً نربط هذا النموذج بـ Flask API.
+     * التعديل الحقيقي يجب أن يتم على الخادم
+     * مع التحقق من هوية البائع وصلاحياته.
+     */
+
+
+    setTimeout(() => {
+
+        window.location.href =
+            "/seller/products";
+
+    }, 900);
+}
+
+
+function goProducts() {
+
+    window.location.href =
+        "/seller/products";
+
+}
+
+</script>
+
+</body>
+</html>
