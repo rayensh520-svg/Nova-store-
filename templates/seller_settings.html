@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>إعدادات المتجر | VYORA STORE</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<main class="page-shell">
+
+    <!-- HEADER -->
+    <header class="page-header">
+
+        <div class="header-info">
+
+            <a href="/seller/dashboard"
+               class="back-button"
+               aria-label="العودة">
+                ←
+            </a>
+
+            <div>
+                <span class="eyebrow">VYORA BUSINESS</span>
+                <h1>إعدادات المتجر</h1>
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- STORE PROFILE -->
+    <section class="detail-card">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="eyebrow">STORE PROFILE</span>
+                <h2>معلومات المتجر</h2>
+            </div>
+
+        </div>
+
+
+        <form id="storeProfileForm">
+
+            <div class="form-group">
+
+                <label for="storeName">
+                    اسم المتجر
+                </label>
+
+                <input
+                    type="text"
+                    id="storeName"
+                    name="store_name"
+                    placeholder="اسم المتجر"
+                    maxlength="100"
+                    autocomplete="organization">
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="storeDescription">
+                    وصف المتجر
+                </label>
+
+                <textarea
+                    id="storeDescription"
+                    name="store_description"
+                    rows="5"
+                    maxlength="1000"
+                    placeholder="اكتب وصفًا مختصرًا عن متجرك..."></textarea>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="storeCategory">
+                    التصنيف
+                </label>
+
+                <select
+                    id="storeCategory"
+                    name="category">
+
+                    <option value="">
+                        اختر التصنيف
+                    </option>
+
+                    <option value="fashion">
+                        أزياء
+                    </option>
+
+                    <option value="beauty">
+                        جمال وعناية
+                    </option>
+
+                    <option value="food">
+                        أطعمة
+                    </option>
+
+                    <option value="home">
+                        المنزل
+                    </option>
+
+                    <option value="electronics">
+                        إلكترونيات
+                    </option>
+
+                    <option value="handmade">
+                        منتجات يدوية
+                    </option>
+
+                    <option value="other">
+                        أخرى
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="storeLocation">
+                    موقع المتجر
+                </label>
+
+                <input
+                    type="text"
+                    id="storeLocation"
+                    name="location"
+                    placeholder="الولاية والمدينة">
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="storePhone">
+                    رقم الهاتف
+                </label>
+
+                <input
+                    type="tel"
+                    id="storePhone"
+                    name="phone"
+                    placeholder="رقم الهاتف"
+                    inputmode="tel">
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="primary-button full-width">
+                حفظ معلومات المتجر
+            </button>
+
+        </form>
+
+    </section>
+
+
+    <!-- OPENING HOURS -->
+    <section class="detail-card">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="eyebrow">OPENING HOURS</span>
+                <h2>أوقات العمل</h2>
+            </div>
+
+        </div>
+
+
+        <div class="hours-list">
+
+            <div class="hours-row">
+
+                <span>السبت</span>
+
+                <input
+                    type="time"
+                    value="09:00">
+
+                <span>إلى</span>
+
+                <input
+                    type="time"
+                    value="18:00">
+
+            </div>
+
+
+            <div class="hours-row">
+
+                <span>الأحد</span>
+
+                <input
+                    type="time"
+                    value="09:00">
+
+                <span>إلى</span>
+
+                <input
+                    type="time"
+                    value="18:00">
+
+            </div>
+
+
+            <div class="hours-row">
+
+                <span>الإثنين</span>
+
+                <input
+                    type="time"
+                    value="09:00">
+
+                <span>إلى</span>
+
+                <input
+                    type="time"
+                    value="18:00">
+
+            </div>
+
+
+            <div class="hours-row">
+
+                <span>الثلاثاء</span>
+
+                <input
+                    type="time"
+                    value="09:00">
+
+                <span>إلى</span>
+
+                <input
+                    type="time"
+                    value="18:00">
+
+            </div>
+
+
+            <div class="hours-row">
+
+                <span>الأربعاء</span>
+
+                <input
+                    type="time"
+                    value="09:00">
+
+                <span>إلى</span>
+
+                <input
+                    type="time"
+                    value="18:00">
+
+            </div>
+
+
+            <div class="hours-row">
+
+                <span>الخميس</span>
+
+                <input
+                    type="time"
+                    value="09:00">
+
+                <span>إلى</span>
+
+                <input
+                    type="time"
+                    value="18:00">
+
+            </div>
+
+
+            <div class="hours-row closed">
+
+                <span>الجمعة</span>
+
+                <strong>
+                    مغلق
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="secondary-button full-width"
+            id="saveHours">
+            حفظ أوقات العمل
+        </button>
+
+    </section>
+
+
+    <!-- DELIVERY SETTINGS -->
+    <section class="detail-card">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="eyebrow">DELIVERY</span>
+                <h2>إعدادات التوصيل</h2>
+            </div>
+
+        </div>
+
+
+        <div class="settings-list">
+
+            <label class="setting-row">
+
+                <div>
+                    <strong>
+                        التوصيل متاح
+                    </strong>
+
+                    <p>
+                        السماح للمشترين باختيار التوصيل.
+                    </p>
+                </div>
+
+                <input
+                    type="checkbox"
+                    id="deliveryEnabled"
+                    checked>
+
+            </label>
+
+
+            <label class="setting-row">
+
+                <div>
+                    <strong>
+                        الاستلام من المتجر
+                    </strong>
+
+                    <p>
+                        السماح للمشتري باستلام الطلب مباشرة.
+                    </p>
+                </div>
+
+                <input
+                    type="checkbox"
+                    id="pickupEnabled">
+
+            </label>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="deliveryNotes">
+                معلومات التوصيل
+            </label>
+
+            <textarea
+                id="deliveryNotes"
+                rows="4"
+                placeholder="اكتب تفاصيل مناطق التوصيل والمدة والملاحظات..."></textarea>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="secondary-button full-width"
+            id="saveDelivery">
+            حفظ إعدادات التوصيل
+        </button>
+
+    </section>
+
+
+    <!-- ORDER SETTINGS -->
+    <section class="detail-card">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="eyebrow">ORDERS</span>
+                <h2>إعدادات الطلبات</h2>
+            </div>
+
+        </div>
+
+
+        <div class="settings-list">
+
+            <label class="setting-row">
+
+                <div>
+                    <strong>
+                        استقبال الطلبات
+                    </strong>
+
+                    <p>
+                        السماح باستقبال طلبات جديدة.
+                    </p>
+                </div>
+
+                <input
+                    type="checkbox"
+                    id="ordersEnabled"
+                    checked>
+
+            </label>
+
+
+            <label class="setting-row">
+
+                <div>
+                    <strong>
+                        إشعارات الطلبات
+                    </strong>
+
+                    <p>
+                        تنبيه البائع عند وصول طلب جديد.
+                    </p>
+                </div>
+
+                <input
+                    type="checkbox"
+                    id="orderNotifications"
+                    checked>
+
+            </label>
+
+        </div>
+
+    </section>
+
+
+    <!-- STORE VISIBILITY -->
+    <section class="detail-card">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="eyebrow">VISIBILITY</span>
+                <h2>ظهور المتجر</h2>
+            </div>
+
+        </div>
+
+
+        <div class="settings-list">
+
+            <label class="setting-row">
+
+                <div>
+                    <strong>
+                        المتجر ظاهر
+                    </strong>
+
+                    <p>
+                        يمكن للمشترين اكتشاف متجرك داخل VYORA.
+                    </p>
+                </div>
+
+                <input
+                    type="checkbox"
+                    id="storeVisible"
+                    checked>
+
+            </label>
+
+        </div>
+
+    </section>
+
+
+    <!-- SECURITY -->
+    <section class="detail-card">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="eyebrow">SECURITY</span>
+                <h2>الأمان</h2>
+            </div>
+
+        </div>
+
+
+        <a href="/change-password"
+           class="secondary-button full-width">
+            تغيير كلمة المرور
+        </a>
+
+
+        <a href="/login"
+           class="danger-button full-width">
+            تسجيل الخروج
+        </a>
+
+    </section>
+
+
+    <!-- DANGER ZONE -->
+    <section class="danger-zone">
+
+        <span class="eyebrow">
+            DANGER ZONE
+        </span>
+
+        <h2>
+            إغلاق المتجر
+        </h2>
+
+        <p>
+            إغلاق المتجر إجراء حساس وسيحتاج إلى تأكيد
+            ومعالجة من الخادم قبل تنفيذه.
+        </p>
+
+        <button
+            type="button"
+            class="danger-button"
+            id="closeStore">
+            طلب إغلاق المتجر
+        </button>
+
+    </section>
+
+</main>
+
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav seller-bottom-nav">
+
+    <a href="/seller/dashboard">
+        <span>الرئيسية</span>
+    </a>
+
+    <a href="/seller/products">
+        <span>المنتجات</span>
+    </a>
+
+    <a href="/seller/orders">
+        <span>الطلبات</span>
+    </a>
+
+    <a href="/seller/analytics">
+        <span>الإحصائيات</span>
+    </a>
+
+    <a href="/profile">
+        <span>الحساب</span>
+    </a>
+
+</nav>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const storeForm =
+        document.getElementById("storeProfileForm");
+
+    const saveHours =
+        document.getElementById("saveHours");
+
+    const saveDelivery =
+        document.getElementById("saveDelivery");
+
+    const closeStore =
+        document.getElementById("closeStore");
+
+
+    storeForm.addEventListener("submit", (event) => {
+
+        event.preventDefault();
+
+        alert(
+            "سيتم حفظ معلومات المتجر عبر Backend بعد ربط قاعدة البيانات."
+        );
+
+    });
+
+
+    saveHours.addEventListener("click", () => {
+
+        alert(
+            "سيتم حفظ أوقات العمل في قاعدة البيانات بعد ربط Backend."
+        );
+
+    });
+
+
+    saveDelivery.addEventListener("click", () => {
+
+        alert(
+            "سيتم حفظ إعدادات التوصيل بعد ربط Backend."
+        );
+
+    });
+
+
+    closeStore.addEventListener("click", () => {
+
+        const confirmed =
+            confirm(
+                "هل تريد إرسال طلب لإغلاق المتجر؟"
+            );
+
+        if (confirmed) {
+
+            alert(
+                "سيتم إرسال طلب الإغلاق إلى الخادم للمراجعة."
+            );
+
+        }
+
+    });
+
+});
+
+</script>
+
+</body>
+  </html>
