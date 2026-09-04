@@ -1,133 +1,70 @@
-import os
-
-from flask import Flask, render_template
-
-from database import init_database, init_app
-from routes import auth
-
-
-# ============================================================
-# DZ MARKET 🇩🇿
-# Flask Application
-# ============================================================
+from flask import Flask, jsonify, render_template
 
 app = Flask(__name__)
 
-
 # ============================================================
-# SECURITY / CONFIG
+# VYORA STORE
+# Main application entry point
 # ============================================================
 
-app.secret_key = os.environ.get(
-    "DZMARKET_SECRET_KEY",
-    "change-this-secret-key-in-production"
-)
-
-app.config["SESSION_COOKIE_HTTPONLY"] = True
-app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
-
-# HTTPS production protection
-if os.environ.get("DZMARKET_PRODUCTION") == "1":
-    app.config["SESSION_COOKIE_SECURE"] = True
-else:
-    app.config["SESSION_COOKIE_SECURE"] = False
+app.config["JSON_SORT_KEYS"] = False
 
 
 # ============================================================
-# DATABASE
+# BASIC PAGES
 # ============================================================
 
-init_app(app)
-init_database()
+@app.route("/")
+def index():
+    return render_template("splash.html")
 
 
-# ============================================================
-# BLUEPRINTS
-# ============================================================
-
-app.register_blueprint(auth)
+@app.route("/home")
+def home():
+    return render_template("home.html")
 
 
 # ============================================================
 # HEALTH CHECK
+# Used to verify that the server is running correctly.
 # ============================================================
 
-@app.route("/health")
+@app.route("/api/health")
 def health():
-
-    return {
-        "status": "ok",
-        "app": "DZ MARKET",
-        "version": "1.0"
-    }
+    return jsonify({
+        "success": True,
+        "app": "VYORA STORE",
+        "status": "running"
+    })
 
 
 # ============================================================
-# ERROR PAGES
+# ERROR HANDLERS
 # ============================================================
-
-@app.errorhandler(403)
-def forbidden(error):
-
-    try:
-        return render_template(
-            "403.html"
-        ), 403
-    except Exception:
-        return (
-            "<h1>403 - Access denied</h1>",
-            403
-        )
-
 
 @app.errorhandler(404)
-def page_not_found(error):
-
-    try:
-        return render_template(
-            "404.html"
-        ), 404
-    except Exception:
-        return (
-            "<h1>404 - Page not found</h1>",
-            404
-        )
+def not_found(error):
+    return jsonify({
+        "success": False,
+        "error": "Page not found"
+    }), 404
 
 
 @app.errorhandler(500)
 def server_error(error):
-
-    try:
-        return render_template(
-            "500.html"
-        ), 500
-    except Exception:
-        return (
-            "<h1>500 - Server error</h1>",
-            500
-        )
+    return jsonify({
+        "success": False,
+        "error": "Internal server error"
+    }), 500
 
 
 # ============================================================
-# RUN
+# RUN SERVER
 # ============================================================
 
 if __name__ == "__main__":
-
-    debug_mode = (
-        os.environ.get(
-            "DZMARKET_DEBUG",
-            "0"
-        ) == "1"
-    )
-
     app.run(
         host="0.0.0.0",
-        port=int(
-            os.environ.get(
-                "PORT",
-                5000
-            )
-        ),
-        debug=debug_mode
+        port=5001,
+        debug=True
     )
