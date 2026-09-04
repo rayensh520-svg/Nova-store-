@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>طلبات المتجر | VYORA STORE</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<main class="page-shell">
+
+    <!-- HEADER -->
+    <header class="page-header">
+
+        <div class="header-info">
+            <a href="/seller/dashboard"
+               class="back-button"
+               aria-label="العودة">
+                ←
+            </a>
+
+            <div>
+                <span class="eyebrow">VYORA STORE</span>
+                <h1>طلبات المتجر</h1>
+            </div>
+        </div>
+
+        <a href="/notifications"
+           class="header-action">
+            الإشعارات
+        </a>
+
+    </header>
+
+
+    <!-- SEARCH -->
+    <section class="seller-orders-tools">
+
+        <div class="search-box">
+            <input
+                type="search"
+                id="orderSearch"
+                placeholder="ابحث برقم الطلب أو اسم العميل..."
+                autocomplete="off"
+            >
+        </div>
+
+        <div class="filter-row" id="statusFilters">
+
+            <button
+                class="filter-button active"
+                data-status="all">
+                الكل
+            </button>
+
+            <button
+                class="filter-button"
+                data-status="pending">
+                قيد الانتظار
+            </button>
+
+            <button
+                class="filter-button"
+                data-status="confirmed">
+                مؤكدة
+            </button>
+
+            <button
+                class="filter-button"
+                data-status="preparing">
+                قيد التحضير
+            </button>
+
+            <button
+                class="filter-button"
+                data-status="ready">
+                جاهزة
+            </button>
+
+            <button
+                class="filter-button"
+                data-status="shipping">
+                قيد التوصيل
+            </button>
+
+            <button
+                class="filter-button"
+                data-status="delivered">
+                مكتملة
+            </button>
+
+            <button
+                class="filter-button"
+                data-status="cancelled">
+                ملغاة
+            </button>
+
+        </div>
+
+    </section>
+
+
+    <!-- ORDER STATUS FLOW -->
+    <section class="order-flow-card">
+
+        <div class="section-heading">
+            <div>
+                <span class="eyebrow">ORDER FLOW</span>
+                <h2>مراحل الطلب</h2>
+            </div>
+        </div>
+
+        <div class="order-flow">
+
+            <div class="flow-step">
+                <span class="flow-number">01</span>
+                <span>طلب جديد</span>
+            </div>
+
+            <span class="flow-line"></span>
+
+            <div class="flow-step">
+                <span class="flow-number">02</span>
+                <span>تأكيد</span>
+            </div>
+
+            <span class="flow-line"></span>
+
+            <div class="flow-step">
+                <span class="flow-number">03</span>
+                <span>تحضير</span>
+            </div>
+
+            <span class="flow-line"></span>
+
+            <div class="flow-step">
+                <span class="flow-number">04</span>
+                <span>جاهز</span>
+            </div>
+
+            <span class="flow-line"></span>
+
+            <div class="flow-step">
+                <span class="flow-number">05</span>
+                <span>توصيل</span>
+            </div>
+
+            <span class="flow-line"></span>
+
+            <div class="flow-step">
+                <span class="flow-number">06</span>
+                <span>مكتمل</span>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ORDERS -->
+    <section class="orders-section">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="eyebrow">ORDERS</span>
+                <h2>جميع الطلبات</h2>
+            </div>
+
+            <span class="results-count" id="resultsCount">
+                0 طلب
+            </span>
+
+        </div>
+
+
+        <div id="ordersList" class="orders-list">
+
+            <!--
+                الطلبات الحقيقية ستأتي لاحقًا من Flask / Database.
+                لا نضع بيانات وهمية هنا.
+            -->
+
+        </div>
+
+
+        <!-- EMPTY STATE -->
+        <div id="emptyOrders" class="empty-state">
+
+            <div class="empty-state-icon">
+                —
+            </div>
+
+            <h3>لا توجد طلبات حاليًا</h3>
+
+            <p>
+                عندما يستلم متجرك طلبات جديدة ستظهر هنا
+                ويمكنك تأكيدها ومتابعة حالتها.
+            </p>
+
+            <a href="/seller/products"
+               class="secondary-button">
+                إدارة المنتجات
+            </a>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav seller-bottom-nav">
+
+    <a href="/seller/dashboard">
+        <span>الرئيسية</span>
+    </a>
+
+    <a href="/seller/products">
+        <span>المنتجات</span>
+    </a>
+
+    <a href="/seller/orders" class="active">
+        <span>الطلبات</span>
+    </a>
+
+    <a href="/seller/analytics">
+        <span>الإحصائيات</span>
+    </a>
+
+    <a href="/profile">
+        <span>الحساب</span>
+    </a>
+
+</nav>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const searchInput = document.getElementById("orderSearch");
+    const filters = document.querySelectorAll(".filter-button");
+    const ordersList = document.getElementById("ordersList");
+    const emptyOrders = document.getElementById("emptyOrders");
+    const resultsCount = document.getElementById("resultsCount");
+
+    let activeStatus = "all";
+
+
+    function filterOrders() {
+
+        const searchValue =
+            searchInput.value.trim().toLowerCase();
+
+        const orders =
+            document.querySelectorAll(".order-card");
+
+        let visibleCount = 0;
+
+        orders.forEach(order => {
+
+            const orderStatus =
+                order.dataset.status || "";
+
+            const searchableText =
+                order.textContent.toLowerCase();
+
+            const matchesStatus =
+                activeStatus === "all" ||
+                orderStatus === activeStatus;
+
+            const matchesSearch =
+                !searchValue ||
+                searchableText.includes(searchValue);
+
+            if (matchesStatus && matchesSearch) {
+
+                order.style.display = "";
+
+                visibleCount++;
+
+            } else {
+
+                order.style.display = "none";
+
+            }
+
+        });
+
+
+        resultsCount.textContent =
+            `${visibleCount} طلب`;
+
+        if (visibleCount === 0) {
+
+            emptyOrders.style.display = "flex";
+
+        } else {
+
+            emptyOrders.style.display = "none";
+
+        }
+
+    }
+
+
+    filters.forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            filters.forEach(item => {
+                item.classList.remove("active");
+            });
+
+            button.classList.add("active");
+
+            activeStatus =
+                button.dataset.status;
+
+            filterOrders();
+
+        });
+
+    });
+
+
+    searchInput.addEventListener(
+        "input",
+        filterOrders
+    );
+
+
+    filterOrders();
+
+});
+
+</script>
+
+</body>
+  </html>
