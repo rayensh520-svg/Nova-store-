@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>متجر البائع | VYORA STORE</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="page-shell seller-store-page">
+
+    <!-- HEADER -->
+    <header class="top-header">
+
+        <button class="icon-button"
+                type="button"
+                onclick="goBack()"
+                aria-label="رجوع">
+            <span class="ui-icon">‹</span>
+        </button>
+
+        <div class="brand-mini">
+            <strong>VYORA</strong>
+            <span>STORE</span>
+        </div>
+
+        <button class="icon-button"
+                type="button"
+                onclick="openChat()"
+                aria-label="مراسلة">
+            <span class="ui-icon">↗</span>
+        </button>
+
+    </header>
+
+
+    <main>
+
+        <!-- STORE HERO -->
+        <section class="seller-store-hero">
+
+            <div class="seller-store-avatar">
+                V
+            </div>
+
+            <div class="seller-store-title">
+
+                <span class="store-label">
+                    متجر
+                </span>
+
+                <h1>
+                    {{ seller.store_name|default('اسم المتجر') }}
+                </h1>
+
+                <div class="store-trust">
+
+                    <span class="trust-badge">
+                        موثوق
+                    </span>
+
+                    <span>
+                        {{ seller.rating|default('—') }}
+                    </span>
+
+                    <span>
+                        {{ seller.reviews_count|default('0') }} تقييم
+                    </span>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- STORE DESCRIPTION -->
+        <section class="store-section">
+
+            <div class="section-title-row">
+                <h2>عن المتجر</h2>
+            </div>
+
+            <p class="store-description">
+                {{ seller.description|default('لا توجد معلومات عن المتجر حالياً.') }}
+            </p>
+
+        </section>
+
+
+        <!-- STORE INFO -->
+        <section class="store-info-card">
+
+            <div class="store-info-row">
+
+                <span class="store-info-icon">⌖</span>
+
+                <div>
+                    <strong>الموقع</strong>
+                    <p>
+                        {{ seller.location|default('غير محدد') }}
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="store-info-row">
+
+                <span class="store-info-icon">◷</span>
+
+                <div>
+                    <strong>أوقات العمل</strong>
+                    <p>
+                        {{ seller.opening_hours|default('غير محددة') }}
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="store-info-row">
+
+                <span class="store-info-icon">⇢</span>
+
+                <div>
+                    <strong>التوصيل</strong>
+                    <p>
+                        {{ seller.delivery_info|default('معلومات التوصيل يحددها المتجر.') }}
+                    </p>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ACTIONS -->
+        <section class="store-actions">
+
+            <button class="secondary-action"
+                    type="button"
+                    onclick="openChat()">
+                مراسلة المتجر
+            </button>
+
+            <button class="primary-action"
+                    type="button"
+                    onclick="shareStore()">
+                مشاركة المتجر
+            </button>
+
+        </section>
+
+
+        <!-- PRODUCTS -->
+        <section class="store-products-section">
+
+            <div class="section-title-row">
+
+                <h2>منتجات المتجر</h2>
+
+                <span>
+                    {{ products|length if products else 0 }}
+                </span>
+
+            </div>
+
+
+            {% if products %}
+
+            <div class="products-grid">
+
+                {% for product in products %}
+
+                <article class="product-card">
+
+                    <button class="product-image"
+                            type="button"
+                            onclick="openProduct('{{ product.id }}')">
+
+                        {% if product.image %}
+
+                            <img src="{{ product.image }}"
+                                 alt="{{ product.name|default('منتج') }}">
+
+                        {% else %}
+
+                            <div class="media-placeholder">
+                                <span>V</span>
+                            </div>
+
+                        {% endif %}
+
+                    </button>
+
+
+                    <div class="product-card-body">
+
+                        <span class="product-category">
+                            {{ product.category|default('منتج') }}
+                        </span>
+
+                        <h3>
+                            {{ product.name|default('منتج') }}
+                        </h3>
+
+                        <div class="product-card-bottom">
+
+                            <strong class="product-price">
+                                {{ product.price|default('—') }}
+                                دج
+                            </strong>
+
+                            <span class="product-rating">
+                                {{ product.rating|default('—') }}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+                {% endfor %}
+
+            </div>
+
+            {% else %}
+
+            <!-- EMPTY STATE -->
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    V
+                </div>
+
+                <h3>
+                    لا توجد منتجات حالياً
+                </h3>
+
+                <p>
+                    سيظهر هنا كل ما ينشره المتجر من منتجات.
+                </p>
+
+            </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- STORE REVIEWS -->
+        <section class="store-reviews-section">
+
+            <div class="section-title-row">
+
+                <h2>تقييمات المتجر</h2>
+
+                <span>
+                    {{ seller.reviews_count|default('0') }}
+                </span>
+
+            </div>
+
+
+            <div class="store-rating-summary">
+
+                <strong>
+                    {{ seller.rating|default('—') }}
+                </strong>
+
+                <div class="stars">
+                    ★★★★★
+                </div>
+
+            </div>
+
+
+            <div class="reviews-empty">
+
+                <div class="empty-icon">
+                    V
+                </div>
+
+                <h3>
+                    لا توجد تقييمات بعد
+                </h3>
+
+                <p>
+                    ستظهر تقييمات المشترين هنا بعد توفرها.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav">
+
+        <a href="/home" class="nav-item">
+            <span class="nav-icon">⌂</span>
+            <span>الرئيسية</span>
+        </a>
+
+        <a href="/search" class="nav-item">
+            <span class="nav-icon">⌕</span>
+            <span>البحث</span>
+        </a>
+
+        <a href="/favorites" class="nav-item">
+            <span class="nav-icon">♡</span>
+            <span>المفضلة</span>
+        </a>
+
+        <a href="/cart" class="nav-item">
+            <span class="nav-icon">□</span>
+            <span>السلة</span>
+        </a>
+
+        <a href="/profile" class="nav-item">
+            <span class="nav-icon">○</span>
+            <span>حسابي</span>
+        </a>
+
+    </nav>
+
+</div>
+
+
+<script>
+
+function goBack() {
+    window.history.back();
+}
+
+
+function openChat() {
+    window.location.href = "/chat";
+}
+
+
+function openProduct(productId) {
+
+    if (!productId) {
+        return;
+    }
+
+    window.location.href = "/product/" + productId;
+}
+
+
+function shareStore() {
+
+    if (navigator.share) {
+
+        navigator.share({
+            title: "VYORA STORE",
+            text: "اكتشف هذا المتجر على VYORA STORE"
+        }).catch(() => {});
+
+    } else {
+
+        alert(
+            "مشاركة المتجر ستتوفر بشكل كامل بعد ربط النظام."
+        );
+    }
+}
+
+</script>
+
+</body>
+</html>
