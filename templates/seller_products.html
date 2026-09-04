@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>منتجاتي | VYORA STORE</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<main class="seller-page">
+
+    <!-- HEADER -->
+    <header class="seller-header">
+
+        <div class="brand">
+
+            <div class="brand-mark">V</div>
+
+            <div class="brand-name">
+                <strong>VYORA</strong>
+                <span>STORE</span>
+            </div>
+
+        </div>
+
+        <button
+            type="button"
+            class="text-button"
+            onclick="goDashboard()">
+            لوحة التحكم
+        </button>
+
+    </header>
+
+
+    <!-- PAGE HEADING -->
+    <section class="seller-welcome">
+
+        <span>إدارة المنتجات</span>
+
+        <h1>منتجات متجرك</h1>
+
+        <p>
+            تحكم في منتجاتك، توفرها، وظهورها للزبائن.
+        </p>
+
+        <button
+            type="button"
+            class="primary-action"
+            onclick="addProduct()">
+            + إضافة منتج
+        </button>
+
+    </section>
+
+
+    <!-- FILTERS -->
+    <section class="product-management">
+
+        <div class="product-toolbar">
+
+            <div class="product-search">
+
+                <label for="productSearch">
+                    البحث
+                </label>
+
+                <input
+                    id="productSearch"
+                    type="search"
+                    placeholder="ابحث عن منتج..."
+                    oninput="filterProducts()">
+
+            </div>
+
+
+            <div class="product-filter">
+
+                <label for="productStatus">
+                    الحالة
+                </label>
+
+                <select
+                    id="productStatus"
+                    onchange="filterProducts()">
+
+                    <option value="all">
+                        جميع المنتجات
+                    </option>
+
+                    <option value="visible">
+                        ظاهرة
+                    </option>
+
+                    <option value="hidden">
+                        مخفية
+                    </option>
+
+                    <option value="stock">
+                        في المخزون
+                    </option>
+
+                    <option value="made_to_order">
+                        عند الطلب
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <!-- PRODUCTS -->
+        <div
+            id="productsList"
+            class="seller-products-grid">
+
+            <!-- PRODUCT 1 -->
+            <article
+                class="seller-product-card"
+                data-name="منتج تجريبي"
+                data-status="visible"
+                data-mode="stock">
+
+                <div class="seller-product-image">
+                    <span>صورة المنتج</span>
+                </div>
+
+                <div class="seller-product-content">
+
+                    <div class="product-card-top">
+
+                        <span class="product-status visible">
+                            ظاهر
+                        </span>
+
+                        <button
+                            type="button"
+                            class="more-button"
+                            onclick="openProductMenu(event, 1)"
+                            aria-label="خيارات المنتج">
+                            ⋯
+                        </button>
+
+                    </div>
+
+                    <h3>
+                        منتج تجريبي
+                    </h3>
+
+                    <p>
+                        وصف مختصر للمنتج
+                    </p>
+
+                    <div class="seller-product-details">
+
+                        <strong>
+                            2,500 دج
+                        </strong>
+
+                        <span>
+                            الكمية: 0
+                        </span>
+
+                    </div>
+
+                    <div class="product-mode">
+                        متوفر في المخزون
+                    </div>
+
+                    <div class="product-actions">
+
+                        <button
+                            type="button"
+                            onclick="editProduct(1)">
+                            تعديل
+                        </button>
+
+                        <button
+                            type="button"
+                            onclick="toggleProduct(1)">
+                            إخفاء
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- EMPTY STATE -->
+            <div
+                id="emptyProducts"
+                class="empty-state"
+                style="display:none;">
+
+                <h3>
+                    لا توجد منتجات
+                </h3>
+
+                <p>
+                    لم نجد منتجات مطابقة للبحث أو الفلتر.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- MENU -->
+    <div
+        id="productMenu"
+        class="product-menu"
+        style="display:none;">
+
+        <button onclick="editSelectedProduct()">
+            تعديل المنتج
+        </button>
+
+        <button onclick="duplicateSelectedProduct()">
+            نسخ المنتج
+        </button>
+
+        <button onclick="hideSelectedProduct()">
+            إخفاء المنتج
+        </button>
+
+        <button
+            class="danger-action"
+            onclick="deleteSelectedProduct()">
+            حذف المنتج
+        </button>
+
+    </div>
+
+
+    <!-- NAVIGATION -->
+    <nav class="seller-navigation">
+
+        <button onclick="goDashboard()">
+            <span>⌂</span>
+            <small>الرئيسية</small>
+        </button>
+
+        <button class="active"
+                onclick="goProducts()">
+            <span>□</span>
+            <small>المنتجات</small>
+        </button>
+
+        <button onclick="goOrders()">
+            <span>≡</span>
+            <small>الطلبات</small>
+        </button>
+
+        <button onclick="goAnalytics()">
+            <span>⌁</span>
+            <small>الإحصائيات</small>
+        </button>
+
+        <button onclick="goProfile()">
+            <span>◯</span>
+            <small>حسابي</small>
+        </button>
+
+    </nav>
+
+</main>
+
+
+<script>
+
+let selectedProductId = null;
+
+
+/* SEARCH + FILTER */
+
+function filterProducts() {
+
+    const search =
+        document.getElementById("productSearch")
+        .value
+        .trim()
+        .toLowerCase();
+
+    const status =
+        document.getElementById("productStatus")
+        .value;
+
+    const products =
+        document.querySelectorAll(
+            ".seller-product-card"
+        );
+
+    let visibleCount = 0;
+
+
+    products.forEach(product => {
+
+        const name =
+            product.dataset.name.toLowerCase();
+
+        const productStatus =
+            product.dataset.status;
+
+        const productMode =
+            product.dataset.mode;
+
+
+        const matchesSearch =
+            !search || name.includes(search);
+
+
+        const matchesStatus =
+            status === "all" ||
+            status === productStatus ||
+            status === productMode;
+
+
+        if (matchesSearch && matchesStatus) {
+
+            product.style.display = "block";
+            visibleCount++;
+
+        } else {
+
+            product.style.display = "none";
+
+        }
+
+    });
+
+
+    const empty =
+        document.getElementById("emptyProducts");
+
+    empty.style.display =
+        visibleCount === 0 ? "block" : "none";
+}
+
+
+/* PRODUCT MENU */
+
+function openProductMenu(event, id) {
+
+    event.stopPropagation();
+
+    selectedProductId = id;
+
+    const menu =
+        document.getElementById("productMenu");
+
+    menu.style.display = "block";
+}
+
+
+/* ACTIONS */
+
+function editProduct(id) {
+
+    window.location.href =
+        "/seller/products/" + id + "/edit";
+}
+
+
+function toggleProduct(id) {
+
+    /*
+     * لاحقاً:
+     * نرسل طلباً إلى Flask API
+     * لتغيير visibility في قاعدة البيانات.
+     */
+
+    alert("سيتم ربط تغيير حالة المنتج بالسيرفر لاحقاً.");
+}
+
+
+function editSelectedProduct() {
+
+    if (selectedProductId) {
+        editProduct(selectedProductId);
+    }
+
+}
+
+
+function duplicateSelectedProduct() {
+
+    if (!selectedProductId) return;
+
+    alert(
+        "سيتم ربط نسخ المنتج بقاعدة البيانات لاحقاً."
+    );
+}
+
+
+function hideSelectedProduct() {
+
+    if (!selectedProductId) return;
+
+    toggleProduct(selectedProductId);
+}
+
+
+function deleteSelectedProduct() {
+
+    if (!selectedProductId) return;
+
+    const confirmed =
+        confirm(
+            "هل أنت متأكد من حذف هذا المنتج؟"
+        );
+
+    if (!confirmed) return;
+
+    /*
+     * الحذف الحقيقي سيتم من الخادم لاحقاً
+     * مع حماية الصلاحيات.
+     */
+
+    alert(
+        "سيتم ربط حذف المنتج بالسيرفر لاحقاً."
+    );
+
+}
+
+
+/* NAVIGATION */
+
+function addProduct() {
+    window.location.href =
+        "/seller/products/add";
+}
+
+
+function goDashboard() {
+    window.location.href =
+        "/seller/dashboard";
+}
+
+
+function goProducts() {
+    window.location.href =
+        "/seller/products";
+}
+
+
+function goOrders() {
+    window.location.href =
+        "/seller/orders";
+}
+
+
+function goAnalytics() {
+    window.location.href =
+        "/seller/analytics";
+}
+
+
+function goProfile() {
+    window.location.href =
+        "/profile";
+}
+
+
+/* CLOSE MENU */
+
+document.addEventListener("click", function(event) {
+
+    const menu =
+        document.getElementById("productMenu");
+
+    if (
+        menu &&
+        !menu.contains(event.target)
+    ) {
+        menu.style.display = "none";
+    }
+
+});
+
+</script>
+
+</body>
+</html>
