@@ -3,10 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>لوحة الإدارة | DZ MARKET</title>
+    <title>DZ MARKET — لوحة الإدارة</title>
 
     <style>
+        :root {
+            --burgundy: #741f35;
+            --burgundy-dark: #481322;
+            --gold: #c9a35a;
+            --cream: #f7f1e7;
+            --card: rgba(255,255,255,.86);
+            --text: #241c20;
+            --muted: #786d72;
+            --border: rgba(116,31,53,.12);
+            --success: #287a57;
+            --danger: #b83b4d;
+            --warning: #b47a19;
+            --shadow: 0 18px 50px rgba(72,19,34,.10);
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -14,687 +28,1367 @@
         }
 
         body {
-            font-family: Arial, Tahoma, sans-serif;
-            background: #f7f2ec;
-            color: #35101b;
             min-height: 100vh;
+            font-family: Arial, "Noto Sans Arabic", sans-serif;
+            color: var(--text);
+            background:
+                radial-gradient(circle at 10% 10%, rgba(201,163,90,.12), transparent 28%),
+                radial-gradient(circle at 90% 20%, rgba(116,31,53,.10), transparent 30%),
+                linear-gradient(135deg, #fffaf2, var(--cream));
+        }
+
+        button, input, select {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
         }
 
         a {
-            -webkit-tap-highlight-color: transparent;
+            color: inherit;
+            text-decoration: none;
         }
 
-        /* =========================
-           HEADER
-        ========================== */
-
-        .header {
-            background: linear-gradient(135deg, #430b1b, #78152f);
-            color: white;
-            padding: 22px 18px 28px;
-            border-radius: 0 0 30px 30px;
-            box-shadow: 0 8px 25px rgba(67, 11, 27, .15);
-        }
-
-        .top {
+        .page {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 275px;
+            min-height: 100vh;
+            position: fixed;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            padding: 24px 18px;
+            background:
+                linear-gradient(160deg, rgba(72,19,34,.98), rgba(116,31,53,.97));
+            color: white;
+            box-shadow: -12px 0 35px rgba(50,10,22,.14);
+            z-index: 100;
+            overflow-y: auto;
         }
 
         .brand {
-            font-size: 19px;
-            font-weight: bold;
-            letter-spacing: .2px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 4px 8px 25px;
+            border-bottom: 1px solid rgba(255,255,255,.12);
+            margin-bottom: 20px;
         }
 
-        .admin-badge {
-            padding: 7px 12px;
+        .brand-mark {
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, var(--gold), #e1c887);
+            color: var(--burgundy-dark);
+            font-weight: 900;
+            font-size: 18px;
+        }
+
+        .brand h1 {
+            font-size: 20px;
+            letter-spacing: .5px;
+        }
+
+        .brand span {
+            display: block;
+            font-size: 11px;
+            opacity: .65;
+            margin-top: 3px;
+        }
+
+        .admin-card {
+            padding: 15px;
+            border-radius: 16px;
+            background: rgba(255,255,255,.08);
+            border: 1px solid rgba(255,255,255,.10);
+            margin-bottom: 20px;
+        }
+
+        .admin-card small {
+            opacity: .65;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .admin-card strong {
+            font-size: 14px;
+        }
+
+        .nav-title {
+            color: rgba(255,255,255,.45);
+            font-size: 11px;
+            margin: 18px 10px 8px;
+        }
+
+        .nav-item {
+            width: 100%;
+            border: 0;
+            background: transparent;
+            color: rgba(255,255,255,.78);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 13px;
+            border-radius: 12px;
+            margin-bottom: 4px;
+            text-align: right;
+            transition: .2s;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: rgba(255,255,255,.11);
+            color: white;
+        }
+
+        .nav-item.active {
+            box-shadow: inset -3px 0 var(--gold);
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            flex: 0 0 20px;
+        }
+
+        .nav-badge {
+            margin-right: auto;
+            min-width: 22px;
+            height: 22px;
+            padding: 0 6px;
             border-radius: 20px;
-            background: rgba(255, 255, 255, .13);
-            color: #f4d58e;
+            display: grid;
+            place-items: center;
+            background: var(--gold);
+            color: var(--burgundy-dark);
             font-size: 11px;
             font-weight: bold;
-            border: 1px solid rgba(255,255,255,.12);
         }
 
-        h1 {
-            margin-top: 18px;
-            font-size: 26px;
+        .logout-btn {
+            margin-top: 25px;
+            color: #ffd9df;
         }
 
-        .subtitle {
-            margin-top: 7px;
-            color: #ead5bb;
-            font-size: 13px;
-            line-height: 1.7;
+        /* MAIN */
+        .main {
+            width: calc(100% - 275px);
+            margin-right: 275px;
+            padding: 28px;
         }
 
-        /* =========================
-           MAIN
-        ========================== */
-
-        .container {
-            width: 100%;
-            max-width: 1000px;
-            margin: auto;
-            padding: 18px 15px 45px;
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
         }
 
-        .section-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin: 22px 2px 12px;
+        .title h2 {
+            font-size: 28px;
+            color: var(--burgundy-dark);
+            margin-bottom: 5px;
         }
 
-        /* =========================
-           STATS
-        ========================== */
+        .title p {
+            color: var(--muted);
+            font-size: 14px;
+        }
 
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon-btn {
+            width: 42px;
+            height: 42px;
+            border: 1px solid var(--border);
+            background: var(--card);
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            color: var(--burgundy);
+            box-shadow: 0 7px 20px rgba(72,19,34,.06);
+        }
+
+        .icon-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* STAT CARDS */
         .stats {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 11px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 22px;
         }
 
-        .stat {
-            background: white;
-            border-radius: 19px;
-            padding: 17px;
-            box-shadow: 0 7px 22px rgba(67,11,27,.07);
-            border: 1px solid #eee4da;
-            transition: transform .2s ease;
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 19px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
         }
 
-        .stat:active {
-            transform: scale(.98);
+        .stat-card::after {
+            content: "";
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border: 1px solid rgba(201,163,90,.22);
+            border-radius: 50%;
+            left: -20px;
+            bottom: -30px;
         }
 
-        .stat-icon {
-            font-size: 25px;
-        }
-
-        .stat-number {
-            margin-top: 9px;
-            font-size: 25px;
-            font-weight: bold;
-            color: #6d122b;
+        .stat-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .stat-label {
-            margin-top: 4px;
-            color: #777;
-            font-size: 12px;
+            color: var(--muted);
+            font-size: 13px;
         }
 
-        /* =========================
-           QUICK ACTIONS
-        ========================== */
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            background: rgba(116,31,53,.08);
+            color: var(--burgundy);
+        }
 
+        .stat-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--burgundy-dark);
+            margin-top: 12px;
+        }
+
+        .stat-note {
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* GRID */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 18px;
+            margin-bottom: 18px;
+        }
+
+        .panel {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .panel-header {
+            padding: 19px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .panel-header h3 {
+            font-size: 16px;
+            color: var(--burgundy-dark);
+        }
+
+        .panel-header span {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .panel-body {
+            padding: 20px;
+        }
+
+        /* ACTIVITY */
+        .activity {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .activity-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .activity-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--gold);
+            flex: 0 0 10px;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-content strong {
+            font-size: 13px;
+            display: block;
+        }
+
+        .activity-content small {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* QUICK ACTIONS */
         .quick-actions {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 10px;
         }
 
-        .quick {
-            background: white;
-            border-radius: 17px;
+        .quick-action {
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,.5);
+            border-radius: 14px;
             padding: 16px;
-            text-decoration: none;
-            color: #4b1221;
-            box-shadow: 0 6px 20px rgba(67,11,27,.06);
-            border: 1px solid #eee3d8;
-            transition: transform .2s ease, box-shadow .2s ease;
+            text-align: right;
+            transition: .2s;
         }
 
-        .quick:active {
-            transform: scale(.97);
-        }
-
-        .quick-icon {
-            font-size: 25px;
-        }
-
-        .quick-title {
-            margin-top: 9px;
-            font-weight: bold;
-            font-size: 14px;
-        }
-
-        .quick-text {
-            margin-top: 4px;
-            color: #777;
-            font-size: 11px;
-        }
-
-        /* =========================
-           MONITORING PANEL
-        ========================== */
-
-        .panel {
+        .quick-action:hover {
+            transform: translateY(-2px);
+            border-color: rgba(201,163,90,.6);
             background: white;
-            border-radius: 20px;
-            padding: 18px;
-            box-shadow: 0 7px 22px rgba(67,11,27,.07);
-            border: 1px solid #eee4da;
         }
 
-        .row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            padding: 13px 0;
-            border-bottom: 1px solid #eee5dc;
+        .quick-action svg {
+            width: 22px;
+            height: 22px;
+            color: var(--burgundy);
+            margin-bottom: 9px;
         }
 
-        .row:last-child {
-            border-bottom: none;
+        .quick-action strong {
+            display: block;
+            font-size: 13px;
+            margin-bottom: 4px;
         }
 
-        .row-left {
+        .quick-action small {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        /* TABLE */
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+
+        th, td {
+            padding: 14px 18px;
+            text-align: right;
+            border-bottom: 1px solid var(--border);
+            font-size: 12px;
+        }
+
+        th {
+            color: var(--muted);
+            font-weight: 600;
+            background: rgba(116,31,53,.025);
+        }
+
+        td {
+            color: var(--text);
+        }
+
+        tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .user-cell {
             display: flex;
             align-items: center;
             gap: 10px;
-            min-width: 0;
         }
 
-        .row-icon {
-            width: 40px;
-            height: 40px;
-            flex-shrink: 0;
-            border-radius: 12px;
-            background: #f7eee5;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 19px;
-        }
-
-        .row-title {
-            font-size: 13px;
-            font-weight: bold;
-        }
-
-        .row-desc {
-            color: #888;
-            font-size: 10px;
-            margin-top: 3px;
-            line-height: 1.5;
-        }
-
-        .number {
-            min-width: 34px;
-            text-align: center;
-            padding: 6px 9px;
-            border-radius: 20px;
-            background: #f4e5c7;
-            color: #765414;
-            font-weight: bold;
-            font-size: 12px;
-        }
-
-        .danger {
-            background: #f9e1e5;
-            color: #9b243c;
-        }
-
-        /* =========================
-           SYSTEM STATUS
-        ========================== */
-
-        .status-box {
-            margin-top: 16px;
-            background: #fff;
-            border-radius: 20px;
-            padding: 17px;
-            border: 1px solid #eee4da;
-            box-shadow: 0 7px 22px rgba(67,11,27,.06);
-        }
-
-        .status-title {
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 13px;
-        }
-
-        .status-line {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 9px 0;
-            border-bottom: 1px solid #f0e8df;
-            font-size: 12px;
-        }
-
-        .status-line:last-child {
-            border-bottom: none;
-        }
-
-        .online {
-            color: #18864b;
-            font-weight: bold;
-        }
-
-        .online-dot {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            background: #27ae60;
+        .avatar {
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
-            margin-left: 5px;
-        }
-
-        /* =========================
-           LOGOUT
-        ========================== */
-
-        .logout {
-            display: block;
-            margin-top: 25px;
-            width: 100%;
-            padding: 14px;
-            border-radius: 15px;
-            text-align: center;
-            text-decoration: none;
-            background: #5c1026;
+            object-fit: cover;
+            background: linear-gradient(135deg, var(--burgundy), var(--gold));
+            display: grid;
+            place-items: center;
             color: white;
+            font-size: 12px;
             font-weight: bold;
-            font-size: 14px;
-            box-shadow: 0 7px 18px rgba(92,16,38,.15);
-            transition: transform .2s ease;
         }
 
-        .logout:active {
-            transform: scale(.98);
+        .user-name strong {
+            display: block;
+            font-size: 12px;
         }
 
-        /* =========================
-           FOOTER
-        ========================== */
+        .user-name small {
+            display: block;
+            color: var(--muted);
+            font-size: 10px;
+            margin-top: 2px;
+        }
 
-        .footer {
-            text-align: center;
-            color: #999;
+        .status {
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 9px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        .status.pending {
+            background: rgba(180,122,25,.10);
+            color: var(--warning);
+        }
+
+        .status.approved {
+            background: rgba(40,122,87,.10);
+            color: var(--success);
+        }
+
+        .status.rejected {
+            background: rgba(184,59,77,.10);
+            color: var(--danger);
+        }
+
+        .status.active {
+            background: rgba(40,122,87,.10);
+            color: var(--success);
+        }
+
+        .view-btn {
+            border: 1px solid var(--border);
+            background: transparent;
+            color: var(--burgundy);
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 10px;
+        }
+
+        .view-btn:hover {
+            background: rgba(116,31,53,.06);
+        }
+
+        /* SEARCH */
+        .table-tools {
+            display: flex;
+            gap: 9px;
+            align-items: center;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            width: 190px;
+            padding: 9px 35px 9px 11px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            outline: none;
+            background: white;
             font-size: 11px;
-            margin-top: 22px;
-            line-height: 1.7;
         }
 
-        /* =========================
-           TABLET / DESKTOP
-        ========================== */
+        .search-box svg {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 15px;
+            color: var(--muted);
+        }
 
-        @media (min-width: 650px) {
+        /* MOBILE */
+        .mobile-menu {
+            display: none;
+        }
 
-            .container {
-                padding-left: 22px;
-                padding-right: 22px;
+        @media (max-width: 1100px) {
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
             }
 
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 800px) {
+            .sidebar {
+                transform: translateX(100%);
+                transition: .25s;
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .main {
+                width: 100%;
+                margin-right: 0;
+                padding: 18px;
+            }
+
+            .mobile-menu {
+                display: grid;
+            }
+
+            .topbar {
+                align-items: flex-start;
+            }
+
+            .title h2 {
+                font-size: 23px;
+            }
+        }
+
+        @media (max-width: 520px) {
             .stats {
-                grid-template-columns: repeat(4, 1fr);
+                grid-template-columns: 1fr;
             }
 
             .quick-actions {
-                grid-template-columns: repeat(4, 1fr);
+                grid-template-columns: 1fr;
             }
 
-            .quick:hover {
-                transform: translateY(-3px);
-                box-shadow: 0 10px 25px rgba(67,11,27,.10);
+            .top-actions .desktop-only {
+                display: none;
             }
 
-            .stat:hover {
-                transform: translateY(-3px);
+            .main {
+                padding: 13px;
             }
         }
 
-        @media (min-width: 900px) {
+        /* DARK MODE */
+        body.dark {
+            --cream: #1a0d12;
+            --card: rgba(47,22,30,.92);
+            --text: #f5e9df;
+            --muted: #bba9ad;
+            --border: rgba(255,255,255,.09);
+            --shadow: 0 18px 50px rgba(0,0,0,.25);
 
-            .header {
-                padding-left: calc((100% - 1000px) / 2 + 22px);
-                padding-right: calc((100% - 1000px) / 2 + 22px);
-            }
+            background:
+                radial-gradient(circle at 10% 10%, rgba(201,163,90,.10), transparent 28%),
+                radial-gradient(circle at 90% 20%, rgba(116,31,53,.22), transparent 30%),
+                linear-gradient(135deg, #160a0f, #241017);
+        }
+
+        body.dark .title h2,
+        body.dark .panel-header h3,
+        body.dark .stat-number {
+            color: #f5e9df;
+        }
+
+        body.dark .icon-btn,
+        body.dark .search-box input,
+        body.dark .quick-action {
+            background: rgba(255,255,255,.055);
+            color: var(--text);
+        }
+
+        body.dark th {
+            background: rgba(255,255,255,.025);
         }
     </style>
 </head>
 
 <body>
 
-<header class="header">
+<div class="page">
 
-    <div class="top">
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
 
         <div class="brand">
-            DZ MARKET 🇩🇿
-        </div>
-
-        <div class="admin-badge">
-            🛡️ ADMIN
-        </div>
-
-    </div>
-
-    <h1>
-        لوحة الإدارة
-    </h1>
-
-    <div class="subtitle">
-        مركز التحكم ومراقبة المنصة بالكامل
-    </div>
-
-</header>
-
-
-<main class="container">
-
-    <!-- =========================
-         OVERVIEW
-    ========================== -->
-
-    <div class="section-title">
-        📊 نظرة عامة
-    </div>
-
-    <section class="stats">
-
-        <div class="stat">
-            <div class="stat-icon">👥</div>
-            <div class="stat-number">
-                {{ stats.users or 0 }}
-            </div>
-            <div class="stat-label">
-                المستخدمون
+            <div class="brand-mark">DZ</div>
+            <div>
+                <h1>DZ MARKET</h1>
+                <span>لوحة التحكم والإدارة</span>
             </div>
         </div>
 
-        <div class="stat">
-            <div class="stat-icon">🏪</div>
-            <div class="stat-number">
-                {{ stats.sellers or 0 }}
-            </div>
-            <div class="stat-label">
-                البائعون
-            </div>
+        <div class="admin-card">
+            <small>الحساب الحالي</small>
+            <strong>
+                {{ current_user.full_name if current_user else "Administrator" }}
+            </strong>
         </div>
 
-        <div class="stat">
-            <div class="stat-icon">📦</div>
-            <div class="stat-number">
-                {{ stats.products or 0 }}
-            </div>
-            <div class="stat-label">
-                المنتجات
-            </div>
-        </div>
+        <div class="nav-title">الرئيسية</div>
 
-        <div class="stat">
-            <div class="stat-icon">🛒</div>
-            <div class="stat-number">
-                {{ stats.orders or 0 }}
-            </div>
-            <div class="stat-label">
-                الطلبات
-            </div>
-        </div>
+        <button class="nav-item active" onclick="showSection('dashboard')">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <rect x="3" y="3" width="7" height="7" rx="1"/>
+                <rect x="14" y="3" width="7" height="7" rx="1"/>
+                <rect x="3" y="14" width="7" height="7" rx="1"/>
+                <rect x="14" y="14" width="7" height="7" rx="1"/>
+            </svg>
+            لوحة المعلومات
+        </button>
 
-    </section>
+        <div class="nav-title">إدارة المنصة</div>
 
+        <button class="nav-item" onclick="showSection('users')">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+            المستخدمون
+        </button>
 
-    <!-- =========================
-         QUICK MANAGEMENT
-    ========================== -->
+        <button class="nav-item" onclick="showSection('sellers')">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M3 9l2-5h14l2 5"/>
+                <path d="M4 9v10h16V9"/>
+                <path d="M8 19v-5h8v5"/>
+                <path d="M3 9h18"/>
+            </svg>
+            البائعون
+            <span class="nav-badge">{{ pending_sellers|default(0) }}</span>
+        </button>
 
-    <div class="section-title">
-        ⚡ الإدارة السريعة
-    </div>
+        <button class="nav-item" onclick="showSection('products')">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <rect x="3" y="3" width="18" height="18" rx="3"/>
+                <path d="M8 14l2-2 2 2 4-4"/>
+            </svg>
+            المنتجات
+        </button>
 
-    <section class="quick-actions">
+        <button class="nav-item" onclick="showSection('orders')">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M6 2l1 4h10l1-4"/>
+                <path d="M4 6h16l-1 15H5L4 6z"/>
+                <path d="M9 10v6"/>
+                <path d="M15 10v6"/>
+            </svg>
+            الطلبات
+        </button>
 
-        <a class="quick" href="#">
-            <div class="quick-icon">👥</div>
-            <div class="quick-title">
-                المستخدمون
-            </div>
-            <div class="quick-text">
-                إدارة الحسابات
-            </div>
+        <div class="nav-title">الأمان والدعم</div>
+
+        <button class="nav-item" onclick="showSection('complaints')">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M21 11.5a8.38 8.38 0 0 1-9 8.5 8.7 8.7 0 0 1-4-.9L3 21l1.8-4.5A8.4 8.4 0 0 1 3 11.5 8.5 8.5 0 1 1 21 11.5z"/>
+                <path d="M8 11h8"/>
+                <path d="M8 15h5"/>
+            </svg>
+            الشكاوى
+        </button>
+
+        <button class="nav-item" onclick="showSection('reports')">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M4 19V5"/>
+                <path d="M4 5c5-3 7 3 16 0v10c-9 3-11-3-16 0"/>
+            </svg>
+            البلاغات
+        </button>
+
+        <a href="{{ url_for('auth.logout') }}" class="nav-item logout-btn">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                <path d="M10 17l5-5-5-5"/>
+                <path d="M15 12H3"/>
+                <path d="M21 3v18"/>
+            </svg>
+            تسجيل الخروج
         </a>
 
-        <a class="quick" href="#">
-            <div class="quick-icon">🏪</div>
-            <div class="quick-title">
-                البائعون
-            </div>
-            <div class="quick-text">
-                مراجعة المتاجر
-            </div>
-        </a>
+    </aside>
 
-        <a class="quick" href="#">
-            <div class="quick-icon">📦</div>
-            <div class="quick-title">
-                المنتجات
-            </div>
-            <div class="quick-text">
-                مراقبة المنتجات
-            </div>
-        </a>
+    <!-- MAIN -->
+    <main class="main">
 
-        <a class="quick" href="#">
-            <div class="quick-icon">🛒</div>
-            <div class="quick-title">
-                الطلبات
-            </div>
-            <div class="quick-text">
-                متابعة الطلبات
-            </div>
-        </a>
+        <div class="topbar">
 
-    </section>
-
-
-    <!-- =========================
-         MONITORING
-    ========================== -->
-
-    <div class="section-title">
-        🛡️ مركز المراقبة
-    </div>
-
-    <section class="panel">
-
-        <div class="row">
-
-            <div class="row-left">
-
-                <div class="row-icon">
-                    ⏳
-                </div>
-
-                <div>
-                    <div class="row-title">
-                        متاجر بانتظار التحقق
-                    </div>
-
-                    <div class="row-desc">
-                        طلبات تسجيل البائعين
-                    </div>
-                </div>
-
+            <div class="title">
+                <h2>لوحة الإدارة</h2>
+                <p>مراقبة وإدارة منصة DZ MARKET من مكان واحد.</p>
             </div>
 
-            <div class="number">
-                {{ stats.pending_sellers or 0 }}
-            </div>
+            <div class="top-actions">
 
+                <button class="icon-btn mobile-menu" onclick="toggleSidebar()" aria-label="القائمة">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+
+                <button class="icon-btn desktop-only" onclick="toggleDarkMode()" aria-label="الوضع الليلي">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <circle cx="12" cy="12" r="4"/>
+                        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+                    </svg>
+                </button>
+
+                <button class="icon-btn" onclick="location.reload()" aria-label="تحديث">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path d="M20 11a8.1 8.1 0 0 0-15.5-2"/>
+                        <path d="M4 4v5h5"/>
+                        <path d="M4 13a8.1 8.1 0 0 0 15.5 2"/>
+                        <path d="M20 20v-5h-5"/>
+                    </svg>
+                </button>
+
+            </div>
         </div>
 
 
-        <div class="row">
+        <!-- DASHBOARD -->
+        <section id="dashboard" class="section">
 
-            <div class="row-left">
+            <div class="stats">
 
-                <div class="row-icon">
-                    📢
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">إجمالي المستخدمين</span>
+                        <div class="stat-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                <circle cx="9" cy="7" r="4"/>
+                                <path d="M2 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2"/>
+                                <path d="M16 3.2a4 4 0 0 1 0 7.6"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-number">{{ total_users|default(0) }}</div>
+                    <div class="stat-note">حساب مسجل في المنصة</div>
                 </div>
 
-                <div>
-                    <div class="row-title">
-                        الشكاوى
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">البائعون</span>
+                        <div class="stat-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                <path d="M3 9l2-5h14l2 5"/>
+                                <path d="M4 9v10h16V9"/>
+                                <path d="M8 19v-5h8v5"/>
+                            </svg>
+                        </div>
                     </div>
-
-                    <div class="row-desc">
-                        شكاوى تحتاج للمراجعة
-                    </div>
+                    <div class="stat-number">{{ total_sellers|default(0) }}</div>
+                    <div class="stat-note">حسابات بائعين</div>
                 </div>
 
-            </div>
-
-            <div class="number danger">
-                {{ stats.complaints or 0 }}
-            </div>
-
-        </div>
-
-
-        <div class="row">
-
-            <div class="row-left">
-
-                <div class="row-icon">
-                    🚨
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">المنتجات</span>
+                        <div class="stat-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                <rect x="3" y="3" width="18" height="18" rx="3"/>
+                                <path d="M8 14l2-2 2 2 4-4"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-number">{{ total_products|default(0) }}</div>
+                    <div class="stat-note">منتج على المنصة</div>
                 </div>
 
-                <div>
-                    <div class="row-title">
-                        البلاغات
+                <div class="stat-card">
+                    <div class="stat-top">
+                        <span class="stat-label">الطلبات</span>
+                        <div class="stat-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                <path d="M6 2l1 4h10l1-4"/>
+                                <path d="M4 6h16l-1 15H5L4 6z"/>
+                            </svg>
+                        </div>
                     </div>
-
-                    <div class="row-desc">
-                        المنتجات والحسابات المبلغ عنها
-                    </div>
+                    <div class="stat-number">{{ total_orders|default(0) }}</div>
+                    <div class="stat-note">إجمالي الطلبات</div>
                 </div>
 
             </div>
 
-            <div class="number danger">
-                {{ stats.reports or 0 }}
-            </div>
 
-        </div>
+            <div class="dashboard-grid">
 
-
-        <div class="row">
-
-            <div class="row-left">
-
-                <div class="row-icon">
-                    💬
-                </div>
-
-                <div>
-                    <div class="row-title">
-                        الرسائل
+                <div class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <h3>آخر نشاطات المنصة</h3>
+                            <span>معلومات مختصرة عن النشاط</span>
+                        </div>
                     </div>
 
-                    <div class="row-desc">
-                        نشاط المحادثات على المنصة
+                    <div class="panel-body">
+                        <div class="activity">
+
+                            <div class="activity-row">
+                                <span class="activity-dot"></span>
+                                <div class="activity-content">
+                                    <strong>{{ total_users|default(0) }} مستخدمين مسجلين</strong>
+                                    <small>إجمالي الحسابات الحالية</small>
+                                </div>
+                            </div>
+
+                            <div class="activity-row">
+                                <span class="activity-dot"></span>
+                                <div class="activity-content">
+                                    <strong>{{ total_sellers|default(0) }} بائع</strong>
+                                    <small>حسابات البائعين الموجودة</small>
+                                </div>
+                            </div>
+
+                            <div class="activity-row">
+                                <span class="activity-dot"></span>
+                                <div class="activity-content">
+                                    <strong>{{ total_products|default(0) }} منتج</strong>
+                                    <small>المنتجات المسجلة في النظام</small>
+                                </div>
+                            </div>
+
+                            <div class="activity-row">
+                                <span class="activity-dot"></span>
+                                <div class="activity-content">
+                                    <strong>{{ pending_sellers|default(0) }} طلبات بائعين معلقة</strong>
+                                    <small>تحتاج إلى مراجعة الإدارة</small>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <div>
+                            <h3>إجراءات سريعة</h3>
+                            <span>الوصول السريع لأهم الأقسام</span>
+                        </div>
+                    </div>
+
+                    <div class="panel-body">
+                        <div class="quick-actions">
+
+                            <button class="quick-action" onclick="showSection('sellers')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                    <path d="M3 9l2-5h14l2 5"/>
+                                    <path d="M4 9v10h16V9"/>
+                                </svg>
+                                <strong>مراجعة البائعين</strong>
+                                <small>{{ pending_sellers|default(0) }} طلب معلق</small>
+                            </button>
+
+                            <button class="quick-action" onclick="showSection('users')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                    <circle cx="9" cy="7" r="4"/>
+                                    <path d="M2 21v-2a4 4 0 0 1 4-4h6"/>
+                                </svg>
+                                <strong>المستخدمون</strong>
+                                <small>إدارة الحسابات</small>
+                            </button>
+
+                            <button class="quick-action" onclick="showSection('orders')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                    <path d="M6 2l1 4h10l1-4"/>
+                                    <path d="M4 6h16l-1 15H5L4 6z"/>
+                                </svg>
+                                <strong>الطلبات</strong>
+                                <small>متابعة الطلبات</small>
+                            </button>
+
+                            <button class="quick-action" onclick="showSection('complaints')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                    <path d="M21 11.5a8.38 8.38 0 0 1-9 8.5 8.7 8.7 0 0 1-4-.9L3 21l1.8-4.5A8.4 8.4 0 0 1 3 11.5 8.5 8.5 0 1 1 21 11.5z"/>
+                                </svg>
+                                <strong>الشكاوى</strong>
+                                <small>مركز الدعم</small>
+                            </button>
+
+                        </div>
                     </div>
                 </div>
 
             </div>
 
-            <div class="number">
-                {{ stats.messages or 0 }}
+        </section>
+
+
+        <!-- USERS -->
+        <section id="users" class="section" style="display:none;">
+
+            <div class="panel">
+
+                <div class="panel-header">
+                    <div>
+                        <h3>إدارة المستخدمين</h3>
+                        <span>جميع الحسابات المسجلة</span>
+                    </div>
+
+                    <div class="table-tools">
+                        <div class="search-box">
+                            <input type="text" id="userSearch" placeholder="بحث عن مستخدم..." oninput="filterTable('usersTable', this.value)">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="7"/>
+                                <path d="M20 20l-4-4"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-wrap">
+                    <table id="usersTable">
+                        <thead>
+                            <tr>
+                                <th>المستخدم</th>
+                                <th>البريد</th>
+                                <th>الهاتف</th>
+                                <th>الدور</th>
+                                <th>الحالة</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                        {% for user in users|default([]) %}
+                            <tr>
+                                <td>
+                                    <div class="user-cell">
+                                        {% if user.avatar %}
+                                            <img class="avatar" src="{{ user.avatar }}" alt="">
+                                        {% else %}
+                                            <div class="avatar">
+                                                {{ (user.full_name or "U")[0]|upper }}
+                                            </div>
+                                        {% endif %}
+
+                                        <div class="user-name">
+                                            <strong>{{ user.full_name }}</strong>
+                                            <small>#{{ user.id }}</small>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td>{{ user.email }}</td>
+                                <td>{{ user.phone or "—" }}</td>
+                                <td>{{ user.role }}</td>
+
+                                <td>
+                                    {% if user.is_active %}
+                                        <span class="status active">نشط</span>
+                                    {% else %}
+                                        <span class="status rejected">موقوف</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="5" style="text-align:center;color:var(--muted);padding:35px;">
+                                    لا توجد بيانات مستخدمين حالياً.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
             </div>
 
-        </div>
-
-    </section>
+        </section>
 
 
-    <!-- =========================
-         SYSTEM STATUS
-    ========================== -->
+        <!-- SELLERS -->
+        <section id="sellers" class="section" style="display:none;">
 
-    <div class="section-title">
-        ⚙️ حالة المنصة
-    </div>
+            <div class="panel">
 
-    <section class="status-box">
+                <div class="panel-header">
+                    <div>
+                        <h3>طلبات البائعين</h3>
+                        <span>مراجعة حالة التحقق</span>
+                    </div>
 
-        <div class="status-title">
-            حالة النظام
-        </div>
+                    <span class="status pending">
+                        {{ pending_sellers|default(0) }} معلقة
+                    </span>
+                </div>
 
-        <div class="status-line">
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>البائع</th>
+                                <th>الولاية</th>
+                                <th>نوع النشاط</th>
+                                <th>الحالة</th>
+                                <th>الإجراء</th>
+                            </tr>
+                        </thead>
 
-            <span>
-                الخادم
-            </span>
+                        <tbody>
+                        {% for seller in sellers|default([]) %}
+                            <tr>
+                                <td>
+                                    <div class="user-cell">
+                                        <div class="avatar">
+                                            {{ (seller.full_name or "S")[0]|upper }}
+                                        </div>
 
-            <span class="online">
-                <span class="online-dot"></span>
-                يعمل
-            </span>
+                                        <div class="user-name">
+                                            <strong>{{ seller.full_name }}</strong>
+                                            <small>{{ seller.email }}</small>
+                                        </div>
+                                    </div>
+                                </td>
 
-        </div>
+                                <td>{{ seller.wilaya or "—" }}</td>
+                                <td>{{ seller.seller_activity_type or "—" }}</td>
 
+                                <td>
+                                    {% if seller.seller_verification_status == "approved" %}
+                                        <span class="status approved">مقبول</span>
+                                    {% elif seller.seller_verification_status == "rejected" %}
+                                        <span class="status rejected">مرفوض</span>
+                                    {% else %}
+                                        <span class="status pending">قيد المراجعة</span>
+                                    {% endif %}
+                                </td>
 
-        <div class="status-line">
+                                <td>
+                                    <button class="view-btn" onclick="sellerReview({{ seller.id }})">
+                                        مراجعة
+                                    </button>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="5" style="text-align:center;color:var(--muted);padding:35px;">
+                                    لا توجد طلبات بائعين حالياً.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
 
-            <span>
-                قاعدة البيانات
-            </span>
+                    </table>
+                </div>
 
-            <span class="online">
-                <span class="online-dot"></span>
-                متصلة
-            </span>
+            </div>
 
-        </div>
-
-
-        <div class="status-line">
-
-            <span>
-                المنصة
-            </span>
-
-            <span class="online">
-                <span class="online-dot"></span>
-                نشطة
-            </span>
-
-        </div>
-
-    </section>
-
-
-    <!-- =========================
-         LOGOUT
-    ========================== -->
-
-    <a class="logout" href="{{ url_for('auth.logout') }}">
-        🚪 تسجيل الخروج
-    </a>
+        </section>
 
 
-    <!-- =========================
-         FOOTER
-    ========================== -->
+        <!-- PRODUCTS -->
+        <section id="products" class="section" style="display:none;">
 
-    <div class="footer">
-        DZ MARKET 🇩🇿 — لوحة الإدارة
-        <br>
-        مركز التحكم وإدارة المنصة
-    </div>
+            <div class="panel">
 
-</main>
+                <div class="panel-header">
+                    <div>
+                        <h3>المنتجات</h3>
+                        <span>مراقبة المنتجات المنشورة</span>
+                    </div>
+                </div>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>المنتج</th>
+                                <th>السعر</th>
+                                <th>الكمية</th>
+                                <th>الفئة</th>
+                                <th>الحالة</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                        {% for product in products|default([]) %}
+                            <tr>
+                                <td>
+                                    <strong>{{ product.name }}</strong>
+                                </td>
+                                <td>{{ product.price }} دج</td>
+                                <td>{{ product.quantity }}</td>
+                                <td>{{ product.category or "—" }}</td>
+                                <td>
+                                    {% if product.active %}
+                                        <span class="status approved">منشور</span>
+                                    {% else %}
+                                        <span class="status rejected">مخفي</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="5" style="text-align:center;color:var(--muted);padding:35px;">
+                                    لا توجد منتجات حالياً.
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+
+                    </table>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ORDERS -->
+        <section id="orders" class="section" style="display:none;">
+
+            <div class="panel">
+
+                <div class="panel-header">
+                    <div>
+                        <h3>الطلبات</h3>
+                        <span>مراقبة عمليات الشراء</span>
+                    </div>
+                </div>
+
+                <div class="panel-body">
+
+                    <div class="quick-actions">
+
+                        <div class="quick-action">
+                            <strong>إجمالي الطلبات</strong>
+                            <small>{{ total_orders|default(0) }} طلب</small>
+                        </div>
+
+                        <div class="quick-action">
+                            <strong>معدل المنصة</strong>
+                            <small>7% من المبيعات الناجحة</small>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- COMPLAINTS -->
+        <section id="complaints" class="section" style="display:none;">
+
+            <div class="panel">
+
+                <div class="panel-header">
+                    <div>
+                        <h3>مركز الشكاوى</h3>
+                        <span>الشكاوى والبلاغات تحتاج متابعة الإدارة</span>
+                    </div>
+                </div>
+
+                <div class="panel-body">
+
+                    {% for complaint in complaints|default([]) %}
+
+                        <div style="
+                            padding:15px;
+                            border:1px solid var(--border);
+                            border-radius:14px;
+                            margin-bottom:10px;
+                        ">
+                            <strong>{{ complaint.subject or "شكوى" }}</strong>
+                            <p style="color:var(--muted);font-size:12px;margin-top:5px;">
+                                {{ complaint.description or complaint.message or "بدون تفاصيل" }}
+                            </p>
+                        </div>
+
+                    {% else %}
+
+                        <div style="
+                            text-align:center;
+                            color:var(--muted);
+                            padding:35px;
+                        ">
+                            لا توجد شكاوى معروضة حالياً.
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- REPORTS -->
+        <section id="reports" class="section" style="display:none;">
+
+            <div class="panel">
+
+                <div class="panel-header">
+                    <div>
+                        <h3>البلاغات</h3>
+                        <span>مراقبة البلاغات المتعلقة بالمستخدمين والمنتجات</span>
+                    </div>
+                </div>
+
+                <div class="panel-body">
+
+                    {% for report in reports|default([]) %}
+
+                        <div style="
+                            padding:15px;
+                            border:1px solid var(--border);
+                            border-radius:14px;
+                            margin-bottom:10px;
+                        ">
+                            <strong>{{ report.reason or "بلاغ" }}</strong>
+                            <p style="color:var(--muted);font-size:12px;margin-top:5px;">
+                                {{ report.description or report.message or "بدون تفاصيل" }}
+                            </p>
+                        </div>
+
+                    {% else %}
+
+                        <div style="
+                            text-align:center;
+                            color:var(--muted);
+                            padding:35px;
+                        ">
+                            لا توجد بلاغات معروضة حالياً.
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script>
+    function showSection(sectionId) {
+        document.querySelectorAll(".section").forEach(section => {
+            section.style.display = "none";
+        });
+
+        const target = document.getElementById(sectionId);
+
+        if (target) {
+            target.style.display = "block";
+        }
+
+        document.querySelectorAll(".nav-item").forEach(item => {
+            item.classList.remove("active");
+        });
+
+        const clicked = event?.currentTarget;
+
+        if (clicked && clicked.classList.contains("nav-item")) {
+            clicked.classList.add("active");
+        }
+
+        if (window.innerWidth <= 800) {
+            document.getElementById("sidebar")?.classList.remove("open");
+        }
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+    }
+
+
+    function toggleSidebar() {
+        document.getElementById("sidebar")?.classList.toggle("open");
+    }
+
+
+    function toggleDarkMode() {
+        document.body.classList.toggle("dark");
+
+        localStorage.setItem(
+            "dzmarket_admin_dark",
+            document.body.classList.contains("dark") ? "1" : "0"
+        );
+    }
+
+
+    function filterTable(tableId, value) {
+        const table = document.getElementById(tableId);
+
+        if (!table) return;
+
+        const rows = table.querySelectorAll("tbody tr");
+        const query = value.toLowerCase().trim();
+
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+
+            row.style.display = text.includes(query) ? "" : "none";
+        });
+    }
+
+
+    function sellerReview(id) {
+        alert(
+            "طلب البائع رقم " +
+            id +
+            " جاهز للمراجعة من لوحة الإدارة."
+        );
+    }
+
+
+    document.addEventListener("DOMContentLoaded", () => {
+
+        if (localStorage.getItem("dzmarket_admin_dark") === "1") {
+            document.body.classList.add("dark");
+        }
+
+    });
+</script>
 
 </body>
-  </html>
+                        </html>
