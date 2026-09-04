@@ -1,7 +1,10 @@
 from .connection import get_connection
+from .migrations import run_migrations
 
 
 def initialize_database():
+    run_migrations()
+
     connection = get_connection()
 
     try:
