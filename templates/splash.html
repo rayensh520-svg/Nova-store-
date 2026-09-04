@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>VYORA STORE</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <main class="splash-screen">
+
+        <!-- شاشة الشعار -->
+        <section class="logo-screen" id="logoScreen">
+
+            <div class="logo-wrapper">
+
+                <div class="v-icon">V</div>
+
+                <h1>VYORA</h1>
+
+                <span>STORE</span>
+
+            </div>
+
+        </section>
+
+
+        <!-- شاشة الترحيب -->
+        <section class="welcome-screen" id="welcomeScreen">
+
+            <div class="welcome-content">
+
+                <div class="mini-logo">V</div>
+
+                <h2>مرحباً بك في VYORA STORE</h2>
+
+                <p>اكتشف ما يناسبك</p>
+
+                <button
+                    type="button"
+                    class="start-button"
+                    onclick="goToHome()">
+                    ابدأ الآن
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script>
+        function goToHome() {
+            window.location.href = "/home";
+        }
+
+        window.addEventListener("load", function () {
+
+            setTimeout(function () {
+
+                const logoScreen =
+                    document.getElementById("logoScreen");
+
+                const welcomeScreen =
+                    document.getElementById("welcomeScreen");
+
+                if (logoScreen) {
+                    logoScreen.classList.add("hide");
+                }
+
+                if (welcomeScreen) {
+                    welcomeScreen.classList.add("show");
+                }
+
+            }, 2200);
+
+        });
+    </script>
+
+</body>
+</html>
