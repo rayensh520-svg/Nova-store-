@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>البحث | VYORA STORE</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<main class="page-shell">
+
+    <!-- HEADER -->
+    <header class="page-header">
+
+        <div class="header-info">
+
+            <a href="/home"
+               class="back-button"
+               aria-label="العودة">
+                ←
+            </a>
+
+            <div>
+                <span class="eyebrow">VYORA STORE</span>
+                <h1>البحث</h1>
+            </div>
+
+        </div>
+
+        <a href="/cart"
+           class="header-action">
+            السلة
+        </a>
+
+    </header>
+
+
+    <!-- SEARCH -->
+    <section class="search-main">
+
+        <form id="searchForm"
+              class="large-search">
+
+            <label for="searchInput">
+                ماذا تبحث؟
+            </label>
+
+            <div class="search-input-row">
+
+                <input
+                    type="search"
+                    id="searchInput"
+                    name="q"
+                    placeholder="اسم المنتج، الوصف أو ميزة..."
+                    autocomplete="off">
+
+                <button
+                    type="submit"
+                    class="primary-button">
+                    بحث
+                </button>
+
+            </div>
+
+        </form>
+
+
+        <!-- AI SEARCH -->
+        <button
+            type="button"
+            class="ai-search-button"
+            id="aiSearchButton">
+
+            <span>
+                ساعدني أختار
+            </span>
+
+            <small>
+                البحث الذكي حسب الميزانية والمناسبة والاختيارات
+            </small>
+
+        </button>
+
+    </section>
+
+
+    <!-- FILTERS -->
+    <section class="filter-panel">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="eyebrow">FILTERS</span>
+                <h2>تصفية النتائج</h2>
+            </div>
+
+            <button
+                type="button"
+                class="text-button"
+                id="clearFilters">
+                مسح
+            </button>
+
+        </div>
+
+
+        <div class="filter-group">
+
+            <label for="categoryFilter">
+                التصنيف
+            </label>
+
+            <select id="categoryFilter">
+
+                <option value="all">
+                    جميع التصنيفات
+                </option>
+
+                <option value="fashion">
+                    أزياء
+                </option>
+
+                <option value="beauty">
+                    جمال وعناية
+                </option>
+
+                <option value="food">
+                    أطعمة
+                </option>
+
+                <option value="home">
+                    المنزل
+                </option>
+
+                <option value="electronics">
+                    إلكترونيات
+                </option>
+
+                <option value="handmade">
+                    منتجات يدوية
+                </option>
+
+                <option value="other">
+                    أخرى
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="filter-grid">
+
+            <div class="filter-group">
+
+                <label for="minPrice">
+                    أقل سعر
+                </label>
+
+                <input
+                    type="number"
+                    id="minPrice"
+                    min="0"
+                    placeholder="0"
+                    inputmode="numeric">
+
+            </div>
+
+
+            <div class="filter-group">
+
+                <label for="maxPrice">
+                    أعلى سعر
+                </label>
+
+                <input
+                    type="number"
+                    id="maxPrice"
+                    min="0"
+                    placeholder="بدون حد"
+                    inputmode="numeric">
+
+            </div>
+
+        </div>
+
+
+        <div class="filter-group">
+
+            <label for="availabilityFilter">
+                التوفر
+            </label>
+
+            <select id="availabilityFilter">
+
+                <option value="all">
+                    الكل
+                </option>
+
+                <option value="in_stock">
+                    متوفر في المخزون
+                </option>
+
+                <option value="made_to_order">
+                    عند الطلب
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div class="filter-group">
+
+            <label for="sortFilter">
+                ترتيب النتائج
+            </label>
+
+            <select id="sortFilter">
+
+                <option value="relevance">
+                    الأكثر صلة
+                </option>
+
+                <option value="newest">
+                    الأحدث
+                </option>
+
+                <option value="price_low">
+                    السعر: من الأقل للأعلى
+                </option>
+
+                <option value="price_high">
+                    السعر: من الأعلى للأقل
+                </option>
+
+                <option value="rating">
+                    الأعلى تقييمًا
+                </option>
+
+            </select>
+
+        </div>
+
+    </section>
+
+
+    <!-- RESULTS -->
+    <section class="search-results">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="eyebrow">RESULTS</span>
+                <h2 id="resultsTitle">
+                    نتائج البحث
+                </h2>
+            </div>
+
+            <span id="resultsCount">
+                0 نتيجة
+            </span>
+
+        </div>
+
+
+        <div id="productsGrid"
+             class="products-grid">
+
+            <!--
+                المنتجات الحقيقية ستأتي من Backend.
+            -->
+
+        </div>
+
+
+        <!-- EMPTY -->
+        <div id="emptyResults"
+             class="empty-state">
+
+            <div class="empty-state-icon">
+                —
+            </div>
+
+            <h3>
+                ابدأ بالبحث
+            </h3>
+
+            <p>
+                اكتب اسم المنتج أو الوصف أو الميزة التي تبحث عنها
+                وستظهر النتائج هنا.
+            </p>
+
+            <a href="/categories"
+               class="secondary-button">
+                تصفح التصنيفات
+            </a>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+
+    <a href="/home">
+        <span>الرئيسية</span>
+    </a>
+
+    <a href="/search"
+       class="active">
+        <span>البحث</span>
+    </a>
+
+    <a href="/categories">
+        <span>التصنيفات</span>
+    </a>
+
+    <a href="/favorites">
+        <span>المفضلة</span>
+    </a>
+
+    <a href="/profile">
+        <span>الحساب</span>
+    </a>
+
+</nav>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const form =
+        document.getElementById("searchForm");
+
+    const input =
+        document.getElementById("searchInput");
+
+    const category =
+        document.getElementById("categoryFilter");
+
+    const minPrice =
+        document.getElementById("minPrice");
+
+    const maxPrice =
+        document.getElementById("maxPrice");
+
+    const availability =
+        document.getElementById("availabilityFilter");
+
+    const sort =
+        document.getElementById("sortFilter");
+
+    const clearFilters =
+        document.getElementById("clearFilters");
+
+    const aiButton =
+        document.getElementById("aiSearchButton");
+
+    const emptyResults =
+        document.getElementById("emptyResults");
+
+    const resultsTitle =
+        document.getElementById("resultsTitle");
+
+
+    function updateSearchState() {
+
+        const query =
+            input.value.trim();
+
+        if (query) {
+
+            resultsTitle.textContent =
+                `نتائج البحث عن "${query}"`;
+
+        } else {
+
+            resultsTitle.textContent =
+                "نتائج البحث";
+
+        }
+
+        /*
+            لاحقًا يتم إرسال:
+            query
+            category
+            min_price
+            max_price
+            availability
+            sort
+
+            إلى Backend API.
+
+            لا يتم الاعتماد على بيانات الواجهة
+            في تحديد السعر أو التوفر الحقيقي.
+        */
+    }
+
+
+    form.addEventListener("submit", (event) => {
+
+        event.preventDefault();
+
+        updateSearchState();
+
+    });
+
+
+    [
+        category,
+        minPrice,
+        maxPrice,
+        availability,
+        sort
+    ].forEach(element => {
+
+        element.addEventListener(
+            "change",
+            updateSearchState
+        );
+
+    });
+
+
+    clearFilters.addEventListener("click", () => {
+
+        category.value = "all";
+
+        minPrice.value = "";
+
+        maxPrice.value = "";
+
+        availability.value = "all";
+
+        sort.value = "relevance";
+
+        updateSearchState();
+
+    });
+
+
+    aiButton.addEventListener("click", () => {
+
+        alert(
+            "سيتم فتح مساعد VYORA الذكي لاختيار المنتج لاحقًا."
+        );
+
+    });
+
+});
+
+</script>
+
+</body>
+</html>
