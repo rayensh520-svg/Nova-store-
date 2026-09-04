@@ -4,674 +4,162 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>تسجيل الدخول — DZ MARKET</title>
+    <title>تسجيل الدخول | VYORA STORE</title>
 
-    <style>
-        :root {
-            --burgundy: #800020;
-            --burgundy-dark: #560015;
-            --gold: #c9a227;
-            --gold-light: #e4c766;
-
-            --bg: #f7f1ed;
-            --surface: #fffaf7;
-            --text: #281f22;
-            --muted: #756b70;
-            --border: #eadde0;
-            --danger: #b3261e;
-
-            --shadow: 0 20px 60px rgba(70,0,25,.13);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            min-height: 100vh;
-            padding: 18px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            font-family:
-                system-ui,
-                -apple-system,
-                BlinkMacSystemFont,
-                "Segoe UI",
-                Arial,
-                sans-serif;
-
-            color: var(--text);
-
-            background:
-                radial-gradient(
-                    circle at 10% 10%,
-                    rgba(128,0,32,.12),
-                    transparent 30%
-                ),
-                radial-gradient(
-                    circle at 90% 90%,
-                    rgba(201,162,39,.12),
-                    transparent 28%
-                ),
-                linear-gradient(
-                    135deg,
-                    #fffaf7,
-                    #f5eaed
-                );
-
-            overflow-x: hidden;
-        }
-
-        body.dark-mode {
-            --bg: #12070b;
-            --surface: #1d0d13;
-            --text: #f8edf0;
-            --muted: #bcaeb3;
-            --border: #40232c;
-
-            background:
-                radial-gradient(
-                    circle at 10% 10%,
-                    rgba(128,0,32,.42),
-                    transparent 32%
-                ),
-                radial-gradient(
-                    circle at 90% 90%,
-                    rgba(201,162,39,.10),
-                    transparent 30%
-                ),
-                linear-gradient(
-                    135deg,
-                    #12070b,
-                    #280914,
-                    #16080d
-                );
-        }
-
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        .page {
-            width: min(100%, 460px);
-            position: relative;
-            z-index: 2;
-        }
-
-        .topbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-
-            margin-bottom: 18px;
-        }
-
-        .brand {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-
-            color: var(--burgundy);
-            font-weight: 950;
-        }
-
-        body.dark-mode .brand {
-            color: var(--gold-light);
-        }
-
-        .brand-mark {
-            width: 40px;
-            height: 40px;
-
-            display: grid;
-            place-items: center;
-
-            border-radius: 13px;
-
-            color: white;
-
-            background:
-                linear-gradient(
-                    145deg,
-                    var(--burgundy),
-                    var(--burgundy-dark)
-                );
-
-            box-shadow:
-                0 8px 22px rgba(128,0,32,.23);
-        }
-
-        .brand-mark svg {
-            width: 22px;
-            height: 22px;
-
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 1.8;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .theme-btn {
-            width: 42px;
-            height: 42px;
-
-            display: grid;
-            place-items: center;
-
-            border: 1px solid var(--border);
-            border-radius: 13px;
-
-            background: var(--surface);
-            color: var(--text);
-
-            cursor: pointer;
-        }
-
-        .theme-btn svg {
-            width: 20px;
-            height: 20px;
-
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 1.8;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .card {
-            padding: 32px;
-
-            border:
-                1px solid var(--border);
-
-            border-radius: 28px;
-
-            background:
-                rgba(255,250,247,.94);
-
-            box-shadow: var(--shadow);
-
-            backdrop-filter: blur(18px);
-        }
-
-        body.dark-mode .card {
-            background:
-                rgba(29,13,19,.93);
-        }
-
-        .heading {
-            margin-bottom: 25px;
-        }
-
-        .heading h1 {
-            font-size: clamp(27px, 7vw, 36px);
-            margin-bottom: 7px;
-        }
-
-        .heading p {
-            color: var(--muted);
-            font-size: 14px;
-            line-height: 1.7;
-        }
-
-        .flash {
-            margin-bottom: 16px;
-            padding: 12px 14px;
-
-            border-radius: 13px;
-
-            color: var(--danger);
-            background: rgba(179,38,30,.08);
-            border: 1px solid rgba(179,38,30,.18);
-
-            font-size: 13px;
-            font-weight: 750;
-        }
-
-        .field {
-            margin-bottom: 17px;
-        }
-
-        .field-label {
-            display: block;
-
-            margin-bottom: 7px;
-
-            font-size: 13px;
-            font-weight: 850;
-        }
-
-        input {
-            width: 100%;
-            min-height: 48px;
-
-            padding: 11px 14px;
-
-            border:
-                1px solid var(--border);
-
-            border-radius: 13px;
-
-            outline: none;
-
-            background: var(--surface);
-            color: var(--text);
-
-            transition: .2s ease;
-        }
-
-        input:focus {
-            border-color: var(--burgundy);
-
-            box-shadow:
-                0 0 0 4px rgba(128,0,32,.07);
-        }
-
-        .password-wrap {
-            position: relative;
-        }
-
-        .password-wrap input {
-            padding-left: 52px;
-        }
-
-        .password-toggle {
-            position: absolute;
-
-            left: 7px;
-            top: 50%;
-
-            transform: translateY(-50%);
-
-            width: 37px;
-            height: 37px;
-
-            display: grid;
-            place-items: center;
-
-            border: 0;
-            background: transparent;
-
-            color: var(--muted);
-
-            cursor: pointer;
-        }
-
-        .password-toggle:hover {
-            color: var(--burgundy);
-        }
-
-        body.dark-mode .password-toggle:hover {
-            color: var(--gold-light);
-        }
-
-        .password-toggle svg {
-            width: 22px;
-            height: 22px;
-
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 1.65;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .password-help {
-            margin-top: 7px;
-
-            color: var(--muted);
-            font-size: 11px;
-            line-height: 1.6;
-        }
-
-        .password-help strong {
-            color: var(--gold);
-        }
-
-        .options {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-
-            gap: 10px;
-
-            margin: 3px 0 20px;
-
-            font-size: 12px;
-        }
-
-        .remember {
-            display: flex;
-            align-items: center;
-            gap: 7px;
-
-            color: var(--muted);
-        }
-
-        .remember input {
-            width: 17px;
-            min-height: 17px;
-        }
-
-        .forgot {
-            color: var(--burgundy);
-            font-weight: 850;
-        }
-
-        body.dark-mode .forgot {
-            color: var(--gold-light);
-        }
-
-        .submit {
-            width: 100%;
-            min-height: 51px;
-
-            border: 0;
-            border-radius: 15px;
-
-            color: white;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    var(--burgundy),
-                    var(--burgundy-dark)
-                );
-
-            font-size: 15px;
-            font-weight: 950;
-
-            cursor: pointer;
-
-            box-shadow:
-                0 12px 28px rgba(128,0,32,.20);
-
-            transition: .2s ease;
-        }
-
-        .submit:hover {
-            transform: translateY(-2px);
-        }
-
-        .register {
-            margin-top: 20px;
-
-            text-align: center;
-
-            color: var(--muted);
-
-            font-size: 13px;
-        }
-
-        .register a {
-            color: var(--burgundy);
-            font-weight: 900;
-        }
-
-        body.dark-mode .register a {
-            color: var(--gold-light);
-        }
-
-        .security-note {
-            margin-top: 20px;
-            padding-top: 18px;
-
-            border-top: 1px solid var(--border);
-
-            text-align: center;
-
-            color: var(--muted);
-            font-size: 11px;
-            line-height: 1.7;
-        }
-
-        @media (max-width: 480px) {
-            .card {
-                padding: 24px 18px;
-                border-radius: 23px;
-            }
-
-            .options {
-                align-items: flex-start;
-                flex-direction: column;
-            }
-        }
-    </style>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
 
-<div class="page">
+    <main class="auth-page">
 
-    <div class="topbar">
+        <section class="auth-card">
 
-        <a
-            href="{{ url_for('auth.index') }}"
-            class="brand"
-        >
-            <span class="brand-mark">
-                <svg viewBox="0 0 24 24">
-                    <path d="M5 8.5 12 4l7 4.5v7L12 20l-7-4.5z"/>
-                    <path d="M8.5 10.5 12 8l3.5 2.5"/>
-                    <path d="M9 14h6"/>
-                </svg>
-            </span>
+            <div class="auth-logo">
+                <div class="v-icon">V</div>
 
-            DZ MARKET
-        </a>
-
-        <button
-            type="button"
-            class="theme-btn"
-            data-theme-toggle
-            aria-label="تغيير الوضع"
-            title="تغيير الوضع"
-        >
-            <svg
-                data-icon-moon
-                viewBox="0 0 24 24"
-            >
-                <path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"/>
-            </svg>
-
-            <svg
-                data-icon-sun
-                viewBox="0 0 24 24"
-                style="display:none"
-            >
-                <circle cx="12" cy="12" r="4"/>
-                <path d="M12 2v2"/>
-                <path d="M12 20v2"/>
-                <path d="m4.93 4.93 1.42 1.42"/>
-                <path d="m17.65 17.65 1.42 1.42"/>
-                <path d="M2 12h2"/>
-                <path d="M20 12h2"/>
-                <path d="m4.93 19.07 1.42-1.42"/>
-                <path d="m17.65 6.35 1.42-1.42"/>
-            </svg>
-        </button>
-
-    </div>
-
-    <section class="card">
-
-        <div class="heading">
-            <h1>تسجيل الدخول</h1>
-
-            <p>
-                مرحبًا بعودتك إلى DZ MARKET.
-            </p>
-        </div>
-
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="flash">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
-        {% endwith %}
-
-        <form
-            method="POST"
-            action="{{ url_for('auth.login') }}"
-        >
-
-            <div class="field">
-
-                <label
-                    class="field-label"
-                    for="email"
-                >
-                    البريد الإلكتروني
-                </label>
-
-                <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    required
-                    autocomplete="email"
-                    placeholder="example@email.com"
-                >
-
+                <div>
+                    <strong>VYORA</strong>
+                    <span>STORE</span>
+                </div>
             </div>
 
-            <div class="field">
+            <div class="auth-heading">
+                <span>مرحباً بعودتك</span>
+                <h1>تسجيل الدخول</h1>
+                <p>ادخل إلى حسابك لمتابعة تجربتك في VYORA.</p>
+            </div>
 
-                <label
-                    class="field-label"
-                    for="password"
-                >
-                    كلمة المرور
-                </label>
+            <form class="auth-form" onsubmit="loginUser(event)">
 
-                <div class="password-wrap">
+                <div class="form-group">
+                    <label for="email">البريد الإلكتروني</label>
+
+                    <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        placeholder="example@email.com"
+                        autocomplete="email"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">كلمة المرور</label>
 
                     <input
                         id="password"
                         name="password"
                         type="password"
-                        required
+                        placeholder="أدخل كلمة المرور"
                         autocomplete="current-password"
-                        placeholder="أدخلي كلمة المرور"
-                    >
+                        required>
+                </div>
+
+                <div class="form-options">
+
+                    <label class="remember-option">
+                        <input type="checkbox" id="remember">
+                        <span>تذكرني</span>
+                    </label>
 
                     <button
                         type="button"
-                        class="password-toggle"
-                        data-password-toggle="password"
-                        aria-label="إظهار كلمة المرور"
-                        title="إظهار كلمة المرور"
-                    >
-
-                        <!-- عين SVG أنيقة، بدون Emoji -->
-                        <svg viewBox="0 0 24 24">
-
-                            <path
-                                d="M3 12s3.2-5 9-5 9 5 9 5-3.2 5-9 5-9-5-9-5Z"
-                            />
-
-                            <path
-                                d="M9.3 12a2.7 2.7 0 1 0 5.4 0 2.7 2.7 0 0 0-5.4 0Z"
-                            />
-
-                            <path d="M5.4 8.4 4.1 6.9"/>
-                            <path d="M8 7.3 7.2 5.5"/>
-                            <path d="M11 7 10.8 5"/>
-                            <path d="M13 7 13.2 5"/>
-                        </svg>
-
+                        class="text-button"
+                        onclick="forgotPassword()">
+                        نسيت كلمة المرور؟
                     </button>
 
                 </div>
 
-                <div class="password-help">
-                    نصيحة أمان:
-                    <strong>
-                        استعملي كلمة مرور طويلة وفريدة
-                    </strong>
-                    ولا تشاركيها مع أي شخص.
-                </div>
+                <p id="loginMessage" class="form-message"></p>
 
-            </div>
+                <button type="submit" class="auth-submit">
+                    تسجيل الدخول
+                </button>
 
-            <div class="options">
+            </form>
 
-                <label class="remember">
-
-                    <input
-                        type="checkbox"
-                        name="remember"
-                        value="1"
-                    >
-
-                    تذكرني
-
-                </label>
-
-                <a
-                    href="#"
-                    class="forgot"
-                    id="forgotPassword"
-                >
-                    نسيت كلمة المرور؟
-                </a>
-
+            <div class="auth-divider">
+                <span>أو</span>
             </div>
 
             <button
-                type="submit"
-                class="submit"
-            >
-                تسجيل الدخول
+                type="button"
+                class="guest-button"
+                onclick="continueAsGuest()">
+                المتابعة كزائر
             </button>
 
-        </form>
+            <div class="auth-footer">
+                <span>ليس لديك حساب؟</span>
 
-        <div class="register">
-            ما عندكش حساب؟
-            <a href="{{ url_for('auth.register') }}">
-                إنشاء حساب جديد
-            </a>
-        </div>
+                <button
+                    type="button"
+                    class="text-button"
+                    onclick="createAccount()">
+                    إنشاء حساب
+                </button>
+            </div>
 
-        <div class="security-note">
-            حسابك محمي، ولا يتم عرض كلمة المرور داخل الموقع.
-        </div>
+        </section>
 
-    </section>
+    </main>
 
-</div>
 
-<script src="{{ url_for('static', filename='app.js') }}"></script>
+    <script>
 
-<script>
-    const forgotPassword =
-        document.getElementById("forgotPassword");
+        function loginUser(event) {
 
-    if (forgotPassword) {
-        forgotPassword.addEventListener(
-            "click",
-            function (event) {
+            event.preventDefault();
 
-                event.preventDefault();
+            const email =
+                document.getElementById("email").value.trim();
 
-                alert(
-                    "استرجاع كلمة المرور سيتم تفعيله في خطوة الأمان القادمة."
-                );
+            const password =
+                document.getElementById("password").value;
+
+            const message =
+                document.getElementById("loginMessage");
+
+            if (!email || !password) {
+                message.textContent =
+                    "يرجى إدخال البريد الإلكتروني وكلمة المرور.";
+                return;
             }
-        );
-    }
-</script>
+
+            /*
+             * مؤقتاً:
+             * لاحقاً نربط النموذج بـ Flask API
+             * ونقوم بالتحقق الحقيقي من الحساب
+             * على الخادم.
+             */
+
+            message.textContent =
+                "جاري تسجيل الدخول...";
+
+            setTimeout(() => {
+                window.location.href = "/home";
+            }, 700);
+        }
+
+
+        function forgotPassword() {
+            window.location.href = "/forgot-password";
+        }
+
+
+        function createAccount() {
+            window.location.href = "/register";
+        }
+
+
+        function continueAsGuest() {
+            window.location.href = "/home";
+        }
+
+    </script>
 
 </body>
 </html>
