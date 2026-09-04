@@ -15,6 +15,7 @@ from flask import (
     jsonify,
     abort,
     current_app,
+    send_from_directory,
 )
 
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -407,10 +408,6 @@ def register():
             referred_by=referred_by,
         )
 
-        # -------------------------------------------------
-        # SELLER VERIFICATION
-        # -------------------------------------------------
-
         if role == "seller":
 
             document_type = request.form.get(
@@ -440,8 +437,6 @@ def register():
                 flash(upload_error, "danger")
                 return redirect(url_for("auth.register"))
 
-            # نحفظ اسم الملف الخاص فقط في ملاحظة التحقق.
-            # لا يظهر للمشترين.
             verification_note = seller_verification_note or ""
 
             verification_note = (
@@ -625,6 +620,170 @@ def account():
     )
 
 
+@auth.route("/account/edit", methods=["GET", "POST"])
+@login_required
+def edit_account():
+    user = current_user()
+
+    if not user:
+        return redirect(url_for("auth.login"))
+
+    if request.method == "POST":
+        full_name = (request.form.get("full_name") or "").strip()
+        phone = (request.form.get("phone") or "").strip()
+        wilaya = (request.form.get("wilaya") or "").strip()
+        municipality = (request.form.get("municipality") or "").strip()
+        bio = (request.form.get("bio") or "").strip()
+
+        if not full_name:
+            flash("الاسم الكامل مطلوب.", "danger")
+            return redirect(url_for("auth.edit_account"))
+
+        if len(full_name) > 120:
+            flash("الاسم طويل جداً.", "danger")
+            return redirect(url_for("auth.edit_account"))
+
+        if len(bio) > 500:
+            flash("النبذة يجب ألا تتجاوز 500 حرف.", "danger")
+            return redirect(url_for("auth.edit_account"))
+
+        avatar_path = None
+        avatar = request.files.get("avatar")
+
+        if avatar and avatar.filename:
+            original_name = secure_filename(avatar.filename)
+
+            if not original_name:
+                flash("اسم الصورة غير صالح.", "danger")
+                return redirect(url_for("auth.edit_account"))
+
+            if not allowed_file(
+                original_name,
+                ALLOWED_IMAGE_EXTENSIONS,
+            ):
+                flash(
+                    "صيغة الصورة غير مدعومة. استعمل JPG أو PNG أو WEBP.",
+                    "danger",
+                )
+                return redirect(url_for("auth.edit_account"))
+
+            try:
+                avatar.seek(0, os.SEEK_END)
+                file_size = avatar.tell()
+                avatar.seek(0)
+            except Exception:
+                flash("تعذر قراءة حجم الصورة.", "danger")
+                return redirect(url_for("auth.edit_account"))
+
+            if file_size > 5 * 1024 * 1024:
+                flash(
+                    "حجم الصورة كبير جداً. الحد الأقصى 5MB.",
+                    "danger",
+                )
+                return redirect(url_for("auth.edit_account"))
+
+            extension = original_name.rsplit(".", 1)[1].lower()
+
+            upload_folder = os.path.join(
+                current_app.instance_path,
+                "uploads",
+                "avatars",
+            )
+
+            os.makedirs(upload_folder, exist_ok=True)
+
+            filename = (
+                f"user_{user['id']}_{secrets.token_hex(12)}.{extension}"
+            )
+
+            save_path = os.path.join(
+                upload_folder,
+                filename,
+            )
+
+            try:
+                avatar.save(save_path)
+            except Exception:
+                current_app.logger.exception(
+                    "Avatar save error"
+                )
+                flash(
+                    "تعذر حفظ صورة الحساب.",
+                    "danger",
+                )
+                return redirect(url_for("auth.edit_account"))
+
+            avatar_path = (
+                f"/account/avatar/{user['id']}/{filename}"
+            )
+
+        try:
+            User.update_profile(
+                user["id"],
+                full_name=full_name,
+                phone=phone,
+                wilaya=wilaya,
+                municipality=municipality,
+                bio=bio,
+                avatar=(
+                    avatar_path
+                    if avatar_path
+                    else user["avatar"]
+                ),
+            )
+
+            flash(
+                "تم تحديث معلومات حسابك بنجاح.",
+                "success",
+            )
+
+            return redirect(
+                url_for("auth.account")
+            )
+
+        except Exception as exc:
+            current_app.logger.exception(
+                "Account update error: %s",
+                exc,
+            )
+
+            flash(
+                "حدث خطأ أثناء حفظ التغييرات.",
+                "danger",
+            )
+
+            return redirect(
+                url_for("auth.edit_account")
+            )
+
+    return render_template(
+        "edit_account.html",
+        user=user,
+    )
+
+
+@auth.route("/account/avatar/<int:user_id>/<filename>")
+@login_required
+def account_avatar(user_id, filename):
+    user = current_user()
+
+    if not user:
+        return redirect(url_for("auth.login"))
+
+    # صورة الحساب عامة من ناحية العرض، لكن لا يمكن استعمال
+    # هذا المسار للوصول إلى وثائق الهوية لأنها محفوظة في مجلد مختلف.
+    upload_folder = os.path.join(
+        current_app.instance_path,
+        "uploads",
+        "avatars",
+    )
+
+    return send_from_directory(
+        upload_folder,
+        filename,
+    )
+
+
 # =========================================================
 # ORDERS
 # =========================================================
@@ -778,9 +937,7 @@ def add_to_cart():
 
     return redirect(
         request.referrer
-        or url_for(
-            "auth.cart"
-        )
+        or url_for("auth.cart")
     )
 
 
@@ -960,7 +1117,6 @@ def checkout():
     try:
         db.execute("BEGIN IMMEDIATE")
 
-        # إعادة جلب المنتجات داخل المعاملة
         fresh_items = Cart.get_items(
             user["id"]
         )
@@ -2077,7 +2233,6 @@ def use_card():
                 url_for("auth.cards")
             )
 
-        # فحص انتهاء الصلاحية في route
         expires_at = row_value(
             card,
             "expires_at",
@@ -2601,4 +2756,5 @@ def internal_error(error):
         return (
             "<h1>500 - Server error</h1>",
             500,
-    )
+        )
+
