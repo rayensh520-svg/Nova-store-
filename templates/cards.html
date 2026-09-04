@@ -1,11 +1,48 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>بطاقاتي | DZ MARKET</title>
+
+    <title>بطاقاتي ومكافآتي | DZ MARKET</title>
 
     <style>
+        :root {
+            --primary: #800020;
+            --primary-dark: #5a0016;
+            --gold: #c9a227;
+            --gold-light: #e4c766;
+
+            --background: #f7f3f4;
+            --surface: #ffffff;
+            --surface-soft: #fcf9fa;
+
+            --text: #241d20;
+            --muted: #756b70;
+            --border: #eadfe3;
+
+            --success: #2e8b57;
+            --danger: #b3261e;
+
+            --shadow: 0 12px 35px rgba(70,0,25,.10);
+        }
+
+        body.dark-mode {
+            --background: #12090c;
+            --surface: #1d1014;
+            --surface-soft: #25151a;
+
+            --text: #f7eef1;
+            --muted: #bcaeb3;
+            --border: #3a252b;
+
+            background:
+                radial-gradient(circle at 10% 5%, rgba(128,0,32,.25), transparent 30%),
+                radial-gradient(circle at 90% 90%, rgba(201,162,39,.08), transparent 25%),
+                var(--background);
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -13,74 +50,205 @@
         }
 
         body {
-            font-family: Arial, sans-serif;
-            background: #f8f5f2;
-            color: #35151f;
-            padding-bottom: 85px;
+            font-family: Arial, "Segoe UI", sans-serif;
+
+            background:
+                radial-gradient(circle at 0% 0%, rgba(128,0,32,.07), transparent 30%),
+                radial-gradient(circle at 100% 100%, rgba(201,162,39,.05), transparent 28%),
+                var(--background);
+
+            color: var(--text);
+            min-height: 100vh;
         }
 
-        header {
-            background: linear-gradient(135deg, #4b0f1d, #741d32);
-            color: white;
-            padding: 20px 18px;
-            border-radius: 0 0 24px 24px;
+        a {
+            color: inherit;
+            text-decoration: none;
         }
 
-        .top {
+        button,
+        input {
+            font-family: inherit;
+        }
+
+        .page {
+            width: min(900px, 94%);
+            margin: auto;
+            padding: 18px 0 45px;
+        }
+
+        /* HEADER */
+
+        .topbar {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            gap: 13px;
+            margin-bottom: 20px;
         }
 
         .back {
-            color: white;
-            text-decoration: none;
-            font-size: 22px;
-        }
+            width: 44px;
+            height: 44px;
 
-        h1 {
-            font-size: 23px;
-        }
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
-        .intro {
-            padding: 20px 18px 10px;
-        }
+            border-radius: 14px;
+            border: 1px solid var(--border);
 
-        .intro h2 {
+            background: var(--surface);
+            color: var(--text);
+
             font-size: 20px;
-            margin-bottom: 6px;
+
+            box-shadow: 0 5px 18px rgba(70,0,25,.06);
         }
 
-        .intro p {
-            color: #777;
-            font-size: 14px;
+        .title {
+            flex: 1;
         }
 
-        .cards {
-            padding: 10px 18px;
+        .title h1 {
+            color: var(--primary);
+            font-size: 23px;
+            font-weight: 900;
+        }
+
+        body.dark-mode .title h1 {
+            color: var(--gold-light);
+        }
+
+        .title p {
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        /* HERO */
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--primary),
+                    var(--primary-dark)
+                );
+
+            color: white;
+
+            border-radius: 27px;
+            padding: 27px;
+
+            margin-bottom: 17px;
+
+            box-shadow: var(--shadow);
+        }
+
+        .hero::before,
+        .hero::after {
+            content: "";
+            position: absolute;
+
+            border: 1px solid rgba(228,199,102,.25);
+            border-radius: 50%;
+        }
+
+        .hero::before {
+            width: 190px;
+            height: 190px;
+            left: -75px;
+            top: -110px;
+        }
+
+        .hero::after {
+            width: 240px;
+            height: 240px;
+            right: -100px;
+            bottom: -170px;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h2 {
+            font-size: 23px;
+            margin-bottom: 8px;
+        }
+
+        .hero p {
+            color: #f4dfe5;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        /* CARDS GRID */
+
+        .cards-grid {
             display: grid;
             gap: 15px;
         }
 
-        .card {
+        .reward-card {
             position: relative;
             overflow: hidden;
-            background: linear-gradient(135deg, #5a1224, #8b2842);
+
+            min-height: 205px;
+
+            padding: 21px;
+
+            border-radius: 23px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #800020,
+                    #5a0016
+                );
+
             color: white;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 8px 25px rgba(75, 15, 29, .18);
+
+            box-shadow: var(--shadow);
         }
 
-        .card::after {
+        .reward-card::before {
             content: "";
+
             position: absolute;
-            width: 120px;
-            height: 120px;
-            border: 1px solid rgba(212, 175, 55, .35);
+
+            width: 170px;
+            height: 170px;
+
+            border: 1px solid rgba(228,199,102,.28);
             border-radius: 50%;
-            left: -45px;
-            bottom: -55px;
+
+            left: -75px;
+            bottom: -105px;
+        }
+
+        .reward-card::after {
+            content: "";
+
+            position: absolute;
+
+            width: 115px;
+            height: 115px;
+
+            border: 1px solid rgba(255,255,255,.08);
+            border-radius: 50%;
+
+            right: -45px;
+            top: -55px;
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 2;
         }
 
         .card-top {
@@ -90,273 +258,385 @@
             gap: 10px;
         }
 
-        .badge {
-            background: #d4af37;
-            color: #35151f;
-            padding: 6px 10px;
-            border-radius: 20px;
-            font-weight: bold;
-            font-size: 12px;
+        .card-type {
+            font-size: 11px;
+            color: #f1dfe5;
+            margin-bottom: 7px;
         }
 
-        .discount {
-            font-size: 34px;
+        .card-title {
+            font-size: 18px;
             font-weight: 900;
-            margin: 18px 0 5px;
         }
 
-        .description {
-            color: #f4e9dc;
-            font-size: 14px;
-            line-height: 1.6;
-        }
+        .card-badge {
+            padding: 6px 9px;
+            border-radius: 20px;
 
-        .code {
-            margin-top: 15px;
             background: rgba(255,255,255,.12);
-            border: 1px dashed rgba(255,255,255,.5);
-            border-radius: 10px;
-            padding: 10px;
-            text-align: center;
-            font-weight: bold;
-            letter-spacing: 2px;
+            border: 1px solid rgba(255,255,255,.15);
+
+            font-size: 10px;
+            font-weight: 800;
         }
 
-        .expiry {
-            margin-top: 10px;
-            font-size: 12px;
-            color: #f1dca4;
+        .card-code {
+            margin-top: 25px;
+
+            letter-spacing: 2px;
+
+            font-size: 17px;
+            font-weight: 900;
+
+            color: var(--gold-light);
+        }
+
+        .card-value {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #f4e8c4;
+        }
+
+        .card-bottom {
+            margin-top: 22px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 10px;
+        }
+
+        .expires {
+            color: #ead8dd;
+            font-size: 10px;
         }
 
         .use-btn {
-            width: 100%;
-            margin-top: 15px;
-            border: none;
-            padding: 12px;
+            border: 0;
+
+            background: var(--gold);
+            color: #241d20;
+
             border-radius: 12px;
-            background: white;
-            color: #5a1224;
-            font-weight: bold;
+
+            padding: 10px 15px;
+
+            font-size: 12px;
+            font-weight: 900;
+
             cursor: pointer;
+
+            transition: .2s;
         }
 
-        .use-btn:disabled {
-            opacity: .55;
-            cursor: not-allowed;
+        .use-btn:hover {
+            transform: translateY(-2px);
+            background: var(--gold-light);
         }
+
+        .used {
+            background: rgba(255,255,255,.10);
+            color: #e5d5da;
+
+            padding: 9px 13px;
+
+            border-radius: 12px;
+
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        /* EMPTY */
 
         .empty {
+            background: var(--surface);
+
+            border: 1px solid var(--border);
+            border-radius: 23px;
+
+            padding: 50px 20px;
+
             text-align: center;
-            padding: 55px 20px;
-            color: #777;
+
+            box-shadow: var(--shadow);
         }
 
         .empty-icon {
-            font-size: 45px;
-            margin-bottom: 15px;
-        }
-
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            right: 0;
-            left: 0;
+            width: 70px;
             height: 70px;
-            background: white;
-            border-top: 1px solid #eee;
+
+            margin: 0 auto 16px;
+
+            border-radius: 22px;
+
+            background: rgba(201,162,39,.10);
+            color: var(--gold);
+
             display: flex;
-            justify-content: space-around;
             align-items: center;
-            z-index: 1000;
+            justify-content: center;
+
+            font-size: 30px;
         }
 
-        .bottom-nav a {
-            text-decoration: none;
-            color: #777;
-            font-size: 11px;
-            text-align: center;
+        .empty h3 {
+            font-size: 19px;
+            margin-bottom: 8px;
         }
 
-        .bottom-nav a span {
-            display: block;
-            font-size: 21px;
-            margin-bottom: 3px;
+        .empty p {
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.7;
         }
 
-        .bottom-nav .active {
-            color: #741d32;
-            font-weight: bold;
+        /* INFO */
+
+        .info {
+            margin-top: 15px;
+
+            padding: 14px;
+
+            border-radius: 15px;
+
+            background: rgba(201,162,39,.08);
+            border: 1px solid rgba(201,162,39,.18);
+
+            color: var(--muted);
+
+            font-size: 12px;
+            line-height: 1.8;
         }
 
-        .toast {
-            position: fixed;
-            bottom: 85px;
-            right: 18px;
-            left: 18px;
-            background: #35151f;
-            color: white;
-            padding: 13px;
-            border-radius: 12px;
-            text-align: center;
-            display: none;
-            z-index: 2000;
+        .info strong {
+            color: var(--primary);
+        }
+
+        body.dark-mode .info strong {
+            color: var(--gold-light);
+        }
+
+        /* RESPONSIVE */
+
+        @media (min-width: 680px) {
+            .cards-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page {
+                width: 92%;
+            }
+
+            .hero {
+                padding: 23px;
+            }
+
+            .reward-card {
+                min-height: 195px;
+            }
         }
     </style>
 </head>
 
 <body>
 
-<header>
-    <div class="top">
-        <a href="{{ url_for('home') }}" class="back">‹</a>
-        <h1>🎟️ بطاقاتي</h1>
-        <div>🇩🇿</div>
-    </div>
-</header>
+<div class="page">
 
-<section class="intro">
-    <h2>بطاقاتك ومكافآتك 🎁</h2>
-    <p>استعمل مكافآتك عند إتمام طلباتك.</p>
-</section>
+    <!-- HEADER -->
 
-{% if cards %}
+    <header class="topbar">
 
-<div class="cards">
+        <a
+            href="{{ url_for('auth.account') }}"
+            class="back"
+            aria-label="رجوع"
+        >
+            ←
+        </a>
 
-    {% for card in cards %}
-    <div class="card" id="card-{{ card.code }}">
-
-        <div class="card-top">
-            <strong>{{ card.title or "مكافأة DZ MARKET" }}</strong>
-            <span class="badge">
-                {{ card.reward_type or "خصم" }}
-            </span>
+        <div class="title">
+            <h1>بطاقاتي ومكافآتي</h1>
+            <p>مكافآتك الخاصة داخل DZ MARKET</p>
         </div>
 
-        <div class="discount">
-            {% if card.discount_percent %}
-                {{ card.discount_percent }}%
-            {% else %}
+    </header>
+
+
+    <!-- HERO -->
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <h2>مكافآتك عندك هنا 🎁</h2>
+
+            <p>
+                استعمل بطاقات المكافآت الخاصة بك عند توفرها
+                واستفد من العروض والمزايا التي تحصل عليها داخل DZ MARKET.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    {% if cards %}
+
+        <div class="cards-grid">
+
+            {% for card in cards %}
+
+                <article class="reward-card">
+
+                    <div class="card-content">
+
+                        <div class="card-top">
+
+                            <div>
+
+                                <div class="card-type">
+                                    بطاقة مكافأة DZ MARKET
+                                </div>
+
+                                <div class="card-title">
+                                    {{ card.reward_type or "مكافأة خاصة" }}
+                                </div>
+
+                            </div>
+
+                            {% if card.used %}
+
+                                <span class="card-badge">
+                                    مستعملة
+                                </span>
+
+                            {% else %}
+
+                                <span class="card-badge">
+                                    متاحة
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="card-code">
+                            {{ card.code }}
+                        </div>
+
+
+                        <div class="card-value">
+
+                            {% if card.reward_value is not none %}
+                                قيمة المكافأة:
+                                {{ card.reward_value }}
+                            {% else %}
+                                مكافأة خاصة لك
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="card-bottom">
+
+                            <div class="expires">
+
+                                {% if card.expires_at %}
+                                    تنتهي:
+                                    {{ card.expires_at }}
+                                {% else %}
+                                    بدون تاريخ انتهاء
+                                {% endif %}
+
+                            </div>
+
+
+                            {% if card.used %}
+
+                                <span class="used">
+                                    ✓ تم استخدامها
+                                </span>
+
+                            {% else %}
+
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('auth.use_card') }}"
+                                >
+
+                                    <input
+                                        type="hidden"
+                                        name="code"
+                                        value="{{ card.code }}"
+                                    >
+
+                                    <button
+                                        type="submit"
+                                        class="use-btn"
+                                    >
+                                        استخدام البطاقة
+                                    </button>
+
+                                </form>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <section class="empty">
+
+            <div class="empty-icon">
                 🎁
-            {% endif %}
-        </div>
+            </div>
 
-        <div class="description">
-            {{ card.description or "مكافأة خاصة لك من DZ MARKET." }}
-        </div>
+            <h3>
+                ما عندك حتى بطاقة حاليا
+            </h3>
 
-        <div class="code">
-            {{ card.code }}
-        </div>
+            <p>
+                واصل استعمال DZ MARKET واستفد من نظام المكافآت
+                للحصول على بطاقات وعروض مستقبلية.
+            </p>
 
-        {% if card.expires_at %}
-        <div class="expiry">
-            ⏳ صالحة إلى: {{ card.expires_at }}
-        </div>
-        {% endif %}
+        </section>
 
-        <button
-            class="use-btn"
-            onclick="useCard('{{ card.code }}', this)">
-            استعمال البطاقة
-        </button>
+    {% endif %}
+
+
+    <div class="info">
+
+        💡
+        <strong>ملاحظة:</strong>
+        بطاقات المكافآت مرتبطة بحسابك، لذلك لا تشارك رمز البطاقة مع الآخرين.
 
     </div>
-    {% endfor %}
 
 </div>
 
-{% else %}
-
-<div class="empty">
-    <div class="empty-icon">🎟️</div>
-    <h3>ما عندك حتى بطاقة حاليا</h3>
-    <p>كمل طلباتك واربح مكافآت أكثر! 🔥</p>
-</div>
-
-{% endif %}
-
-<div class="toast" id="toast"></div>
-
-<nav class="bottom-nav">
-    <a href="{{ url_for('home') }}">
-        <span>🏠</span>
-        الرئيسية
-    </a>
-
-    <a href="#">
-        <span>◈</span>
-        الاستكشاف
-    </a>
-
-    <a href="{{ url_for('auth.cart') }}">
-        <span>🛒</span>
-        السلة
-    </a>
-
-    <a href="{{ url_for('auth.messages') }}">
-        <span>💬</span>
-        الرسائل
-    </a>
-
-    <a href="{{ url_for('auth.cards') }}" class="active">
-        <span>🎟️</span>
-        بطاقاتي
-    </a>
-</nav>
 
 <script>
-async function useCard(code, button) {
 
-    button.disabled = true;
-    button.textContent = "جاري الاستعمال...";
+    const savedTheme =
+        localStorage.getItem("dzmarket-theme");
 
-    try {
-        const formData = new FormData();
-        formData.append("code", code);
-
-        const response = await fetch(
-            "{{ url_for('auth.use_card') }}",
-            {
-                method: "POST",
-                body: formData
-            }
-        );
-
-        const data = await response.json();
-
-        showToast(data.message || "تمت العملية");
-
-        if (data.success) {
-            const card = document.getElementById("card-" + code);
-
-            if (card) {
-                card.style.opacity = "0.5";
-                button.textContent = "تم استعمال البطاقة ✓";
-                button.disabled = true;
-            }
-        } else {
-            button.disabled = false;
-            button.textContent = "استعمال البطاقة";
-        }
-
-    } catch (error) {
-        showToast("حدث خطأ، حاول مرة أخرى.");
-        button.disabled = false;
-        button.textContent = "استعمال البطاقة";
+    if (savedTheme === "dark") {
+        document.body.classList.add("dark-mode");
     }
-}
 
-function showToast(message) {
-    const toast = document.getElementById("toast");
-
-    toast.textContent = message;
-    toast.style.display = "block";
-
-    setTimeout(() => {
-        toast.style.display = "none";
-    }, 2500);
-}
 </script>
 
 </body>
