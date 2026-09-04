@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>الإحصائيات | VYORA STORE</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<main class="page-shell">
+
+    <!-- HEADER -->
+    <header class="page-header">
+
+        <div class="header-info">
+
+            <a href="/seller/dashboard"
+               class="back-button"
+               aria-label="العودة">
+                ←
+            </a>
+
+            <div>
+                <span class="eyebrow">VYORA BUSINESS</span>
+                <h1>الإحصائيات</h1>
+            </div>
+
+        </div>
+
+        <a href="/notifications"
+           class="header-action">
+            الإشعارات
+        </a>
+
+    </header>
+
+
+    <!-- PERIOD -->
+    <section class="analytics-period">
+
+        <div>
+            <span class="eyebrow">ANALYTICS</span>
+            <h2>أداء المتجر</h2>
+
+            <p>
+                اختر الفترة التي تريد تحليلها.
+            </p>
+        </div>
+
+
+        <select id="periodSelect"
+                class="period-select">
+
+            <option value="7">
+                آخر 7 أيام
+            </option>
+
+            <option value="30" selected>
+                آخر 30 يومًا
+            </option>
+
+            <option value="90">
+                آخر 90 يومًا
+            </option>
+
+            <option value="365">
+                آخر سنة
+            </option>
+
+        </select>
+
+    </section>
+
+
+    <!-- KPI -->
+    <section class="analytics-grid">
+
+        <div class="analytics-card">
+
+            <span class="eyebrow">
+                SALES
+            </span>
+
+            <strong id="salesValue">
+                0 دج
+            </strong>
+
+            <p>
+                إجمالي المبيعات
+            </p>
+
+            <span id="salesComparison"
+                  class="comparison">
+                لا توجد بيانات مقارنة
+            </span>
+
+        </div>
+
+
+        <div class="analytics-card">
+
+            <span class="eyebrow">
+                ORDERS
+            </span>
+
+            <strong id="ordersValue">
+                0
+            </strong>
+
+            <p>
+                الطلبات المكتملة
+            </p>
+
+            <span id="ordersComparison"
+                  class="comparison">
+                لا توجد بيانات مقارنة
+            </span>
+
+        </div>
+
+
+        <div class="analytics-card">
+
+            <span class="eyebrow">
+                AOV
+            </span>
+
+            <strong id="aovValue">
+                0 دج
+            </strong>
+
+            <p>
+                متوسط قيمة الطلب
+            </p>
+
+        </div>
+
+
+        <div class="analytics-card">
+
+            <span class="eyebrow">
+                VIEWS
+            </span>
+
+            <strong id="viewsValue">
+                0
+            </strong>
+
+            <p>
+                مشاهدات المنتجات
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- SALES CHART -->
+    <section class="detail-card">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="eyebrow">
+                    SALES TREND
+                </span>
+
+                <h2>
+                    تطور المبيعات
+                </h2>
+            </div>
+
+            <span id="chartPeriod">
+                آخر 30 يومًا
+            </span>
+
+        </div>
+
+
+        <div class="chart-container">
+
+            <canvas id="salesChart"></canvas>
+
+            <div id="salesChartEmpty"
+                 class="chart-empty">
+
+                <strong>
+                    لا توجد مبيعات بعد
+                </strong>
+
+                <p>
+                    سيظهر منحنى المبيعات هنا عندما تتوفر
+                    بيانات حقيقية.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ORDERS CHART -->
+    <section class="detail-card">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="eyebrow">
+                    ORDERS TREND
+                </span>
+
+                <h2>
+                    تطور الطلبات
+                </h2>
+            </div>
+
+        </div>
+
+
+        <div class="chart-container">
+
+            <canvas id="ordersChart"></canvas>
+
+            <div id="ordersChartEmpty"
+                 class="chart-empty">
+
+                <strong>
+                    لا توجد طلبات بعد
+                </strong>
+
+                <p>
+                    سيظهر منحنى الطلبات عند توفر بيانات حقيقية.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- CONVERSION FUNNEL -->
+    <section class="detail-card">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="eyebrow">
+                    CONVERSION
+                </span>
+
+                <h2>
+                    مسار التحويل
+                </h2>
+            </div>
+
+        </div>
+
+
+        <div class="conversion-funnel">
+
+            <div class="funnel-step">
+
+                <span>
+                    المشاهدات
+                </span>
+
+                <strong id="funnelViews">
+                    0
+                </strong>
+
+            </div>
+
+
+            <div class="funnel-arrow">
+                ↓
+            </div>
+
+
+            <div class="funnel-step">
+
+                <span>
+                    الإضافة للسلة
+                </span>
+
+                <strong id="funnelCart">
+                    0
+                </strong>
+
+            </div>
+
+
+            <div class="funnel-arrow">
+                ↓
+            </div>
+
+
+            <div class="funnel-step">
+
+                <span>
+                    بدء الدفع
+                </span>
+
+                <strong id="funnelCheckout">
+                    0
+                </strong>
+
+            </div>
+
+
+            <div class="funnel-arrow">
+                ↓
+            </div>
+
+
+            <div class="funnel-step">
+
+                <span>
+                    الطلبات المكتملة
+                </span>
+
+                <strong id="funnelCompleted">
+                    0
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <div class="conversion-summary">
+
+            <div>
+                <span>نسبة الإضافة للسلة</span>
+                <strong id="cartRate">—</strong>
+            </div>
+
+            <div>
+                <span>نسبة بدء الدفع</span>
+                <strong id="checkoutRate">—</strong>
+            </div>
+
+            <div>
+                <span>نسبة إتمام الطلب</span>
+                <strong id="completionRate">—</strong>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ORDER STATUS -->
+    <section class="detail-card">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="eyebrow">
+                    ORDER STATUS
+                </span>
+
+                <h2>
+                    حالات الطلبات
+                </h2>
+            </div>
+
+        </div>
+
+
+        <div class="status-stat-grid">
+
+            <div class="status-stat">
+                <span>قيد الانتظار</span>
+                <strong id="pendingOrders">0</strong>
+            </div>
+
+            <div class="status-stat">
+                <span>قيد التحضير</span>
+                <strong id="preparingOrders">0</strong>
+            </div>
+
+            <div class="status-stat">
+                <span>قيد التوصيل</span>
+                <strong id="shippingOrders">0</strong>
+            </div>
+
+            <div class="status-stat">
+                <span>مكتملة</span>
+                <strong id="completedOrders">0</strong>
+            </div>
+
+            <div class="status-stat">
+                <span>ملغاة</span>
+                <strong id="cancelledOrders">0</strong>
+            </div>
+
+            <div class="status-stat">
+                <span>مرتجعة</span>
+                <strong id="returnedOrders">0</strong>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- TOP PRODUCTS -->
+    <section class="detail-card">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="eyebrow">
+                    TOP PRODUCTS
+                </span>
+
+                <h2>
+                    أفضل المنتجات
+                </h2>
+            </div>
+
+        </div>
+
+
+        <div id="topProducts"
+             class="top-products">
+
+            <!--
+                المنتجات الحقيقية ستأتي من قاعدة البيانات.
+            -->
+
+        </div>
+
+
+        <div id="topProductsEmpty"
+             class="empty-state">
+
+            <div class="empty-state-icon">
+                —
+            </div>
+
+            <h3>
+                لا توجد بيانات كافية
+            </h3>
+
+            <p>
+                عندما تبدأ المبيعات ستظهر هنا المنتجات
+                الأفضل أداءً.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- CATEGORY PERFORMANCE -->
+    <section class="detail-card">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="eyebrow">
+                    CATEGORIES
+                </span>
+
+                <h2>
+                    أداء التصنيفات
+                </h2>
+            </div>
+
+        </div>
+
+
+        <div id="categoryPerformance"
+             class="category-performance">
+
+            <!-- البيانات الحقيقية ستضاف لاحقًا -->
+
+        </div>
+
+
+        <div id="categoryEmpty"
+             class="empty-state">
+
+            <h3>
+                لا توجد بيانات
+            </h3>
+
+            <p>
+                ستظهر مقارنة التصنيفات بعد توفر بيانات مبيعات.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- RETURNS / CANCELLATIONS -->
+    <section class="detail-card">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="eyebrow">
+                    QUALITY
+                </span>
+
+                <h2>
+                    مؤشرات جودة الطلبات
+                </h2>
+            </div>
+
+        </div>
+
+
+        <div class="quality-grid">
+
+            <div class="quality-item">
+
+                <span>
+                    نسبة الإلغاء
+                </span>
+
+                <strong id="cancelRate">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div class="quality-item">
+
+                <span>
+                    نسبة الإرجاع
+                </span>
+
+                <strong id="returnRate">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div class="quality-item">
+
+                <span>
+                    نسبة الشكاوى
+                </span>
+
+                <strong id="complaintRate">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div class="quality-item">
+
+                <span>
+                    تقييم المتجر
+                </span>
+
+                <strong id="storeRating">
+                    —
+                </strong>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- COMPARISON -->
+    <section class="detail-card">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="eyebrow">
+                    PERIOD COMPARISON
+                </span>
+
+                <h2>
+                    مقارنة الفترات
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div class="comparison-table">
+
+            <div class="comparison-row comparison-head">
+
+                <span>المؤشر</span>
+                <span>الفترة الحالية</span>
+                <span>الفترة السابقة</span>
+                <span>التغير</span>
+
+            </div>
+
+
+            <div class="comparison-row">
+
+                <span>المبيعات</span>
+
+                <strong id="currentSales">
+                    0 دج
+                </strong>
+
+                <strong id="previousSales">
+                    0 دج
+                </strong>
+
+                <strong id="salesChange">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div class="comparison-row">
+
+                <span>الطلبات</span>
+
+                <strong id="currentOrders">
+                    0
+                </strong>
+
+                <strong id="previousOrders">
+                    0
+                </strong>
+
+                <strong id="ordersChange">
+                    —
+                </strong>
+
+            </div>
+
+
+            <div class="comparison-row">
+
+                <span>المشاهدات</span>
+
+                <strong id="currentViews">
+                    0
+                </strong>
+
+                <strong id="previousViews">
+                    0
+                </strong>
+
+                <strong id="viewsChange">
+                    —
+                </strong>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- DATA NOTE -->
+    <section class="security-note">
+
+        <strong>
+            دقة الإحصائيات
+        </strong>
+
+        <p>
+            الإحصائيات النهائية يجب أن تُحسب من بيانات حقيقية
+            محفوظة في قاعدة البيانات. لا يتم عرض نسب أو نتائج
+            تقديرية، ولا يمكن للواجهة تعديل أرقام المبيعات أو
+            الأرباح أو الطلبات.
+        </p>
+
+    </section>
+
+</main>
+
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav seller-bottom-nav">
+
+    <a href="/seller/dashboard">
+        <span>الرئيسية</span>
+    </a>
+
+    <a href="/seller/products">
+        <span>المنتجات</span>
+    </a>
+
+    <a href="/seller/orders">
+        <span>الطلبات</span>
+    </a>
+
+    <a href="/seller/analytics"
+       class="active">
+        <span>الإحصائيات</span>
+    </a>
+
+    <a href="/profile">
+        <span>الحساب</span>
+    </a>
+
+</nav>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const periodSelect =
+        document.getElementById("periodSelect");
+
+    const chartPeriod =
+        document.getElementById("chartPeriod");
+
+
+    function updatePeriodLabel() {
+
+        const value =
+            periodSelect.value;
+
+        let label = "آخر 30 يومًا";
+
+        if (value === "7") {
+            label = "آخر 7 أيام";
+        }
+
+        if (value === "30") {
+            label = "آخر 30 يومًا";
+        }
+
+        if (value === "90") {
+            label = "آخر 90 يومًا";
+        }
+
+        if (value === "365") {
+            label = "آخر سنة";
+        }
+
+        chartPeriod.textContent = label;
+
+        /*
+            لاحقًا:
+            يتم إرسال الفترة إلى Backend
+            لجلب البيانات الحقيقية.
+        */
+    }
+
+
+    periodSelect.addEventListener(
+        "change",
+        updatePeriodLabel
+    );
+
+
+    updatePeriodLabel();
+
+});
+
+</script>
+
+</body>
+  </html>
