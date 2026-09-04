@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>المحفظة والأرباح | VYORA STORE</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<main class="page-shell">
+
+    <!-- HEADER -->
+    <header class="page-header">
+
+        <div class="header-info">
+
+            <a href="/seller/dashboard"
+               class="back-button"
+               aria-label="العودة">
+                ←
+            </a>
+
+            <div>
+                <span class="eyebrow">VYORA BUSINESS</span>
+                <h1>المحفظة والأرباح</h1>
+            </div>
+
+        </div>
+
+        <a href="/notifications"
+           class="header-action">
+            الإشعارات
+        </a>
+
+    </header>
+
+
+    <!-- BALANCE -->
+    <section class="wallet-hero">
+
+        <div class="wallet-label">
+            الرصيد المتاح
+        </div>
+
+        <div class="wallet-balance"
+             id="availableBalance">
+            0 دج
+        </div>
+
+        <p>
+            الرصيد القابل للسحب بعد تسوية الطلبات والعمولات.
+        </p>
+
+        <button
+            type="button"
+            class="primary-button"
+            id="withdrawButton">
+            طلب سحب
+        </button>
+
+    </section>
+
+
+    <!-- FINANCIAL CARDS -->
+    <section class="wallet-grid">
+
+        <div class="financial-card">
+
+            <span class="eyebrow">
+                GROSS SALES
+            </span>
+
+            <strong id="grossSales">
+                0 دج
+            </strong>
+
+            <p>
+                إجمالي المبيعات
+            </p>
+
+        </div>
+
+
+        <div class="financial-card">
+
+            <span class="eyebrow">
+                VYORA FEE
+            </span>
+
+            <strong id="commissionAmount">
+                0 دج
+            </strong>
+
+            <p>
+                عمولة VYORA
+            </p>
+
+        </div>
+
+
+        <div class="financial-card">
+
+            <span class="eyebrow">
+                NET EARNINGS
+            </span>
+
+            <strong id="netEarnings">
+                0 دج
+            </strong>
+
+            <p>
+                صافي الأرباح
+            </p>
+
+        </div>
+
+
+        <div class="financial-card">
+
+            <span class="eyebrow">
+                PENDING
+            </span>
+
+            <strong id="pendingBalance">
+                0 دج
+            </strong>
+
+            <p>
+                قيد التسوية
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- COMMISSION INFO -->
+    <section class="detail-card">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="eyebrow">COMMISSION</span>
+                <h2>عمولة VYORA</h2>
+            </div>
+
+        </div>
+
+
+        <div class="commission-box">
+
+            <div class="commission-rate">
+
+                <span>
+                    النسبة الحالية
+                </span>
+
+                <strong>
+                    7%
+                </strong>
+
+            </div>
+
+
+            <p>
+                تُحتسب العمولة على عملية البيع الناجحة وفق إعدادات
+                المنصة. يتم حساب القيمة النهائية على الخادم وتسجيلها
+                ضمن السجل المالي للطلب.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- FINANCIAL BREAKDOWN -->
+    <section class="detail-card">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="eyebrow">BREAKDOWN</span>
+                <h2>التفاصيل المالية</h2>
+            </div>
+
+        </div>
+
+
+        <div class="summary-list">
+
+            <div class="summary-row">
+
+                <span>إجمالي المبيعات</span>
+
+                <strong id="breakdownGross">
+                    0 دج
+                </strong>
+
+            </div>
+
+
+            <div class="summary-row">
+
+                <span>عمولة المنصة 7%</span>
+
+                <strong id="breakdownCommission">
+                    0 دج
+                </strong>
+
+            </div>
+
+
+            <div class="summary-row">
+
+                <span>رسوم التوصيل</span>
+
+                <strong id="breakdownDelivery">
+                    0 دج
+                </strong>
+
+            </div>
+
+
+            <div class="summary-row">
+
+                <span>تكاليف أخرى</span>
+
+                <strong id="breakdownOther">
+                    0 دج
+                </strong>
+
+            </div>
+
+
+            <div class="summary-row total">
+
+                <span>صافي الأرباح</span>
+
+                <strong id="breakdownNet">
+                    0 دج
+                </strong>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- TRANSACTIONS -->
+    <section class="detail-card">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="eyebrow">TRANSACTIONS</span>
+                <h2>سجل المعاملات</h2>
+            </div>
+
+            <span id="transactionCount">
+                0 معاملة
+            </span>
+
+        </div>
+
+
+        <div id="transactionsList"
+             class="transactions-list">
+
+            <!--
+                المعاملات الحقيقية ستُحمّل من قاعدة البيانات.
+                لا نضع بيانات وهمية.
+            -->
+
+        </div>
+
+
+        <div id="emptyTransactions"
+             class="empty-state">
+
+            <div class="empty-state-icon">
+                —
+            </div>
+
+            <h3>
+                لا توجد معاملات حاليًا
+            </h3>
+
+            <p>
+                ستظهر هنا المبيعات والعمولات والسحوبات
+                والتسويات المرتبطة بطلباتك.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- PAYOUT -->
+    <section class="detail-card">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="eyebrow">PAYOUT</span>
+                <h2>السحب</h2>
+            </div>
+
+        </div>
+
+
+        <div class="info-grid">
+
+            <div class="info-item">
+
+                <span>الرصيد المتاح</span>
+
+                <strong id="payoutAvailable">
+                    0 دج
+                </strong>
+
+            </div>
+
+
+            <div class="info-item">
+
+                <span>آخر سحب</span>
+
+                <strong id="lastPayout">
+                    لا توجد عمليات سحب
+                </strong>
+
+            </div>
+
+
+            <div class="info-item">
+
+                <span>حالة السحب</span>
+
+                <strong id="payoutStatus">
+                    لا توجد عملية معلقة
+                </strong>
+
+            </div>
+
+
+            <div class="info-item">
+
+                <span>موعد التسوية</span>
+
+                <strong id="settlementDate">
+                    غير متوفر
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="secondary-button full-width"
+            id="payoutSettings">
+            إعدادات السحب
+        </button>
+
+    </section>
+
+
+    <!-- SECURITY NOTE -->
+    <section class="security-note">
+
+        <strong>
+            حماية العمليات المالية
+        </strong>
+
+        <p>
+            جميع الحسابات المالية والعمولات وحالات السحب يجب أن
+            يتم التحقق منها وحسابها على الخادم، وليس اعتمادًا على
+            بيانات الواجهة فقط.
+        </p>
+
+    </section>
+
+</main>
+
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav seller-bottom-nav">
+
+    <a href="/seller/dashboard">
+        <span>الرئيسية</span>
+    </a>
+
+    <a href="/seller/products">
+        <span>المنتجات</span>
+    </a>
+
+    <a href="/seller/orders">
+        <span>الطلبات</span>
+    </a>
+
+    <a href="/seller/analytics">
+        <span>الإحصائيات</span>
+    </a>
+
+    <a href="/profile">
+        <span>الحساب</span>
+    </a>
+
+</nav>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const withdrawButton =
+        document.getElementById("withdrawButton");
+
+    const payoutSettings =
+        document.getElementById("payoutSettings");
+
+
+    withdrawButton.addEventListener("click", () => {
+
+        alert(
+            "سيتم ربط طلب السحب بالخادم ونظام المدفوعات لاحقًا."
+        );
+
+    });
+
+
+    payoutSettings.addEventListener("click", () => {
+
+        alert(
+            "سيتم فتح إعدادات السحب بعد ربط نظام الحسابات المالية."
+        );
+
+    });
+
+});
+
+</script>
+
+</body>
+</html>
