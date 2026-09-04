@@ -1,7 +1,12 @@
-from flask import jsonify, request
+from flask import jsonify, request, session
 
 from . import auth_bp
-from .service import RegistrationError, register_user
+from .service import (
+    LoginError,
+    RegistrationError,
+    login_user,
+    register_user,
+)
 
 
 @auth_bp.get("/status")
@@ -34,3 +39,30 @@ def register():
             "success": False,
             "error": str(error)
         }), 400
+
+
+@auth_bp.post("/login")
+def login():
+    data = request.get_json(silent=True) or {}
+
+    try:
+        user = login_user(
+            email=data.get("email", ""),
+            password=data.get("password", ""),
+        )
+
+        session.clear()
+
+        session["user_id"] = user["id"]
+        session["user_role"] = user["role"]
+
+        return jsonify({
+            "success": True,
+            "user": user
+        })
+
+    except LoginError as error:
+        return jsonify({
+            "success": False,
+            "error": str(error)
+        }), 401
