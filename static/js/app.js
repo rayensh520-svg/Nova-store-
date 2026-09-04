@@ -1,23 +1,39 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    const logoScreen = document.getElementById("logoScreen");
-    const welcomeScreen = document.getElementById("welcomeScreen");
+    const logoScreen =
+        document.getElementById("logoScreen");
 
-    // انتقال تلقائي من الشعار إلى شاشة الترحيب
-    if (logoScreen && welcomeScreen) {
-        setTimeout(() => {
-            logoScreen.classList.add("hide");
-            welcomeScreen.classList.add("show");
-        }, 2200);
+    const welcomeScreen =
+        document.getElementById("welcomeScreen");
+
+
+    if (!logoScreen || !welcomeScreen) {
+        return;
     }
 
-    // زر ابدأ الآن
-    const startButton = document.querySelector(".start-button");
 
-    if (startButton) {
-        startButton.addEventListener("click", () => {
-            window.location.href = "/home";
-        });
-    }
+    /*
+     * المرحلة الأولى:
+     * عرض شعار VYORA
+     */
+    setTimeout(() => {
+
+        logoScreen.classList.add("hide");
+
+        welcomeScreen.classList.add("show");
+
+    }, 1800);
+
+
+    /*
+     * المرحلة الثانية:
+     * بعد ظهور رسالة الترحيب،
+     * الانتقال تلقائيًا إلى المتجر.
+     */
+    setTimeout(() => {
+
+        window.location.href = "/home";
+
+    }, 3500);
 
 });
