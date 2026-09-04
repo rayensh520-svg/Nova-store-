@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>تعديل الحساب — DZ MARKET</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        .edit-account-page {
+            min-height: 100vh;
+            padding: 28px 16px 60px;
+        }
+
+        .edit-account-container {
+            width: min(100%, 720px);
+            margin: 0 auto;
+        }
+
+        .edit-account-card {
+            background: rgba(255,255,255,.92);
+            border: 1px solid rgba(111,24,48,.12);
+            border-radius: 28px;
+            padding: 28px;
+            box-shadow: 0 24px 70px rgba(60,15,30,.12);
+        }
+
+        body.dark-mode .edit-account-card {
+            background: rgba(53,10,27,.90);
+            border-color: rgba(218,177,94,.16);
+        }
+
+        .page-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .back-button {
+            width: 42px;
+            height: 42px;
+            border-radius: 13px;
+            display: grid;
+            place-items: center;
+            text-decoration: none;
+            border: 1px solid rgba(111,24,48,.14);
+            color: inherit;
+            background: rgba(255,255,255,.55);
+        }
+
+        body.dark-mode .back-button {
+            background: rgba(255,255,255,.04);
+            border-color: rgba(218,177,94,.15);
+        }
+
+        .page-title h1 {
+            margin: 0;
+            font-size: 25px;
+            font-weight: 900;
+        }
+
+        .page-title p {
+            margin: 4px 0 0;
+            opacity: .65;
+            font-size: 13px;
+        }
+
+        .profile-photo-area {
+            text-align: center;
+            padding: 10px 0 25px;
+        }
+
+        .avatar-preview {
+            width: 112px;
+            height: 112px;
+            margin: 0 auto 14px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid rgba(139,41,71,.18);
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(139,41,71,.12),
+                    rgba(216,176,93,.18)
+                );
+            display: grid;
+            place-items: center;
+        }
+
+        .avatar-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .avatar-placeholder {
+            font-size: 32px;
+            font-weight: 900;
+            color: #711b35;
+        }
+
+        body.dark-mode .avatar-placeholder {
+            color: #e5bd70;
+        }
+
+        .photo-label {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 800;
+            border: 1px solid rgba(111,24,48,.16);
+            color: #711b35;
+            background: rgba(139,41,71,.06);
+        }
+
+        body.dark-mode .photo-label {
+            color: #e5bd70;
+            border-color: rgba(218,177,94,.18);
+            background: rgba(218,177,94,.06);
+        }
+
+        #avatar {
+            display: none;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0,1fr));
+            gap: 15px;
+        }
+
+        .field {
+            margin-bottom: 3px;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        .field label {
+            display: block;
+            margin-bottom: 7px;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        .field input,
+        .field textarea {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 13px 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(111,24,48,.15);
+            background: rgba(255,255,255,.62);
+            color: inherit;
+            outline: none;
+            font: inherit;
+        }
+
+        body.dark-mode .field input,
+        body.dark-mode .field textarea {
+            background: rgba(255,255,255,.045);
+            border-color: rgba(218,177,94,.17);
+        }
+
+        .field input:focus,
+        .field textarea:focus {
+            border-color: #8b2947;
+            box-shadow: 0 0 0 3px rgba(139,41,71,.07);
+        }
+
+        .field textarea {
+            min-height: 115px;
+            resize: vertical;
+        }
+
+        .readonly-box {
+            padding: 13px 14px;
+            border-radius: 14px;
+            background: rgba(111,24,48,.05);
+            border: 1px solid rgba(111,24,48,.10);
+            opacity: .8;
+        }
+
+        body.dark-mode .readonly-box {
+            background: rgba(255,255,255,.035);
+            border-color: rgba(218,177,94,.12);
+        }
+
+        .hint {
+            margin-top: 6px;
+            font-size: 12px;
+            opacity: .58;
+            line-height: 1.6;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        .actions .btn {
+            flex: 1;
+        }
+
+        .security-note {
+            margin-top: 22px;
+            padding: 15px;
+            border-radius: 16px;
+            background: rgba(139,41,71,.06);
+            border: 1px solid rgba(139,41,71,.10);
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        body.dark-mode .security-note {
+            background: rgba(218,177,94,.06);
+            border-color: rgba(218,177,94,.12);
+        }
+
+        @media (max-width: 600px) {
+            .edit-account-card {
+                padding: 21px 17px;
+                border-radius: 22px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .field.full {
+                grid-column: auto;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="edit-account-page">
+
+    <div class="edit-account-container">
+
+        <div class="edit-account-card">
+
+            <div class="page-top">
+
+                <a href="{{ url_for('auth.account') }}"
+                   class="back-button"
+                   aria-label="العودة للحساب"
+                   title="العودة">
+
+                    <svg width="21"
+                         height="21"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         aria-hidden="true">
+
+                        <path d="M15 18l-6-6 6-6"/>
+                    </svg>
+
+                </a>
+
+                <div class="page-title">
+                    <h1>تعديل الحساب</h1>
+                    <p>حدّث معلوماتك الشخصية في DZ MARKET</p>
+                </div>
+
+            </div>
+
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert {{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+
+            <form method="POST"
+                  action="{{ url_for('auth.edit_account') }}"
+                  enctype="multipart/form-data">
+
+
+                <!-- صورة الحساب -->
+
+                <div class="profile-photo-area">
+
+                    <div class="avatar-preview">
+
+                        {% if user.avatar %}
+                            <img id="avatarPreview"
+                                 src="{{ user.avatar }}"
+                                 alt="الصورة الشخصية">
+                        {% else %}
+                            <div class="avatar-placeholder"
+                                 id="avatarPlaceholder">
+                                {{ (user.full_name or 'D')[0]|upper }}
+                            </div>
+
+                            <img id="avatarPreview"
+                                 src=""
+                                 alt="معاينة الصورة"
+                                 style="display:none;">
+                        {% endif %}
+
+                    </div>
+
+                    <label for="avatar"
+                           class="photo-label">
+
+                        <svg width="18"
+                             height="18"
+                             viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.8"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             aria-hidden="true">
+
+                            <path d="M4 7h4l2-2h4l2 2h4v12H4z"/>
+                            <circle cx="12" cy="13" r="3.2"/>
+
+                        </svg>
+
+                        تغيير الصورة
+                    </label>
+
+                    <input type="file"
+                           id="avatar"
+                           name="avatar"
+                           accept=".jpg,.jpeg,.png,.webp">
+
+                    <div class="hint">
+                        JPG أو PNG أو WEBP — صورة واضحة وبحجم مناسب.
+                    </div>
+
+                </div>
+
+
+                <!-- المعلومات -->
+
+                <div class="form-grid">
+
+                    <div class="field full">
+                        <label for="full_name">
+                            الاسم الكامل
+                        </label>
+
+                        <input type="text"
+                               id="full_name"
+                               name="full_name"
+                               value="{{ user.full_name or '' }}"
+                               autocomplete="name"
+                               required>
+                    </div>
+
+
+                    <div class="field">
+                        <label>البريد الإلكتروني</label>
+
+                        <div class="readonly-box">
+                            {{ user.email }}
+                        </div>
+
+                        <div class="hint">
+                            البريد الإلكتروني لا يتم تغييره من هذه الصفحة.
+                        </div>
+                    </div>
+
+
+                    <div class="field">
+                        <label for="phone">
+                            رقم الهاتف
+                        </label>
+
+                        <input type="tel"
+                               id="phone"
+                               name="phone"
+                               value="{{ user.phone or '' }}"
+                               autocomplete="tel">
+                    </div>
+
+
+                    <div class="field">
+                        <label for="wilaya">
+                            الولاية
+                        </label>
+
+                        <input type="text"
+                               id="wilaya"
+                               name="wilaya"
+                               value="{{ user.wilaya or '' }}">
+                    </div>
+
+
+                    <div class="field">
+                        <label for="municipality">
+                            البلدية
+                        </label>
+
+                        <input type="text"
+                               id="municipality"
+                               name="municipality"
+                               value="{{ user.municipality or '' }}">
+                    </div>
+
+
+                    <div class="field full">
+                        <label for="bio">
+                            نبذة عني
+                        </label>
+
+                        <textarea id="bio"
+                                  name="bio"
+                                  maxlength="500"
+                                  placeholder="اكتب نبذة قصيرة عنك...">{{ user.bio or '' }}</textarea>
+
+                        <div class="hint">
+                            اختيارية — الحد الأقصى 500 حرف.
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="security-note">
+
+                    <strong>🔒 الخصوصية</strong><br>
+
+                    معلومات الحساب الشخصية مخصصة لحسابك.
+                    وثائق التحقق الخاصة بالبائع لا تظهر للمشترين.
+
+                </div>
+
+
+                <div class="actions">
+
+                    <a href="{{ url_for('auth.account') }}"
+                       class="btn btn-secondary">
+                        إلغاء
+                    </a>
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        حفظ التغييرات
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const input = document.getElementById("avatar");
+    const preview = document.getElementById("avatarPreview");
+    const placeholder = document.getElementById("avatarPlaceholder");
+
+    if (!input || !preview) return;
+
+    input.addEventListener("change", function () {
+
+        const file = this.files && this.files[0];
+
+        if (!file) return;
+
+        if (!file.type.startsWith("image/")) {
+            this.value = "";
+            return;
+        }
+
+        const reader = new FileReader();
+
+        reader.onload = function (event) {
+
+            preview.src = event.target.result;
+            preview.style.display = "block";
+
+            if (placeholder) {
+                placeholder.style.display = "none";
+            }
+        };
+
+        reader.readAsDataURL(file);
+    });
+
+});
+</script>
+
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+
+</body>
+  </html>
