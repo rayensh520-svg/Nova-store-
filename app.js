@@ -1,36 +1,62 @@
-/* =========================================================
-   DZ MARKET 🇩🇿
-   Global Frontend Controller
-   ========================================================= */
+"use strict";
+
+/*
+ * DZ MARKET — Global Frontend Controller
+ * مسؤول عن:
+ * - الوضع الليلي/النهاري
+ * - إظهار وإخفاء كلمات السر
+ * - القوائم المتنقلة
+ * - رسائل التأكيد
+ * - اختصارات لوحة المفاتيح
+ */
 
 (function () {
-    "use strict";
 
     const THEME_KEY = "dzmarket-theme";
 
-    /* =====================================================
+
+    /* =========================================
        THEME
-       ===================================================== */
+    ========================================= */
 
     function applyTheme(theme) {
+
         const isDark = theme === "dark";
 
         document.body.classList.toggle("dark-mode", isDark);
-
         document.documentElement.setAttribute(
             "data-theme",
             isDark ? "dark" : "light"
         );
 
-        localStorage.setItem(
-            THEME_KEY,
-            isDark ? "dark" : "light"
-        );
+        document.querySelectorAll("[data-theme-toggle]")
+            .forEach(function (button) {
 
-        updateThemeButtons(isDark);
+                button.setAttribute(
+                    "aria-label",
+                    isDark
+                        ? "تفعيل الوضع النهاري"
+                        : "تفعيل الوضع الليلي"
+                );
+
+                button.setAttribute(
+                    "title",
+                    isDark
+                        ? "الوضع النهاري"
+                        : "الوضع الليلي"
+                );
+
+                const icon = button.querySelector("[data-theme-icon]");
+
+                if (icon) {
+                    icon.textContent = isDark ? "☀" : "☾";
+                }
+            });
     }
 
-    function getInitialTheme() {
+
+    function getPreferredTheme() {
+
         const saved = localStorage.getItem(THEME_KEY);
 
         if (saved === "dark" || saved === "light") {
@@ -47,299 +73,334 @@
         return "light";
     }
 
-    function updateThemeButtons(isDark) {
-        document
-            .querySelectorAll("[data-theme-toggle]")
-            .forEach(button => {
 
-                button.setAttribute(
-                    "aria-label",
-                    isDark
-                        ? "تفعيل الوضع الفاتح"
-                        : "تفعيل الوضع الليلي"
-                );
+    function toggleTheme() {
 
-                button.setAttribute(
-                    "title",
-                    isDark
-                        ? "الوضع الفاتح"
-                        : "الوضع الليلي"
-                );
+        const current =
+            document.body.classList.contains("dark-mode")
+                ? "dark"
+                : "light";
 
-                const sun = button.querySelector(
-                    "[data-icon-sun]"
-                );
+        const next = current === "dark"
+            ? "light"
+            : "dark";
 
-                const moon = button.querySelector(
-                    "[data-icon-moon]"
-                );
+        localStorage.setItem(THEME_KEY, next);
+        applyTheme(next);
+    }
 
-                if (sun) {
-                    sun.style.display =
-                        isDark ? "block" : "none";
+
+    /* =========================================
+       PASSWORD VISIBILITY
+    ========================================= */
+
+    function setupPasswordToggles() {
+
+        document.querySelectorAll("[data-password-toggle]")
+            .forEach(function (button) {
+
+                if (button.dataset.passwordReady === "true") {
+                    return;
                 }
 
-                if (moon) {
-                    moon.style.display =
-                        isDark ? "none" : "block";
-                }
+                button.dataset.passwordReady = "true";
+
+                button.addEventListener("click", function () {
+
+                    const targetId =
+                        button.getAttribute("data-target");
+
+                    const input =
+                        document.getElementById(targetId);
+
+                    if (!input) return;
+
+                    const willShow =
+                        input.type === "password";
+
+                    input.type =
+                        willShow ? "text" : "password";
+
+                    /*
+                     * هذا الكلاس يخلي SVG:
+                     * العين المفتوحة ↔ العين المغلقة
+                     */
+                    button.classList.toggle(
+                        "is-hidden",
+                        willShow
+                    );
+
+                    button.setAttribute(
+                        "aria-label",
+                        willShow
+                            ? "إخفاء كلمة السر"
+                            : "إظهار كلمة السر"
+                    );
+
+                    button.setAttribute(
+                        "title",
+                        willShow
+                            ? "إخفاء كلمة السر"
+                            : "إظهار كلمة السر"
+                    );
+                });
+
             });
     }
 
-    function toggleTheme() {
-        const dark =
-            document.body.classList.contains("dark-mode");
 
-        applyTheme(dark ? "light" : "dark");
+    /* =========================================
+       MOBILE MENU
+    ========================================= */
+
+    function setupMobileMenu() {
+
+        const menuButton =
+            document.querySelector("[data-mobile-menu-button]");
+
+        const menu =
+            document.querySelector("[data-mobile-menu]");
+
+        if (!menuButton || !menu) return;
+
+        if (menuButton.dataset.menuReady === "true") {
+            return;
+        }
+
+        menuButton.dataset.menuReady = "true";
+
+        menuButton.addEventListener("click", function () {
+
+            const opened =
+                menu.classList.toggle("is-open");
+
+            menuButton.setAttribute(
+                "aria-expanded",
+                opened ? "true" : "false"
+            );
+        });
     }
 
-    /* Apply immediately */
-    applyTheme(getInitialTheme());
 
-    /* =====================================================
-       DOM READY
-       ===================================================== */
+    /* =========================================
+       CONFIRM ACTIONS
+    ========================================= */
 
-    document.addEventListener("DOMContentLoaded", function () {
+    function setupConfirmActions() {
 
-        /* Theme buttons */
-        document
-            .querySelectorAll("[data-theme-toggle]")
-            .forEach(button => {
+        document.querySelectorAll("[data-confirm]")
+            .forEach(function (element) {
+
+                if (element.dataset.confirmReady === "true") {
+                    return;
+                }
+
+                element.dataset.confirmReady = "true";
+
+                element.addEventListener("click", function (event) {
+
+                    const message =
+                        element.getAttribute("data-confirm") ||
+                        "هل أنت متأكد؟";
+
+                    if (!window.confirm(message)) {
+                        event.preventDefault();
+                    }
+                });
+            });
+    }
+
+
+    /* =========================================
+       SEARCH SHORTCUT
+    ========================================= */
+
+    function setupSearchShortcut() {
+
+        document.addEventListener("keydown", function (event) {
+
+            if (
+                event.key === "/" &&
+                !event.ctrlKey &&
+                !event.altKey &&
+                !event.metaKey
+            ) {
+
+                const active =
+                    document.activeElement;
+
+                if (
+                    active &&
+                    (
+                        active.tagName === "INPUT" ||
+                        active.tagName === "TEXTAREA" ||
+                        active.isContentEditable
+                    )
+                ) {
+                    return;
+                }
+
+                const searchInput =
+                    document.querySelector(
+                        "[data-search-input], input[type='search']"
+                    );
+
+                if (searchInput) {
+                    event.preventDefault();
+                    searchInput.focus();
+                }
+            }
+
+        });
+    }
+
+
+    /* =========================================
+       ESCAPE
+    ========================================= */
+
+    function setupEscapeHandler() {
+
+        document.addEventListener("keydown", function (event) {
+
+            if (event.key !== "Escape") {
+                return;
+            }
+
+            document.querySelectorAll(".is-open")
+                .forEach(function (element) {
+
+                    element.classList.remove("is-open");
+
+                    if (
+                        element.hasAttribute("aria-expanded")
+                    ) {
+                        element.setAttribute(
+                            "aria-expanded",
+                            "false"
+                        );
+                    }
+                });
+        });
+    }
+
+
+    /* =========================================
+       THEME BUTTONS
+    ========================================= */
+
+    function setupThemeButtons() {
+
+        document.querySelectorAll("[data-theme-toggle]")
+            .forEach(function (button) {
+
+                if (button.dataset.themeReady === "true") {
+                    return;
+                }
+
+                button.dataset.themeReady = "true";
 
                 button.addEventListener(
                     "click",
                     toggleTheme
                 );
             });
+    }
 
-        updateThemeButtons(
-            document.body.classList.contains("dark-mode")
-        );
 
-        /* =================================================
-           PASSWORD VISIBILITY
-           ================================================= */
+    /* =========================================
+       AUTO DISMISS ALERTS
+    ========================================= */
 
-        document
-            .querySelectorAll("[data-password-toggle]")
-            .forEach(button => {
+    function setupAlerts() {
 
-                button.addEventListener(
-                    "click",
-                    function () {
+        document.querySelectorAll(".alert[data-auto-dismiss]")
+            .forEach(function (alert) {
 
-                        const targetId =
-                            this.getAttribute(
-                                "data-password-toggle"
-                            );
-
-                        const input =
-                            document.getElementById(targetId);
-
-                        if (!input) return;
-
-                        const visible =
-                            input.type === "text";
-
-                        input.type =
-                            visible ? "password" : "text";
-
-                        this.setAttribute(
-                            "aria-label",
-                            visible
-                                ? "إظهار كلمة المرور"
-                                : "إخفاء كلمة المرور"
-                        );
-
-                        this.setAttribute(
-                            "title",
-                            visible
-                                ? "إظهار كلمة المرور"
-                                : "إخفاء كلمة المرور"
-                        );
-
-                        /* Change SVG state if available */
-                        this.classList.toggle(
-                            "password-visible",
-                            !visible
-                        );
-                    }
-                );
-            });
-
-        /* =================================================
-           AUTO DISMISS ALERTS
-           ================================================= */
-
-        document
-            .querySelectorAll(
-                ".alert[data-auto-dismiss]"
-            )
-            .forEach(alert => {
-
-                const delay =
+                const seconds =
                     Number(
-                        alert.dataset.autoDismiss
-                    ) || 5000;
+                        alert.getAttribute("data-auto-dismiss")
+                    ) || 5;
 
-                window.setTimeout(() => {
+                setTimeout(function () {
 
                     alert.style.opacity = "0";
-                    alert.style.transform =
-                        "translateY(-5px)";
+                    alert.style.transform = "translateY(-5px)";
 
-                    window.setTimeout(() => {
+                    setTimeout(function () {
                         alert.remove();
                     }, 250);
 
-                }, delay);
+                }, seconds * 1000);
             });
+    }
 
-        /* =================================================
-           CONFIRM ACTIONS
-           ================================================= */
 
-        document
-            .querySelectorAll("[data-confirm]")
-            .forEach(element => {
-
-                element.addEventListener(
-                    "click",
-                    function (event) {
-
-                        const message =
-                            this.dataset.confirm ||
-                            "هل أنت متأكد؟";
-
-                        if (!window.confirm(message)) {
-                            event.preventDefault();
-                        }
-                    }
-                );
-            });
-
-        /* =================================================
-           MOBILE MENU
-           ================================================= */
-
-        const menuButton =
-            document.querySelector(
-                "[data-mobile-menu]"
-            );
-
-        const mobileMenu =
-            document.querySelector(
-                "[data-mobile-menu-panel]"
-            );
-
-        if (menuButton && mobileMenu) {
-
-            menuButton.addEventListener(
-                "click",
-                function () {
-
-                    const opened =
-                        mobileMenu.classList.toggle(
-                            "is-open"
-                        );
-
-                    menuButton.setAttribute(
-                        "aria-expanded",
-                        opened ? "true" : "false"
-                    );
-                }
-            );
-        }
-
-        /* =================================================
-           SEARCH SHORTCUT
-           ================================================= */
-
-        document.addEventListener(
-            "keydown",
-            function (event) {
-
-                const tag =
-                    document.activeElement?.tagName;
-
-                const typing =
-                    tag === "INPUT" ||
-                    tag === "TEXTAREA" ||
-                    tag === "SELECT";
-
-                if (
-                    event.key === "/" &&
-                    !typing
-                ) {
-
-                    const search =
-                        document.querySelector(
-                            "[data-search-input]"
-                        );
-
-                    if (search) {
-
-                        event.preventDefault();
-
-                        search.focus();
-                    }
-                }
-            }
-        );
-
-        /* =================================================
-           ESCAPE
-           ================================================= */
-
-        document.addEventListener(
-            "keydown",
-            function (event) {
-
-                if (event.key !== "Escape") {
-                    return;
-                }
-
-                document
-                    .querySelectorAll(
-                        ".is-open"
-                    )
-                    .forEach(element => {
-                        element.classList.remove(
-                            "is-open"
-                        );
-                    });
-            }
-        );
-    });
-
-    /* =====================================================
+    /* =========================================
        PUBLIC API
-       ===================================================== */
+    ========================================= */
 
     window.DZMarket = {
 
-        toggleTheme,
+        theme: {
+            get: function () {
+                return document.body.classList.contains("dark-mode")
+                    ? "dark"
+                    : "light";
+            },
 
-        setTheme: function (theme) {
+            set: function (theme) {
 
-            if (
-                theme !== "dark" &&
-                theme !== "light"
-            ) {
-                return;
-            }
+                if (
+                    theme !== "dark" &&
+                    theme !== "light"
+                ) {
+                    return;
+                }
 
-            applyTheme(theme);
+                localStorage.setItem(
+                    THEME_KEY,
+                    theme
+                );
+
+                applyTheme(theme);
+            },
+
+            toggle: toggleTheme
         },
 
-        getTheme: function () {
-            return document.body.classList.contains(
-                "dark-mode"
-            )
-                ? "dark"
-                : "light";
-        }
+        refreshPasswordToggles:
+            setupPasswordToggles
     };
+
+
+    /* =========================================
+       INITIALIZATION
+    ========================================= */
+
+    function init() {
+
+        applyTheme(getPreferredTheme());
+
+        setupThemeButtons();
+        setupPasswordToggles();
+        setupMobileMenu();
+        setupConfirmActions();
+        setupSearchShortcut();
+        setupEscapeHandler();
+        setupAlerts();
+    }
+
+
+    if (document.readyState === "loading") {
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            init
+        );
+
+    } else {
+        init();
+    }
 
 })();
