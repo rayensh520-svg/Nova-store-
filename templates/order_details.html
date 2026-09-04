@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>تفاصيل الطلب | VYORA STORE</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<main class="page-shell">
+
+    <!-- HEADER -->
+    <header class="page-header">
+
+        <div class="header-info">
+
+            <a href="/seller/orders"
+               class="back-button"
+               aria-label="العودة">
+                ←
+            </a>
+
+            <div>
+                <span class="eyebrow">ORDER DETAILS</span>
+                <h1>تفاصيل الطلب</h1>
+            </div>
+
+        </div>
+
+        <a href="/notifications"
+           class="header-action">
+            الإشعارات
+        </a>
+
+    </header>
+
+
+    <!-- ORDER ID -->
+    <section class="order-detail-header">
+
+        <div>
+            <span class="eyebrow">ORDER</span>
+
+            <h2 id="orderNumber">
+                #VYORA-0000
+            </h2>
+
+            <p id="orderDate">
+                بانتظار بيانات الطلب
+            </p>
+        </div>
+
+        <span
+            id="orderStatus"
+            class="status-badge pending">
+            قيد الانتظار
+        </span>
+
+    </section>
+
+
+    <!-- STATUS TIMELINE -->
+    <section class="detail-card">
+
+        <div class="section-heading">
+            <div>
+                <span class="eyebrow">STATUS</span>
+                <h2>حالة الطلب</h2>
+            </div>
+        </div>
+
+
+        <div class="status-timeline">
+
+            <div class="timeline-item active">
+                <span class="timeline-marker">01</span>
+
+                <div>
+                    <strong>طلب جديد</strong>
+                    <p>تم استلام الطلب.</p>
+                </div>
+            </div>
+
+
+            <div class="timeline-item">
+                <span class="timeline-marker">02</span>
+
+                <div>
+                    <strong>تأكيد الطلب</strong>
+                    <p>بانتظار تأكيد البائع.</p>
+                </div>
+            </div>
+
+
+            <div class="timeline-item">
+                <span class="timeline-marker">03</span>
+
+                <div>
+                    <strong>قيد التحضير</strong>
+                    <p>يتم تجهيز المنتجات.</p>
+                </div>
+            </div>
+
+
+            <div class="timeline-item">
+                <span class="timeline-marker">04</span>
+
+                <div>
+                    <strong>جاهز للتسليم</strong>
+                    <p>الطلب جاهز لشركة التوصيل.</p>
+                </div>
+            </div>
+
+
+            <div class="timeline-item">
+                <span class="timeline-marker">05</span>
+
+                <div>
+                    <strong>قيد التوصيل</strong>
+                    <p>الطلب في طريقه إلى المشتري.</p>
+                </div>
+            </div>
+
+
+            <div class="timeline-item">
+                <span class="timeline-marker">06</span>
+
+                <div>
+                    <strong>تم التسليم</strong>
+                    <p>اكتمل الطلب بنجاح.</p>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- CUSTOMER -->
+    <section class="detail-card">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="eyebrow">CUSTOMER</span>
+                <h2>معلومات المشتري</h2>
+            </div>
+
+        </div>
+
+
+        <div class="info-grid">
+
+            <div class="info-item">
+
+                <span>الاسم</span>
+
+                <strong id="customerName">
+                    غير متوفر
+                </strong>
+
+            </div>
+
+
+            <div class="info-item">
+
+                <span>الهاتف</span>
+
+                <strong id="customerPhone">
+                    غير متوفر
+                </strong>
+
+            </div>
+
+
+            <div class="info-item">
+
+                <span>الولاية</span>
+
+                <strong id="customerWilaya">
+                    غير متوفر
+                </strong>
+
+            </div>
+
+
+            <div class="info-item">
+
+                <span>العنوان</span>
+
+                <strong id="customerAddress">
+                    غير متوفر
+                </strong>
+
+            </div>
+
+        </div>
+
+
+        <a href="/chat"
+           class="secondary-button full-width">
+            فتح المحادثة
+        </a>
+
+    </section>
+
+
+    <!-- PRODUCTS -->
+    <section class="detail-card">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="eyebrow">ITEMS</span>
+                <h2>المنتجات</h2>
+            </div>
+
+            <span id="itemsCount">
+                0 منتجات
+            </span>
+
+        </div>
+
+
+        <div id="orderItems"
+             class="order-items">
+
+            <!-- المنتجات الحقيقية ستُحمّل من قاعدة البيانات -->
+
+        </div>
+
+
+        <div class="empty-items">
+
+            لا توجد بيانات منتجات لهذا الطلب حاليًا.
+
+        </div>
+
+    </section>
+
+
+    <!-- ORDER TYPE -->
+    <section class="detail-card">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="eyebrow">AVAILABILITY</span>
+                <h2>طريقة توفير المنتج</h2>
+            </div>
+
+        </div>
+
+
+        <div class="availability-info">
+
+            <div class="availability-option active">
+
+                <strong>حسب إعداد البائع</strong>
+
+                <p>
+                    المنتج يمكن أن يكون متوفرًا في المخزون
+                    أو يتم تجهيزه عند الطلب.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- DELIVERY -->
+    <section class="detail-card">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="eyebrow">DELIVERY</span>
+                <h2>معلومات التوصيل</h2>
+            </div>
+
+        </div>
+
+
+        <div class="info-grid">
+
+            <div class="info-item">
+
+                <span>طريقة التوصيل</span>
+
+                <strong id="deliveryMethod">
+                    غير محددة
+                </strong>
+
+            </div>
+
+
+            <div class="info-item">
+
+                <span>الولاية</span>
+
+                <strong id="deliveryWilaya">
+                    غير متوفر
+                </strong>
+
+            </div>
+
+
+            <div class="info-item">
+
+                <span>رسوم التوصيل</span>
+
+                <strong id="deliveryFee">
+                    غير محسوبة
+                </strong>
+
+            </div>
+
+
+            <div class="info-item">
+
+                <span>ملاحظات</span>
+
+                <strong id="deliveryNotes">
+                    لا توجد ملاحظات
+                </strong>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- PAYMENT SUMMARY -->
+    <section class="detail-card">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="eyebrow">SUMMARY</span>
+                <h2>ملخص الطلب</h2>
+            </div>
+
+        </div>
+
+
+        <div class="summary-row">
+
+            <span>مجموع المنتجات</span>
+
+            <strong id="productsTotal">
+                0 دج
+            </strong>
+
+        </div>
+
+
+        <div class="summary-row">
+
+            <span>التوصيل</span>
+
+            <strong id="deliveryTotal">
+                0 دج
+            </strong>
+
+        </div>
+
+
+        <div class="summary-row total">
+
+            <span>الإجمالي</span>
+
+            <strong id="orderTotal">
+                0 دج
+            </strong>
+
+        </div>
+
+    </section>
+
+
+    <!-- SELLER ACTIONS -->
+    <section class="detail-card seller-actions-card">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="eyebrow">ACTIONS</span>
+                <h2>إدارة الطلب</h2>
+            </div>
+
+        </div>
+
+
+        <div class="action-stack">
+
+            <button
+                type="button"
+                class="primary-button"
+                id="confirmOrder">
+                تأكيد الطلب
+            </button>
+
+
+            <button
+                type="button"
+                class="secondary-button"
+                id="prepareOrder">
+                بدء التحضير
+            </button>
+
+
+            <button
+                type="button"
+                class="secondary-button"
+                id="readyOrder">
+                تحديد الطلب كجاهز
+            </button>
+
+
+            <button
+                type="button"
+                class="secondary-button"
+                id="handoverOrder">
+                تسليم لشركة التوصيل
+            </button>
+
+
+            <button
+                type="button"
+                class="danger-button"
+                id="cancelOrder">
+                إلغاء الطلب
+            </button>
+
+        </div>
+
+
+        <p class="action-note">
+            الأزرار مرتبطة لاحقًا بصلاحيات البائع وحالة الطلب
+            والتحقق من الخادم.
+        </p>
+
+    </section>
+
+</main>
+
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav seller-bottom-nav">
+
+    <a href="/seller/dashboard">
+        <span>الرئيسية</span>
+    </a>
+
+    <a href="/seller/products">
+        <span>المنتجات</span>
+    </a>
+
+    <a href="/seller/orders" class="active">
+        <span>الطلبات</span>
+    </a>
+
+    <a href="/seller/analytics">
+        <span>الإحصائيات</span>
+    </a>
+
+    <a href="/profile">
+        <span>الحساب</span>
+    </a>
+
+</nav>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const confirmButton =
+        document.getElementById("confirmOrder");
+
+    const prepareButton =
+        document.getElementById("prepareOrder");
+
+    const readyButton =
+        document.getElementById("readyOrder");
+
+    const handoverButton =
+        document.getElementById("handoverOrder");
+
+    const cancelButton =
+        document.getElementById("cancelOrder");
+
+
+    function temporaryMessage(message) {
+        alert(message);
+    }
+
+
+    confirmButton.addEventListener("click", () => {
+
+        temporaryMessage(
+            "سيتم ربط تأكيد الطلب بالخادم وقاعدة البيانات لاحقًا."
+        );
+
+    });
+
+
+    prepareButton.addEventListener("click", () => {
+
+        temporaryMessage(
+            "سيتم تحديث حالة الطلب إلى قيد التحضير بعد ربط Backend."
+        );
+
+    });
+
+
+    readyButton.addEventListener("click", () => {
+
+        temporaryMessage(
+            "سيتم تحديث حالة الطلب إلى جاهز بعد ربط Backend."
+        );
+
+    });
+
+
+    handoverButton.addEventListener("click", () => {
+
+        temporaryMessage(
+            "سيتم تسجيل تسليم الطلب لشركة التوصيل بعد ربط النظام."
+        );
+
+    });
+
+
+    cancelButton.addEventListener("click", () => {
+
+        const confirmed =
+            confirm(
+                "هل تريد إلغاء هذا الطلب؟ سيتم تسجيل عملية الإلغاء في النظام."
+            );
+
+        if (confirmed) {
+
+            temporaryMessage(
+                "سيتم تنفيذ الإلغاء من الخادم بعد ربط Backend."
+            );
+
+        }
+
+    });
+
+});
+
+</script>
+
+</body>
+  </html>
