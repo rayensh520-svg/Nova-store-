@@ -28,6 +28,38 @@ def run_migrations():
             """
         )
 
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS sellers (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                user_id INTEGER NOT NULL UNIQUE,
+                verification_status TEXT NOT NULL DEFAULT 'pending'
+                    CHECK (
+                        verification_status IN (
+                            'pending',
+                            'approved',
+                            'rejected',
+                            'suspended'
+                        )
+                    ),
+                is_active INTEGER NOT NULL DEFAULT 1,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+                FOREIGN KEY (user_id)
+                    REFERENCES users(id)
+                    ON DELETE CASCADE
+            )
+            """
+        )
+
+        connection.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_sellers_user_id
+            ON sellers(user_id)
+            """
+        )
+
         connection.commit()
 
     finally:
