@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>VYORA STORE</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <!-- HEADER -->
+    <header class="home-header">
+
+        <div class="brand">
+            <div class="brand-mark">V</div>
+
+            <div class="brand-name">
+                <strong>VYORA</strong>
+                <span>STORE</span>
+            </div>
+        </div>
+
+        <div class="header-actions">
+
+            <button class="icon-button"
+                    type="button"
+                    aria-label="الإشعارات">
+                🔔
+            </button>
+
+            <button class="profile-button"
+                    type="button"
+                    aria-label="الحساب"
+                    onclick="openProfile()">
+                <span>حسابي</span>
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- MAIN -->
+    <main class="home-main">
+
+        <!-- HERO -->
+        <section class="hero-section">
+
+            <div class="hero-content">
+
+                <span class="hero-label">
+                    VYORA STORE
+                </span>
+
+                <h1>
+                    اكتشف ما يناسبك
+                </h1>
+
+                <p>
+                    منتجات مميزة، متاجر موثوقة،
+                    وتجربة شراء أبسط.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- SEARCH -->
+        <section class="search-section">
+
+            <form class="search-box"
+                  onsubmit="searchProducts(event)">
+
+                <span class="search-icon">⌕</span>
+
+                <input
+                    id="searchInput"
+                    type="search"
+                    placeholder="ابحث عن منتج أو متجر..."
+                    autocomplete="off">
+
+                <button type="submit">
+                    بحث
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- CATEGORIES -->
+        <section class="home-section">
+
+            <div class="section-heading">
+
+                <div>
+                    <span>استكشف</span>
+                    <h2>التصنيفات</h2>
+                </div>
+
+                <button type="button"
+                        onclick="viewAllCategories()">
+                    عرض الكل
+                </button>
+
+            </div>
+
+
+            <div class="categories-grid">
+
+                <button class="category-card"
+                        onclick="selectCategory('fashion')">
+                    <span>أزياء</span>
+                </button>
+
+                <button class="category-card"
+                        onclick="selectCategory('beauty')">
+                    <span>جمال</span>
+                </button>
+
+                <button class="category-card"
+                        onclick="selectCategory('home')">
+                    <span>منزل</span>
+                </button>
+
+                <button class="category-card"
+                        onclick="selectCategory('technology')">
+                    <span>تقنية</span>
+                </button>
+
+                <button class="category-card"
+                        onclick="selectCategory('gifts')">
+                    <span>هدايا</span>
+                </button>
+
+                <button class="category-card"
+                        onclick="selectCategory('other')">
+                    <span>المزيد</span>
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- PRODUCTS -->
+        <section class="home-section">
+
+            <div class="section-heading">
+
+                <div>
+                    <span>مختارات VYORA</span>
+                    <h2>منتجات مميزة</h2>
+                </div>
+
+                <button type="button"
+                        onclick="viewAllProducts()">
+                    عرض الكل
+                </button>
+
+            </div>
+
+
+            <div class="products-grid">
+
+                <!-- Product 1 -->
+                <article class="product-card"
+                         onclick="openProduct(1)">
+
+                    <div class="product-image">
+                        <span>صورة المنتج</span>
+                    </div>
+
+                    <div class="product-info">
+
+                        <h3>منتج مميز</h3>
+
+                        <p class="product-store">
+                            متجر VYORA
+                        </p>
+
+                        <div class="product-bottom">
+
+                            <strong>
+                                2,500 دج
+                            </strong>
+
+                            <span>
+                                متوفر
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- Product 2 -->
+                <article class="product-card"
+                         onclick="openProduct(2)">
+
+                    <div class="product-image">
+                        <span>صورة المنتج</span>
+                    </div>
+
+                    <div class="product-info">
+
+                        <h3>منتج جديد</h3>
+
+                        <p class="product-store">
+                            متجر VYORA
+                        </p>
+
+                        <div class="product-bottom">
+
+                            <strong>
+                                3,200 دج
+                            </strong>
+
+                            <span>
+                                متوفر
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+
+                <!-- Product 3 -->
+                <article class="product-card"
+                         onclick="openProduct(3)">
+
+                    <div class="product-image">
+                        <span>صورة المنتج</span>
+                    </div>
+
+                    <div class="product-info">
+
+                        <h3>اختيار VYORA</h3>
+
+                        <p class="product-store">
+                            متجر VYORA
+                        </p>
+
+                        <div class="product-bottom">
+
+                            <strong>
+                                4,500 دج
+                            </strong>
+
+                            <span>
+                                متوفر
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- BOTTOM NAVIGATION -->
+    <nav class="bottom-navigation">
+
+        <button class="nav-item active"
+                onclick="goHome()">
+            <span>⌂</span>
+            <small>الرئيسية</small>
+        </button>
+
+        <button class="nav-item"
+                onclick="openSearch()">
+            <span>⌕</span>
+            <small>البحث</small>
+        </button>
+
+        <button class="nav-item"
+                onclick="openFavorites()">
+            <span>♡</span>
+            <small>المفضلة</small>
+        </button>
+
+        <button class="nav-item"
+                onclick="openCart()">
+            <span>□</span>
+            <small>السلة</small>
+        </button>
+
+        <button class="nav-item"
+                onclick="openProfile()">
+            <span>◯</span>
+            <small>حسابي</small>
+        </button>
+
+    </nav>
+
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+
+
+    <script>
+
+        function searchProducts(event) {
+
+            event.preventDefault();
+
+            const input =
+                document.getElementById("searchInput");
+
+            const query =
+                input.value.trim();
+
+            if (!query) {
+                input.focus();
+                return;
+            }
+
+            window.location.href =
+                "/search?q=" +
+                encodeURIComponent(query);
+        }
+
+
+        function selectCategory(category) {
+
+            window.location.href =
+                "/category/" +
+                encodeURIComponent(category);
+        }
+
+
+        function viewAllCategories() {
+            window.location.href = "/categories";
+        }
+
+
+        function viewAllProducts() {
+            window.location.href = "/products";
+        }
+
+
+        function openProduct(id) {
+            window.location.href =
+                "/product/" + id;
+        }
+
+
+        function openSearch() {
+            document.getElementById("searchInput").focus();
+        }
+
+
+        function openFavorites() {
+            window.location.href = "/favorites";
+        }
+
+
+        function openCart() {
+            window.location.href = "/cart";
+        }
+
+
+        function openProfile() {
+            window.location.href = "/profile";
+        }
+
+
+        function goHome() {
+            window.location.href = "/home";
+        }
+
+    </script>
+
+</body>
+                          </html>
