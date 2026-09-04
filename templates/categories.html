@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>التصنيفات | VYORA STORE</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<main class="page-shell">
+
+    <!-- HEADER -->
+    <header class="page-header">
+
+        <div class="header-info">
+
+            <a href="/home"
+               class="back-button"
+               aria-label="العودة">
+                ←
+            </a>
+
+            <div>
+                <span class="eyebrow">VYORA STORE</span>
+                <h1>التصنيفات</h1>
+            </div>
+
+        </div>
+
+        <a href="/search"
+           class="header-action">
+            البحث
+        </a>
+
+    </header>
+
+
+    <!-- INTRO -->
+    <section class="categories-intro">
+
+        <span class="eyebrow">
+            DISCOVER
+        </span>
+
+        <h2>
+            اكتشف ما يناسبك
+        </h2>
+
+        <p>
+            تصفح المنتجات حسب التصنيف للوصول إلى ما تبحث عنه بسهولة.
+        </p>
+
+    </section>
+
+
+    <!-- CATEGORIES -->
+    <section class="categories-section">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="eyebrow">
+                    CATEGORIES
+                </span>
+
+                <h2>
+                    جميع التصنيفات
+                </h2>
+            </div>
+
+        </div>
+
+
+        <div class="categories-grid">
+
+            <a href="/category/fashion"
+               class="category-card">
+
+                <div class="category-icon">
+                    F
+                </div>
+
+                <div>
+                    <h3>أزياء</h3>
+                    <p>ملابس وإكسسوارات</p>
+                </div>
+
+                <span class="category-arrow">
+                    ←
+                </span>
+
+            </a>
+
+
+            <a href="/category/beauty"
+               class="category-card">
+
+                <div class="category-icon">
+                    B
+                </div>
+
+                <div>
+                    <h3>جمال وعناية</h3>
+                    <p>العناية والجمال</p>
+                </div>
+
+                <span class="category-arrow">
+                    ←
+                </span>
+
+            </a>
+
+
+            <a href="/category/food"
+               class="category-card">
+
+                <div class="category-icon">
+                    F
+                </div>
+
+                <div>
+                    <h3>أطعمة</h3>
+                    <p>منتجات ومأكولات</p>
+                </div>
+
+                <span class="category-arrow">
+                    ←
+                </span>
+
+            </a>
+
+
+            <a href="/category/home"
+               class="category-card">
+
+                <div class="category-icon">
+                    H
+                </div>
+
+                <div>
+                    <h3>المنزل</h3>
+                    <p>منتجات للمنزل</p>
+                </div>
+
+                <span class="category-arrow">
+                    ←
+                </span>
+
+            </a>
+
+
+            <a href="/category/electronics"
+               class="category-card">
+
+                <div class="category-icon">
+                    E
+                </div>
+
+                <div>
+                    <h3>إلكترونيات</h3>
+                    <p>أجهزة وتقنيات</p>
+                </div>
+
+                <span class="category-arrow">
+                    ←
+                </span>
+
+            </a>
+
+
+            <a href="/category/handmade"
+               class="category-card">
+
+                <div class="category-icon">
+                    H
+                </div>
+
+                <div>
+                    <h3>منتجات يدوية</h3>
+                    <p>صناعة وإبداع</p>
+                </div>
+
+                <span class="category-arrow">
+                    ←
+                </span>
+
+            </a>
+
+
+            <a href="/category/gifts"
+               class="category-card">
+
+                <div class="category-icon">
+                    G
+                </div>
+
+                <div>
+                    <h3>هدايا</h3>
+                    <p>أفكار للمناسبات</p>
+                </div>
+
+                <span class="category-arrow">
+                    ←
+                </span>
+
+            </a>
+
+
+            <a href="/category/other"
+               class="category-card">
+
+                <div class="category-icon">
+                    +
+                </div>
+
+                <div>
+                    <h3>أخرى</h3>
+                    <p>استكشف المزيد</p>
+                </div>
+
+                <span class="category-arrow">
+                    ←
+                </span>
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- SMART DISCOVERY -->
+    <section class="detail-card smart-discovery">
+
+        <div class="section-heading">
+
+            <div>
+                <span class="eyebrow">
+                    VYORA AI
+                </span>
+
+                <h2>
+                    لا تعرف ماذا تختار؟
+                </h2>
+            </div>
+
+        </div>
+
+
+        <p>
+            أخبر VYORA بميزانيتك والمناسبة وما تفضله،
+            وسيساعدك النظام الذكي على العثور على المنتجات
+            المناسبة من الكتالوج.
+        </p>
+
+
+        <button
+            type="button"
+            class="primary-button"
+            id="openAiAssistant">
+            ساعدني أختار
+        </button>
+
+    </section>
+
+
+    <!-- BOTTOM NAV -->
+    <nav class="bottom-nav">
+
+        <a href="/home">
+            <span>الرئيسية</span>
+        </a>
+
+        <a href="/search">
+            <span>البحث</span>
+        </a>
+
+        <a href="/categories"
+           class="active">
+            <span>التصنيفات</span>
+        </a>
+
+        <a href="/favorites">
+            <span>المفضلة</span>
+        </a>
+
+        <a href="/profile">
+            <span>الحساب</span>
+        </a>
+
+    </nav>
+
+</main>
+
+
+<script>
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const aiButton =
+        document.getElementById("openAiAssistant");
+
+    aiButton.addEventListener("click", () => {
+
+        window.location.href =
+            "/ai-assistant";
+
+    });
+
+});
+
+</script>
+
+</body>
+</html>
