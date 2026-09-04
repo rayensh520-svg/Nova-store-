@@ -17,142 +17,220 @@
 
     <section class="auth-card">
 
-        <div class="auth-logo">
-            <div class="v-icon">V</div>
+        <!-- BRAND -->
+        <div class="auth-brand">
+            <div class="mini-logo">V</div>
 
             <div>
-                <strong>VYORA</strong>
+                <h1>VYORA</h1>
                 <span>STORE</span>
             </div>
         </div>
 
+
+        <!-- TITLE -->
         <div class="auth-heading">
-            <span>ابدأ تجربتك</span>
-            <h1>إنشاء حساب</h1>
-            <p>أنشئ حسابك واختر كيف تريد استخدام VYORA.</p>
+
+            <h2>إنشاء حساب</h2>
+
+            <p>
+                أنشئ حسابك وابدأ تجربتك مع VYORA STORE
+            </p>
+
         </div>
 
-        <form class="auth-form" onsubmit="registerUser(event)">
 
+        <!-- REGISTER FORM -->
+        <form id="registerForm">
+
+            <!-- FULL NAME -->
             <div class="form-group">
-                <label for="fullName">الاسم الكامل</label>
+
+                <label for="fullName">
+                    الاسم الكامل
+                </label>
 
                 <input
-                    id="fullName"
-                    name="fullName"
                     type="text"
+                    id="fullName"
+                    name="full_name"
                     placeholder="أدخل اسمك الكامل"
                     autocomplete="name"
-                    required>
+                    required
+                >
+
             </div>
 
+
+            <!-- EMAIL -->
             <div class="form-group">
-                <label for="email">البريد الإلكتروني</label>
+
+                <label for="email">
+                    البريد الإلكتروني
+                </label>
 
                 <input
+                    type="email"
                     id="email"
                     name="email"
-                    type="email"
                     placeholder="example@email.com"
                     autocomplete="email"
-                    required>
+                    required
+                >
+
             </div>
 
+
+            <!-- PASSWORD -->
             <div class="form-group">
-                <label for="password">كلمة المرور</label>
+
+                <label for="password">
+                    كلمة السر
+                </label>
 
                 <input
+                    type="password"
                     id="password"
                     name="password"
-                    type="password"
-                    placeholder="أنشئ كلمة مرور قوية"
+                    placeholder="8 أحرف على الأقل"
                     autocomplete="new-password"
                     minlength="8"
-                    required>
+                    required
+                >
+
             </div>
 
+
+            <!-- CONFIRM PASSWORD -->
             <div class="form-group">
-                <label for="confirmPassword">تأكيد كلمة المرور</label>
+
+                <label for="confirmPassword">
+                    تأكيد كلمة السر
+                </label>
 
                 <input
-                    id="confirmPassword"
-                    name="confirmPassword"
                     type="password"
-                    placeholder="أعد إدخال كلمة المرور"
+                    id="confirmPassword"
+                    name="confirm_password"
+                    placeholder="أعد كتابة كلمة السر"
                     autocomplete="new-password"
                     minlength="8"
-                    required>
+                    required
+                >
+
             </div>
 
-            <div class="account-type">
 
-                <label>نوع الحساب</label>
+            <!-- ACCOUNT TYPE -->
+            <div class="form-group">
 
-                <div class="account-options">
+                <label>
+                    نوع الحساب
+                </label>
+
+                <div class="account-type">
 
                     <label class="account-option">
+
                         <input
                             type="radio"
-                            name="accountType"
+                            name="role"
                             value="buyer"
-                            checked>
+                            checked
+                        >
 
                         <span>
-                            <strong>مشتري</strong>
-                            <small>اكتشف واشري المنتجات</small>
+                            مشتري
                         </span>
+
+                        <small>
+                            أبحث عن المنتجات وأطلبها
+                        </small>
+
                     </label>
 
+
                     <label class="account-option">
+
                         <input
                             type="radio"
-                            name="accountType"
-                            value="seller">
+                            name="role"
+                            value="seller"
+                        >
 
                         <span>
-                            <strong>بائع</strong>
-                            <small>أنشئ متجرك وبع منتجاتك</small>
+                            بائع
                         </span>
+
+                        <small>
+                            أبيع منتجاتي وأدير متجري
+                        </small>
+
                     </label>
 
                 </div>
 
             </div>
 
-            <label class="terms-option">
+
+            <!-- TERMS -->
+            <div class="terms-row">
 
                 <input
                     type="checkbox"
                     id="terms"
-                    required>
+                    required
+                >
 
-                <span>
-                    أوافق على شروط الاستخدام وسياسة الخصوصية.
-                </span>
+                <label for="terms">
 
-            </label>
+                    أوافق على شروط الاستخدام
+                    وسياسة الخصوصية
 
-            <p id="registerMessage"
-               class="form-message"></p>
+                </label>
 
+            </div>
+
+
+            <!-- ERROR -->
+            <div
+                id="registerError"
+                class="form-message error"
+                hidden>
+            </div>
+
+
+            <!-- SUCCESS -->
+            <div
+                id="registerSuccess"
+                class="form-message success"
+                hidden>
+            </div>
+
+
+            <!-- BUTTON -->
             <button
                 type="submit"
-                class="auth-submit">
+                class="primary-button"
+                id="registerButton">
+
                 إنشاء الحساب
+
             </button>
 
         </form>
 
+
+        <!-- LOGIN -->
         <div class="auth-footer">
 
-            <span>لديك حساب بالفعل؟</span>
+            <span>
+                لديك حساب بالفعل؟
+            </span>
 
-            <button
-                type="button"
-                class="text-button"
-                onclick="goToLogin()">
+            <a href="{{ url_for('login') }}">
                 تسجيل الدخول
-            </button>
+            </a>
 
         </div>
 
@@ -163,11 +241,27 @@
 
 <script>
 
-function registerUser(event) {
+const registerForm =
+    document.getElementById("registerForm");
+
+const registerButton =
+    document.getElementById("registerButton");
+
+const registerError =
+    document.getElementById("registerError");
+
+const registerSuccess =
+    document.getElementById("registerSuccess");
+
+
+registerForm.addEventListener("submit", async function(event) {
 
     event.preventDefault();
 
-    const name =
+    registerError.hidden = true;
+    registerSuccess.hidden = true;
+
+    const fullName =
         document.getElementById("fullName").value.trim();
 
     const email =
@@ -179,61 +273,173 @@ function registerUser(event) {
     const confirmPassword =
         document.getElementById("confirmPassword").value;
 
-    const message =
-        document.getElementById("registerMessage");
+    const terms =
+        document.getElementById("terms").checked;
+
+    const role =
+        document.querySelector(
+            'input[name="role"]:checked'
+        ).value;
+
+
+    // =========================
+    // CLIENT VALIDATION
+    // =========================
+
+    if (!fullName) {
+
+        showError("يرجى إدخال الاسم الكامل.");
+
+        return;
+    }
+
 
     if (password.length < 8) {
 
-        message.textContent =
-            "كلمة المرور يجب أن تحتوي على 8 أحرف على الأقل.";
+        showError(
+            "كلمة السر يجب أن تحتوي على 8 أحرف على الأقل."
+        );
 
         return;
     }
+
 
     if (password !== confirmPassword) {
 
-        message.textContent =
-            "كلمتا المرور غير متطابقتين.";
+        showError(
+            "كلمتا السر غير متطابقتين."
+        );
 
         return;
     }
 
-    if (!name || !email) {
 
-        message.textContent =
-            "يرجى إكمال جميع المعلومات.";
+    if (!terms) {
+
+        showError(
+            "يجب الموافقة على شروط الاستخدام."
+        );
 
         return;
     }
 
-    const accountType =
-        document.querySelector(
-            'input[name="accountType"]:checked'
-        ).value;
 
-    message.textContent =
-        "جاري إنشاء الحساب...";
+    // =========================
+    // DISABLE BUTTON
+    // =========================
 
-    /*
-     * مؤقتاً فقط.
-     * لاحقاً نربط التسجيل بقاعدة البيانات
-     * وFlask API مع التحقق الحقيقي.
-     */
+    registerButton.disabled = true;
 
-    setTimeout(() => {
+    registerButton.textContent =
+        "جارٍ إنشاء الحساب...";
 
-        if (accountType === "seller") {
-            window.location.href = "/seller";
-        } else {
-            window.location.href = "/home";
+
+    try {
+
+        // =========================
+        // SEND TO BACKEND
+        // =========================
+
+        const response = await fetch(
+            "/api/auth/register",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    full_name: fullName,
+                    email: email,
+                    password: password,
+                    role: role
+
+                })
+            }
+        );
+
+
+        const data =
+            await response.json();
+
+
+        // =========================
+        // ERROR
+        // =========================
+
+        if (!response.ok || !data.success) {
+
+            showError(
+                data.error ||
+                "حدث خطأ أثناء إنشاء الحساب."
+            );
+
+            registerButton.disabled = false;
+
+            registerButton.textContent =
+                "إنشاء الحساب";
+
+            return;
         }
 
-    }, 700);
-}
+
+        // =========================
+        // SUCCESS
+        // =========================
+
+        registerSuccess.textContent =
+            "تم إنشاء حسابك بنجاح.";
+
+        registerSuccess.hidden = false;
 
 
-function goToLogin() {
-    window.location.href = "/login";
+        // =========================
+        // REDIRECT
+        // =========================
+
+        setTimeout(function() {
+
+            if (data.user.role === "seller") {
+
+                window.location.href =
+                    "/seller/dashboard";
+
+            } else {
+
+                window.location.href =
+                    "/home";
+
+            }
+
+        }, 700);
+
+
+    } catch (error) {
+
+        showError(
+            "تعذر الاتصال بالخادم. حاول مرة أخرى."
+        );
+
+        registerButton.disabled = false;
+
+        registerButton.textContent =
+            "إنشاء الحساب";
+    }
+
+});
+
+
+// =========================
+// ERROR FUNCTION
+// =========================
+
+function showError(message) {
+
+    registerError.textContent = message;
+
+    registerError.hidden = false;
 }
 
 </script>
