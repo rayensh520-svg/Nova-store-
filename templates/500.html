@@ -4,285 +4,208 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>500 - خطأ في الخادم | DZ MARKET</title>
+    <title>DZ MARKET — خطأ في الخادم</title>
 
     <style>
         :root {
-            --primary: #800020;
-            --primary-dark: #5a0016;
+            --burgundy: #800020;
+            --burgundy-dark: #4d0013;
             --gold: #c9a227;
             --gold-light: #e4c766;
 
-            --background: #f7f3f4;
-            --surface: #ffffff;
-            --text: #241d20;
-            --muted: #756b70;
-            --border: #eadfe3;
+            --cream: #f7f1ed;
+            --surface: #fffaf7;
+            --text: #2a2023;
+            --muted: #756a6f;
+            --border: #eadde0;
 
-            --shadow: 0 18px 50px rgba(70, 0, 25, .12);
+            --shadow: 0 20px 55px rgba(70, 0, 25, .12);
         }
 
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            margin: 0;
             min-height: 100vh;
-            font-family: Arial, "Segoe UI", sans-serif;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            padding: 24px;
-            overflow: hidden;
-
-            color: var(--text);
+            font-family:
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
 
             background:
                 radial-gradient(
-                    circle at 15% 20%,
+                    circle at 10% 15%,
+                    rgba(128, 0, 32, .12),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 90% 85%,
                     rgba(201, 162, 39, .12),
                     transparent 28%
                 ),
-                radial-gradient(
-                    circle at 85% 80%,
-                    rgba(128, 0, 32, .10),
-                    transparent 30%
-                ),
-                var(--background);
-
-            transition: .25s ease;
-        }
-
-        body.dark-mode {
-            --background: #12090c;
-            --surface: #1d1014;
-            --text: #f7eef1;
-            --muted: #bcaeb3;
-            --border: #3a252b;
-
-            background:
-                radial-gradient(
-                    circle at 15% 20%,
-                    rgba(201, 162, 39, .10),
-                    transparent 28%
-                ),
-                radial-gradient(
-                    circle at 85% 80%,
-                    rgba(128, 0, 32, .25),
-                    transparent 30%
-                ),
                 linear-gradient(
                     135deg,
-                    #12090c,
-                    #1d0d12 55%,
-                    #10070a
+                    #fffaf7,
+                    #f5ecee
                 );
+
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
         }
 
-        .decoration {
-            position: fixed;
-            border: 1px solid rgba(201, 162, 39, .18);
+        /* Abstract background */
+        .shape {
+            position: absolute;
+            border: 1px solid rgba(128, 0, 32, .12);
             border-radius: 50%;
             pointer-events: none;
         }
 
-        .circle-one {
+        .shape.one {
             width: 300px;
             height: 300px;
-            top: -140px;
-            right: -110px;
+            top: -150px;
+            right: -80px;
         }
 
-        .circle-two {
-            width: 230px;
-            height: 230px;
-            bottom: -105px;
-            left: -85px;
+        .shape.two {
+            width: 420px;
+            height: 420px;
+            bottom: -260px;
+            left: -150px;
+            border-color: rgba(201, 162, 39, .15);
         }
 
-        .container {
-            width: 100%;
-            max-width: 620px;
+        .shape.three {
+            width: 130px;
+            height: 130px;
+            top: 18%;
+            left: 10%;
+            border-color: rgba(128, 0, 32, .08);
+        }
+
+        .wrapper {
+            width: min(92%, 520px);
             position: relative;
             z-index: 2;
         }
 
         .card {
-            background: rgba(255, 255, 255, .93);
-            border: 1px solid var(--border);
+            background: rgba(255, 250, 247, .92);
+            border: 1px solid rgba(128, 0, 32, .10);
             border-radius: 30px;
-
-            padding: 46px 28px;
-            text-align: center;
-
             box-shadow: var(--shadow);
-
-            backdrop-filter: blur(12px);
-        }
-
-        body.dark-mode .card {
-            background: rgba(29, 16, 20, .94);
+            padding: 42px 30px;
+            text-align: center;
+            backdrop-filter: blur(18px);
         }
 
         .brand {
             display: inline-flex;
             align-items: center;
-            gap: 9px;
-
-            margin-bottom: 22px;
-
-            color: var(--primary);
-
-            font-size: 18px;
-            font-weight: 800;
-            letter-spacing: .5px;
-        }
-
-        body.dark-mode .brand {
-            color: var(--gold-light);
+            gap: 10px;
+            margin-bottom: 30px;
+            text-decoration: none;
+            color: var(--burgundy);
+            font-weight: 900;
+            font-size: 19px;
+            letter-spacing: .4px;
         }
 
         .brand-mark {
-            width: 38px;
-            height: 38px;
-
+            width: 40px;
+            height: 40px;
+            border-radius: 13px;
             display: grid;
             place-items: center;
-
-            border-radius: 12px;
-
-            background:
-                linear-gradient(
-                    135deg,
-                    var(--primary),
-                    var(--primary-dark)
-                );
-
             color: white;
 
-            font-size: 14px;
-            font-weight: 900;
-
-            box-shadow:
-                0 8px 20px rgba(128, 0, 32, .22);
-        }
-
-        .icon {
-            width: 76px;
-            height: 76px;
-
-            margin: 5px auto 20px;
-
-            display: grid;
-            place-items: center;
-
-            border-radius: 24px;
-
             background:
                 linear-gradient(
-                    135deg,
-                    rgba(128, 0, 32, .12),
-                    rgba(201, 162, 39, .16)
+                    145deg,
+                    var(--burgundy),
+                    var(--burgundy-dark)
                 );
 
-            border: 1px solid rgba(201, 162, 39, .25);
-
-            font-size: 36px;
+            box-shadow:
+                0 8px 20px rgba(128, 0, 32, .25);
         }
 
-        .code {
-            margin: 0;
+        .brand-mark svg {
+            width: 22px;
+            height: 22px;
+        }
 
-            font-size: clamp(76px, 20vw, 150px);
+        .error-code {
+            font-size: clamp(76px, 22vw, 130px);
             line-height: .9;
-
-            font-weight: 900;
-
+            font-weight: 950;
             letter-spacing: -7px;
 
             background:
                 linear-gradient(
                     135deg,
-                    var(--primary),
+                    var(--burgundy),
+                    #a52a4a 55%,
                     var(--gold)
                 );
 
             -webkit-background-clip: text;
             background-clip: text;
-
             color: transparent;
+
+            margin-bottom: 18px;
         }
 
         h1 {
-            margin: 22px 0 10px;
-
-            font-size: clamp(25px, 6vw, 36px);
+            font-size: clamp(23px, 6vw, 32px);
+            margin-bottom: 12px;
+            color: var(--text);
         }
 
         .description {
-            max-width: 480px;
-
-            margin: 0 auto;
-
             color: var(--muted);
-
-            font-size: 16px;
-            line-height: 1.8;
-        }
-
-        .notice {
-            margin: 22px auto 0;
-
-            max-width: 480px;
-
-            padding: 13px 16px;
-
-            border-radius: 14px;
-
-            background: rgba(128, 0, 32, .06);
-
-            border: 1px solid rgba(128, 0, 32, .10);
-
-            color: var(--muted);
-
-            font-size: 13px;
-            line-height: 1.7;
-        }
-
-        body.dark-mode .notice {
-            background: rgba(201, 162, 39, .07);
-            border-color: rgba(201, 162, 39, .12);
+            font-size: 15px;
+            line-height: 1.9;
+            max-width: 390px;
+            margin: 0 auto 28px;
         }
 
         .actions {
             display: flex;
-
             justify-content: center;
-
             gap: 12px;
-
             flex-wrap: wrap;
-
-            margin-top: 30px;
         }
 
         .btn {
-            min-width: 145px;
-
-            padding: 13px 20px;
-
+            min-height: 48px;
+            padding: 0 22px;
             border-radius: 14px;
-
             border: 1px solid var(--border);
 
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+
             text-decoration: none;
-
             font-weight: 800;
+            font-size: 14px;
 
-            transition: .2s ease;
+            transition:
+                transform .2s ease,
+                box-shadow .2s ease,
+                background .2s ease;
         }
 
         .btn:hover {
@@ -291,60 +214,90 @@
 
         .btn-primary {
             color: white;
+            border-color: transparent;
 
             background:
                 linear-gradient(
                     135deg,
-                    var(--primary),
-                    var(--primary-dark)
+                    var(--burgundy),
+                    var(--burgundy-dark)
                 );
 
-            border-color: transparent;
+            box-shadow:
+                0 10px 24px rgba(128, 0, 32, .20);
         }
 
         .btn-secondary {
-            color: var(--primary);
+            color: var(--burgundy);
+            background: rgba(255,255,255,.75);
+        }
 
-            background: var(--surface);
+        .btn svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .hint {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        /* Dark mode */
+        body.dark-mode {
+            --cream: #10070a;
+            --surface: #1d0d13;
+            --text: #f7edf0;
+            --muted: #bcaeb3;
+            --border: #40232c;
+
+            background:
+                radial-gradient(
+                    circle at 10% 15%,
+                    rgba(128, 0, 32, .42),
+                    transparent 32%
+                ),
+                radial-gradient(
+                    circle at 90% 85%,
+                    rgba(201, 162, 39, .10),
+                    transparent 30%
+                ),
+                linear-gradient(
+                    135deg,
+                    #17080d,
+                    #2a0b16,
+                    #110609
+                );
+
+            color: var(--text);
+        }
+
+        body.dark-mode .card {
+            background: rgba(29, 13, 19, .90);
+            border-color: rgba(228, 199, 102, .10);
         }
 
         body.dark-mode .btn-secondary {
+            background: rgba(255,255,255,.05);
             color: var(--gold-light);
-            background: #25151a;
+            border-color: var(--border);
         }
 
-        .theme-btn {
-            position: fixed;
-
-            top: 18px;
-            left: 18px;
-
-            width: 42px;
-            height: 42px;
-
-            border: 1px solid var(--border);
-
-            border-radius: 13px;
-
-            background: var(--surface);
-
-            color: var(--text);
-
-            cursor: pointer;
-
-            font-size: 18px;
-
-            z-index: 5;
+        body.dark-mode .hint {
+            border-color: var(--border);
         }
 
         @media (max-width: 480px) {
             .card {
-                padding: 38px 20px;
+                padding: 34px 20px;
                 border-radius: 24px;
-            }
-
-            .description {
-                font-size: 15px;
             }
 
             .actions {
@@ -360,45 +313,37 @@
 
 <body>
 
-    <div class="decoration circle-one"></div>
-    <div class="decoration circle-two"></div>
+    <div class="shape one"></div>
+    <div class="shape two"></div>
+    <div class="shape three"></div>
 
-    <button
-        class="theme-btn"
-        id="themeToggle"
-        type="button"
-        aria-label="تغيير المظهر"
-    >
-        🌙
-    </button>
-
-    <main class="container">
+    <main class="wrapper">
 
         <section class="card">
 
-            <div class="brand">
-                <span class="brand-mark">DZ</span>
-                MARKET
-            </div>
+            <a href="{{ url_for('auth.index') }}" class="brand">
 
-            <div class="icon">
-                ⚙️
-            </div>
+                <span class="brand-mark">
+                    <svg viewBox="0 0 24 24"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 8.5 12 4l7 4.5v7L12 20l-7-4.5z"/>
+                        <path d="M8.5 10.5 12 8l3.5 2.5"/>
+                        <path d="M9 14h6"/>
+                    </svg>
+                </span>
 
-            <p class="code">500</p>
+                <span>DZ MARKET</span>
 
-            <h1>حدث خطأ في الخادم</h1>
+            </a>
+
+            <div class="error-code">500</div>
+
+            <h1>حدث خطأ غير متوقع</h1>
 
             <p class="description">
-                عذراً، صار مشكل تقني غير متوقع في الخادم.
-                الخدمة مازالت موجودة، والمشكل غالباً مؤقت.
-                جربي العودة للصفحة الرئيسية.
+                يبدو أن الخادم واجه مشكلة مؤقتة أثناء معالجة طلبك.
+                لا تقلق، جرّبي العودة للصفحة الرئيسية والمحاولة من جديد.
             </p>
-
-            <div class="notice">
-                🛡️ لا تقلقي، معلومات حسابك وبياناتك لا يتم عرضها
-                في صفحة الخطأ هذه.
-            </div>
 
             <div class="actions">
 
@@ -406,29 +351,31 @@
                     href="{{ url_for('auth.index') }}"
                     class="btn btn-primary"
                 >
-                    🏠 الصفحة الرئيسية
+                    <svg viewBox="0 0 24 24">
+                        <path d="m3 11 9-8 9 8"/>
+                        <path d="M5 10v10h14V10"/>
+                        <path d="M9 20v-6h6v6"/>
+                    </svg>
+
+                    الصفحة الرئيسية
                 </a>
 
-                {% if current_user_id %}
+                <a
+                    href="{{ url_for('auth.account') }}"
+                    class="btn btn-secondary"
+                >
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="8" r="3"/>
+                        <path d="M5 20c.8-3.4 3.1-5 7-5s6.2 1.6 7 5"/>
+                    </svg>
 
-                    <a
-                        href="{{ url_for('auth.account') }}"
-                        class="btn btn-secondary"
-                    >
-                        👤 حسابي
-                    </a>
+                    حسابي
+                </a>
 
-                {% else %}
+            </div>
 
-                    <a
-                        href="{{ url_for('auth.login') }}"
-                        class="btn btn-secondary"
-                    >
-                        🔐 تسجيل الدخول
-                    </a>
-
-                {% endif %}
-
+            <div class="hint">
+                إذا تكرر الخطأ، يمكنك العودة لاحقًا والمحاولة مرة أخرى.
             </div>
 
         </section>
@@ -436,43 +383,21 @@
     </main>
 
     <script>
-        const body = document.body;
-        const toggle = document.getElementById("themeToggle");
+        /* توحيد الثيم مع DZ MARKET */
+        const savedTheme = localStorage.getItem("dzmarket-theme");
 
-        function applyTheme() {
-
-            const theme =
-                localStorage.getItem("dzmarket-theme");
-
-            if (theme === "dark") {
-
-                body.classList.add("dark-mode");
-
-                toggle.textContent = "☀️";
-
-            } else {
-
-                body.classList.remove("dark-mode");
-
-                toggle.textContent = "🌙";
-            }
+        if (savedTheme === "dark") {
+            document.body.classList.add("dark-mode");
         }
 
-        toggle.addEventListener("click", () => {
-
-            const dark =
-                body.classList.toggle("dark-mode");
-
-            localStorage.setItem(
-                "dzmarket-theme",
-                dark ? "dark" : "light"
-            );
-
-            toggle.textContent =
-                dark ? "☀️" : "🌙";
-        });
-
-        applyTheme();
+        /* إذا لم يوجد اختيار محفوظ، نحترم إعداد الجهاز */
+        if (
+            !savedTheme &&
+            window.matchMedia &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches
+        ) {
+            document.body.classList.add("dark-mode");
+        }
     </script>
 
 </body>
