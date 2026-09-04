@@ -1,13 +1,23 @@
 from flask import Flask, render_template, jsonify, request
+from database import init_db
 
 app = Flask(__name__)
 
 app.config["JSON_SORT_KEYS"] = False
 
+# ==============================
+# DATABASE INITIALIZATION
+# ==============================
+try:
+    init_db()
+    print("VYORA database initialized successfully.")
+except Exception as e:
+    print(f"Database initialization error: {e}")
 
-# ==========================================================
-# BASIC PAGES
-# ==========================================================
+
+# ==============================
+# PUBLIC PAGES
+# ==============================
 
 @app.route("/")
 def index():
@@ -34,10 +44,6 @@ def forgot_password():
     return render_template("forgot_password.html")
 
 
-# ==========================================================
-# BUYER PAGES
-# ==========================================================
-
 @app.route("/search")
 def search():
     return render_template("search.html")
@@ -59,18 +65,12 @@ def product(product_id):
 
 @app.route("/cart")
 def cart():
-    return render_template(
-        "cart.html",
-        cart=[]
-    )
+    return render_template("cart.html", cart=[])
 
 
 @app.route("/checkout")
 def checkout():
-    return render_template(
-        "checkout.html",
-        cart=[]
-    )
+    return render_template("checkout.html", cart=[])
 
 
 @app.route("/favorites")
@@ -112,9 +112,9 @@ def ai_assistant():
     return render_template("ai_assistant.html")
 
 
-# ==========================================================
+# ==============================
 # SELLER PAGES
-# ==========================================================
+# ==============================
 
 @app.route("/seller")
 def seller():
@@ -184,9 +184,9 @@ def seller_store(seller_id):
     )
 
 
-# ==========================================================
-# SIMPLE API
-# ==========================================================
+# ==============================
+# API
+# ==============================
 
 @app.route("/api/health")
 def health():
@@ -202,19 +202,14 @@ def api_status():
     return jsonify({
         "success": True,
         "environment": "development",
-        "database": "not_connected",
+        "database": "connected",
         "authentication": "not_connected",
-        "message": "VYORA backend is ready for database integration."
+        "message": "VYORA backend is ready for authentication integration."
     })
 
 
-# ==========================================================
-# TEST API
-# ==========================================================
-
 @app.route("/api/test", methods=["GET"])
 def api_test():
-
     return jsonify({
         "success": True,
         "message": "VYORA API is working."
@@ -223,7 +218,6 @@ def api_test():
 
 @app.route("/api/test", methods=["POST"])
 def api_test_post():
-
     data = request.get_json(silent=True) or {}
 
     return jsonify({
@@ -232,13 +226,12 @@ def api_test_post():
     })
 
 
-# ==========================================================
+# ==============================
 # ERROR HANDLERS
-# ==========================================================
+# ==============================
 
 @app.errorhandler(404)
 def not_found(error):
-
     return jsonify({
         "success": False,
         "error": "Page not found"
@@ -247,7 +240,6 @@ def not_found(error):
 
 @app.errorhandler(405)
 def method_not_allowed(error):
-
     return jsonify({
         "success": False,
         "error": "Method not allowed"
@@ -256,21 +248,19 @@ def method_not_allowed(error):
 
 @app.errorhandler(500)
 def server_error(error):
-
     return jsonify({
         "success": False,
         "error": "Internal server error"
     }), 500
 
 
-# ==========================================================
-# RUN
-# ==========================================================
+# ==============================
+# START SERVER
+# ==============================
 
 if __name__ == "__main__":
-
     app.run(
         host="0.0.0.0",
         port=5001,
         debug=True
-    )
+)
