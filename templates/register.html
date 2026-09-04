@@ -4,108 +4,131 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>إنشاء حساب | DZ MARKET 🇩🇿</title>
+    <title>إنشاء حساب — DZ MARKET</title>
 
     <style>
         :root {
             --burgundy: #800020;
-            --burgundy-dark: #560015;
-            --burgundy-soft: #a52a4a;
+            --burgundy-dark: #570014;
             --gold: #c9a227;
-            --gold-light: #e6cd72;
-            --cream: #faf6f2;
-            --white: #ffffff;
-            --text: #261d20;
+            --gold-light: #e4c766;
+
+            --bg: #f7f1ed;
+            --surface: #fffaf7;
+            --text: #281f22;
             --muted: #756b70;
-            --border: #eadfe3;
-            --success: #287a4d;
+            --border: #eadde0;
             --danger: #b3261e;
+            --success: #2e8b57;
+
             --shadow: 0 18px 55px rgba(70, 0, 25, .12);
-            --radius: 22px;
         }
 
         * {
             box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            margin: 0;
             min-height: 100vh;
+            padding: 28px 14px;
+
             font-family:
-                "Noto Sans Arabic",
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
                 "Segoe UI",
-                Tahoma,
                 Arial,
                 sans-serif;
+
+            color: var(--text);
+
             background:
                 radial-gradient(
                     circle at 10% 10%,
-                    rgba(201, 162, 39, .13),
+                    rgba(128, 0, 32, .12),
+                    transparent 28%
+                ),
+                radial-gradient(
+                    circle at 90% 90%,
+                    rgba(201, 162, 39, .12),
+                    transparent 28%
+                ),
+                linear-gradient(
+                    135deg,
+                    #fffaf7,
+                    #f5eaed
+                );
+        }
+
+        body.dark-mode {
+            --bg: #12070b;
+            --surface: #1d0d13;
+            --text: #f8edf0;
+            --muted: #bcaeb3;
+            --border: #40232c;
+
+            background:
+                radial-gradient(
+                    circle at 10% 10%,
+                    rgba(128, 0, 32, .42),
                     transparent 30%
                 ),
                 radial-gradient(
                     circle at 90% 90%,
-                    rgba(128, 0, 32, .10),
-                    transparent 35%
+                    rgba(201, 162, 39, .10),
+                    transparent 30%
                 ),
-                var(--cream);
-            color: var(--text);
+                linear-gradient(
+                    135deg,
+                    #12070b,
+                    #280914,
+                    #16080d
+                );
         }
 
-        body::before {
-            content: "";
-            position: fixed;
-            width: 280px;
-            height: 280px;
-            border: 1px solid rgba(128, 0, 32, .08);
-            border-radius: 50%;
-            top: -130px;
-            left: -100px;
-            pointer-events: none;
-        }
-
-        body::after {
-            content: "";
-            position: fixed;
-            width: 360px;
-            height: 360px;
-            border: 1px solid rgba(201, 162, 39, .10);
-            border-radius: 50%;
-            bottom: -190px;
-            right: -150px;
-            pointer-events: none;
+        a {
+            color: inherit;
+            text-decoration: none;
         }
 
         .page {
-            width: 100%;
-            max-width: 760px;
+            width: min(100%, 680px);
             margin: auto;
-            padding: 28px 16px 50px;
-            position: relative;
-            z-index: 1;
         }
 
-        /* ================================
-           HEADER
-        ================================= */
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            margin-bottom: 18px;
+        }
 
         .brand {
-            text-align: center;
-            margin-bottom: 24px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+
+            color: var(--burgundy);
+            font-weight: 950;
+        }
+
+        body.dark-mode .brand {
+            color: var(--gold-light);
         }
 
         .brand-mark {
-            width: 64px;
-            height: 64px;
-            margin: auto;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 40px;
+            height: 40px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 13px;
+
+            color: white;
 
             background:
                 linear-gradient(
@@ -114,153 +137,96 @@
                     var(--burgundy-dark)
                 );
 
-            color: var(--gold-light);
-            font-size: 27px;
-            font-weight: 900;
-
             box-shadow:
-                0 12px 30px rgba(128, 0, 32, .22),
-                inset 0 1px rgba(255, 255, 255, .12);
+                0 8px 22px rgba(128, 0, 32, .22);
         }
 
-        .brand h1 {
-            margin: 12px 0 4px;
-            font-size: 27px;
-            color: var(--burgundy);
-            letter-spacing: -.5px;
+        .brand-mark svg {
+            width: 22px;
+            height: 22px;
+
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
-        .brand p {
-            margin: 0;
+        .theme-btn {
+            width: 42px;
+            height: 42px;
+
+            display: grid;
+            place-items: center;
+
+            border: 1px solid var(--border);
+            border-radius: 13px;
+
+            background: var(--surface);
+            color: var(--text);
+        }
+
+        .theme-btn svg {
+            width: 20px;
+            height: 20px;
+
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .card {
+            background: rgba(255,250,247,.94);
+
+            border: 1px solid var(--border);
+            border-radius: 28px;
+
+            box-shadow: var(--shadow);
+
+            padding: 30px;
+        }
+
+        body.dark-mode .card {
+            background: rgba(29,13,19,.92);
+        }
+
+        .heading {
+            margin-bottom: 24px;
+        }
+
+        .heading h1 {
+            font-size: clamp(25px, 6vw, 34px);
+            margin-bottom: 7px;
+        }
+
+        .heading p {
             color: var(--muted);
             font-size: 14px;
         }
-
-        /* ================================
-           CARD
-        ================================= */
-
-        .card {
-            background: rgba(255, 255, 255, .88);
-            border: 1px solid rgba(234, 223, 227, .95);
-            border-radius: var(--radius);
-            padding: 22px;
-            box-shadow: var(--shadow);
-            backdrop-filter: blur(14px);
-        }
-
-        .section-title {
-            margin: 0 0 5px;
-            font-size: 19px;
-            color: var(--burgundy);
-        }
-
-        .section-subtitle {
-            margin: 0 0 20px;
-            color: var(--muted);
-            font-size: 13px;
-        }
-
-        /* ================================
-           FLASH MESSAGES
-        ================================= */
 
         .flash {
             padding: 12px 14px;
-            border-radius: 14px;
-            margin-bottom: 14px;
+            margin-bottom: 16px;
+
+            border-radius: 13px;
+
             font-size: 13px;
-            border: 1px solid transparent;
-        }
+            font-weight: 750;
 
-        .flash-success {
-            background: rgba(40, 122, 77, .09);
-            color: var(--success);
-            border-color: rgba(40, 122, 77, .18);
-        }
-
-        .flash-danger {
-            background: rgba(179, 38, 30, .08);
+            background: rgba(179,38,30,.09);
             color: var(--danger);
-            border-color: rgba(179, 38, 30, .16);
+
+            border: 1px solid rgba(179,38,30,.18);
         }
 
-        .flash-warning,
-        .flash-info {
-            background: rgba(201, 162, 39, .10);
-            color: #715700;
-            border-color: rgba(201, 162, 39, .20);
-        }
-
-        /* ================================
-           FORM
-        ================================= */
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-        }
-
-        .field {
-            display: flex;
-            flex-direction: column;
-            gap: 7px;
-        }
-
-        .field label {
-            font-size: 13px;
-            font-weight: 700;
-        }
-
-        .field input,
-        .field select,
-        .field textarea {
-            width: 100%;
-            border: 1px solid var(--border);
-            background: #fff;
-            color: var(--text);
-            border-radius: 14px;
-            padding: 13px 14px;
-            outline: none;
-            font: inherit;
-            font-size: 14px;
-            transition: .2s ease;
-        }
-
-        .field textarea {
-            min-height: 105px;
-            resize: vertical;
-        }
-
-        .field input:focus,
-        .field select:focus,
-        .field textarea:focus {
-            border-color: var(--burgundy-soft);
-            box-shadow:
-                0 0 0 4px rgba(128, 0, 32, .07);
-        }
-
-        .hint {
-            color: var(--muted);
-            font-size: 11px;
-            line-height: 1.6;
-        }
-
-        /* ================================
-           ROLE SELECTOR
-        ================================= */
-
-        .role-title {
-            margin: 25px 0 10px;
-            font-size: 14px;
-            font-weight: 800;
-        }
-
-        .roles {
+        .role-switch {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
+
+            margin-bottom: 23px;
         }
 
         .role-option {
@@ -273,116 +239,290 @@
             pointer-events: none;
         }
 
-        .role-card {
-            display: block;
-            padding: 15px;
-            border-radius: 17px;
+        .role-option label {
+            min-height: 62px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 10px;
+
             border: 1px solid var(--border);
-            background: #fff;
+            border-radius: 15px;
+
+            background: var(--surface);
+
+            color: var(--muted);
+
+            font-size: 14px;
+            font-weight: 900;
+
             cursor: pointer;
+
             transition: .2s ease;
         }
 
-        .role-card:hover {
-            transform: translateY(-1px);
-            border-color: rgba(128, 0, 32, .35);
-        }
+        .role-option input:checked + label {
+            color: var(--burgundy);
 
-        .role-option input:checked + .role-card {
             border-color: var(--burgundy);
+
             background:
                 linear-gradient(
-                    145deg,
-                    rgba(128, 0, 32, .07),
-                    rgba(201, 162, 39, .07)
+                    135deg,
+                    rgba(128,0,32,.08),
+                    rgba(201,162,39,.08)
                 );
+
             box-shadow:
-                0 8px 22px rgba(128, 0, 32, .08);
+                0 7px 20px rgba(128,0,32,.08);
         }
 
-        .role-name {
-            font-weight: 800;
-            color: var(--burgundy);
-            margin-bottom: 4px;
+        body.dark-mode .role-option input:checked + label {
+            color: var(--gold-light);
+            border-color: var(--gold);
+            background: rgba(128,0,32,.22);
         }
 
-        .role-description {
-            font-size: 11px;
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .field {
+            margin-bottom: 15px;
+        }
+
+        .field.full {
+            grid-column: 1 / -1;
+        }
+
+        label.field-label {
+            display: block;
+
+            margin-bottom: 7px;
+
+            font-size: 13px;
+            font-weight: 850;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+
+            min-height: 47px;
+
+            padding: 11px 13px;
+
+            border: 1px solid var(--border);
+            border-radius: 13px;
+
+            outline: none;
+
+            background: var(--surface);
+            color: var(--text);
+
+            transition: .2s ease;
+        }
+
+        textarea {
+            min-height: 95px;
+            resize: vertical;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--burgundy);
+
+            box-shadow:
+                0 0 0 4px rgba(128,0,32,.07);
+        }
+
+        .password-wrap {
+            position: relative;
+        }
+
+        .password-wrap input {
+            padding-left: 50px;
+        }
+
+        .password-toggle {
+            position: absolute;
+
+            left: 7px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            width: 36px;
+            height: 36px;
+
+            display: grid;
+            place-items: center;
+
+            border: 0;
+            background: transparent;
+
             color: var(--muted);
+
+            cursor: pointer;
+        }
+
+        .password-toggle svg {
+            width: 22px;
+            height: 22px;
+
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.65;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .password-help {
+            margin-top: 7px;
+
+            color: var(--muted);
+
+            font-size: 11px;
             line-height: 1.6;
         }
 
-        /* ================================
-           SELLER SECTION
-        ================================= */
+        .password-help strong {
+            color: var(--gold);
+        }
 
         .seller-section {
-            margin-top: 20px;
+            display: none;
+
+            margin-top: 8px;
+            padding-top: 22px;
+
+            border-top: 1px solid var(--border);
+        }
+
+        .seller-section.active {
+            display: block;
+        }
+
+        .seller-title {
+            margin-bottom: 15px;
+
+            font-size: 18px;
+            font-weight: 950;
+
+            color: var(--burgundy);
+        }
+
+        body.dark-mode .seller-title {
+            color: var(--gold-light);
+        }
+
+        .verification-box {
+            margin-top: 4px;
             padding: 17px;
-            border-radius: 18px;
+
+            border-radius: 17px;
+
+            border: 1px solid rgba(201,162,39,.25);
 
             background:
                 linear-gradient(
-                    145deg,
-                    rgba(128, 0, 32, .055),
-                    rgba(201, 162, 39, .055)
+                    135deg,
+                    rgba(201,162,39,.08),
+                    rgba(128,0,32,.05)
                 );
-
-            border: 1px solid rgba(128, 0, 32, .11);
         }
 
-        .seller-section.hidden {
-            display: none;
+        .verification-box h3 {
+            margin-bottom: 6px;
+            font-size: 14px;
         }
 
-        .seller-heading {
-            margin: 0 0 5px;
-            color: var(--burgundy);
-            font-size: 16px;
-            font-weight: 800;
-        }
-
-        .seller-note {
-            margin: 0 0 15px;
-            font-size: 12px;
+        .verification-box p {
             color: var(--muted);
+            font-size: 12px;
             line-height: 1.7;
         }
 
-        /* ================================
-           TERMS
-        ================================= */
+        .document-choice {
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 9px;
+
+            margin-top: 13px;
+        }
+
+        .document-choice label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            min-height: 44px;
+
+            padding: 9px 11px;
+
+            border: 1px solid var(--border);
+            border-radius: 12px;
+
+            background: var(--surface);
+
+            font-size: 12px;
+            font-weight: 750;
+
+            cursor: pointer;
+        }
+
+        .document-choice input {
+            width: auto;
+            min-height: auto;
+        }
+
+        .document-note {
+            margin-top: 9px;
+
+            color: var(--muted);
+
+            font-size: 11px;
+            line-height: 1.6;
+        }
 
         .terms {
             display: flex;
-            gap: 9px;
             align-items: flex-start;
-            margin: 20px 0;
-            font-size: 12px;
-            line-height: 1.7;
+            gap: 9px;
+
+            margin: 18px 0;
+
             color: var(--muted);
+
+            font-size: 12px;
+            line-height: 1.6;
         }
 
         .terms input {
-            margin-top: 4px;
-            accent-color: var(--burgundy);
-        }
+            width: 17px;
+            min-width: 17px;
+            height: 17px;
+            min-height: 17px;
 
-        .terms a {
-            color: var(--burgundy);
-            font-weight: 700;
-            text-decoration: none;
+            margin-top: 2px;
         }
-
-        /* ================================
-           BUTTON
-        ================================= */
 
         .submit {
             width: 100%;
+            min-height: 51px;
+
             border: 0;
             border-radius: 15px;
-            padding: 14px 18px;
+
+            color: white;
 
             background:
                 linear-gradient(
@@ -391,136 +531,62 @@
                     var(--burgundy-dark)
                 );
 
-            color: white;
-            font: inherit;
             font-size: 15px;
-            font-weight: 800;
+            font-weight: 950;
+
             cursor: pointer;
 
             box-shadow:
-                0 12px 25px rgba(128, 0, 32, .18);
+                0 12px 28px rgba(128,0,32,.20);
 
             transition: .2s ease;
         }
 
         .submit:hover {
-            transform: translateY(-1px);
-            box-shadow:
-                0 15px 30px rgba(128, 0, 32, .23);
-        }
-
-        .submit:active {
-            transform: translateY(0);
+            transform: translateY(-2px);
         }
 
         .login-link {
+            margin-top: 19px;
+
             text-align: center;
-            margin-top: 18px;
+
             color: var(--muted);
+
             font-size: 13px;
         }
 
         .login-link a {
             color: var(--burgundy);
-            font-weight: 800;
-            text-decoration: none;
+            font-weight: 900;
         }
 
-        /* ================================
-           DARK MODE
-        ================================= */
-
-        body.dark-mode {
-            --cream: #12090c;
-            --white: #1d1014;
-            --text: #f7eef1;
-            --muted: #bcaeb3;
-            --border: #3a252b;
-
-            background:
-                radial-gradient(
-                    circle at 10% 10%,
-                    rgba(201, 162, 39, .08),
-                    transparent 30%
-                ),
-                radial-gradient(
-                    circle at 90% 90%,
-                    rgba(128, 0, 32, .20),
-                    transparent 35%
-                ),
-                #12090c;
-        }
-
-        body.dark-mode .card {
-            background: rgba(29, 16, 20, .91);
-            border-color: var(--border);
-        }
-
-        body.dark-mode .field input,
-        body.dark-mode .field select,
-        body.dark-mode .field textarea,
-        body.dark-mode .role-card {
-            background: #25151a;
-            color: var(--text);
-            border-color: var(--border);
-        }
-
-        body.dark-mode .brand h1,
-        body.dark-mode .section-title,
-        body.dark-mode .role-name,
-        body.dark-mode .seller-heading {
+        body.dark-mode .login-link a {
             color: var(--gold-light);
         }
 
-        body.dark-mode .seller-section {
-            background:
-                linear-gradient(
-                    145deg,
-                    rgba(128, 0, 32, .20),
-                    rgba(201, 162, 39, .07)
-                );
-            border-color: #4a2932;
-        }
+        @media (max-width: 600px) {
 
-        body.dark-mode .role-option input:checked + .role-card {
-            border-color: var(--gold);
-            background:
-                linear-gradient(
-                    145deg,
-                    rgba(128, 0, 32, .25),
-                    rgba(201, 162, 39, .08)
-                );
-        }
-
-        body.dark-mode .login-link a,
-        body.dark-mode .terms a {
-            color: var(--gold-light);
-        }
-
-        /* ================================
-           RESPONSIVE
-        ================================= */
-
-        @media (min-width: 640px) {
-
-            .page {
-                padding-top: 45px;
+            body {
+                padding: 15px 10px 25px;
             }
 
             .card {
-                padding: 30px;
+                padding: 22px 16px;
+                border-radius: 23px;
             }
 
             .form-grid {
-                grid-template-columns: 1fr 1fr;
+                grid-template-columns: 1fr;
+                gap: 0;
             }
 
-            .full {
-                grid-column: 1 / -1;
+            .field.full {
+                grid-column: auto;
             }
 
-            .brand h1 {
-                font-size: 30px;
+            .document-choice {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -530,64 +596,120 @@
 
 <div class="page">
 
-    <!-- BRAND -->
-    <header class="brand">
-        <div class="brand-mark">DZ</div>
+    <div class="topbar">
 
-        <h1>DZ MARKET 🇩🇿</h1>
+        <a
+            href="{{ url_for('auth.index') }}"
+            class="brand"
+        >
+            <span class="brand-mark">
+                <svg viewBox="0 0 24 24">
+                    <path d="M5 8.5 12 4l7 4.5v7L12 20l-7-4.5z"/>
+                    <path d="M8.5 10.5 12 8l3.5 2.5"/>
+                    <path d="M9 14h6"/>
+                </svg>
+            </span>
 
-        <p>
-            سوق جزائري يجمع البائع والمشتري في مكان واحد
-        </p>
-    </header>
+            DZ MARKET
+        </a>
 
+        <button
+            type="button"
+            class="theme-btn"
+            data-theme-toggle
+            aria-label="تغيير الوضع"
+            title="تغيير الوضع"
+        >
+            <svg
+                data-icon-moon
+                viewBox="0 0 24 24"
+            >
+                <path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"/>
+            </svg>
 
-    <!-- MAIN CARD -->
-    <main class="card">
+            <svg
+                data-icon-sun
+                viewBox="0 0 24 24"
+                style="display:none"
+            >
+                <circle cx="12" cy="12" r="4"/>
+                <path d="M12 2v2"/>
+                <path d="M12 20v2"/>
+                <path d="m4.93 4.93 1.42 1.42"/>
+                <path d="m17.65 17.65 1.42 1.42"/>
+                <path d="M2 12h2"/>
+                <path d="M20 12h2"/>
+                <path d="m4.93 19.07 1.42-1.42"/>
+                <path d="m17.65 6.35 1.42-1.42"/>
+            </svg>
+        </button>
 
-        <h2 class="section-title">
-            إنشاء حساب
-        </h2>
+    </div>
 
-        <p class="section-subtitle">
-            أنشئي حسابك وابدئي رحلتك في DZ MARKET
-        </p>
+    <section class="card">
 
+        <div class="heading">
+            <h1>إنشاء حساب</h1>
+            <p>
+                انضم إلى DZ MARKET وابدأ تجربتك في السوق الجزائري.
+            </p>
+        </div>
 
-        <!-- FLASH MESSAGES -->
-
-        {% with messages = get_flashed_messages(with_categories=true) %}
-
+        {% with messages = get_flashed_messages() %}
             {% if messages %}
-
-                {% for category, message in messages %}
-
-                    <div class="flash flash-{{ category }}">
+                {% for message in messages %}
+                    <div class="flash">
                         {{ message }}
                     </div>
-
                 {% endfor %}
-
             {% endif %}
-
         {% endwith %}
-
-
-        <!-- FORM -->
 
         <form
             method="POST"
             action="{{ url_for('auth.register') }}"
-            autocomplete="on"
+            enctype="multipart/form-data"
+            id="registerForm"
         >
 
-            <!-- PERSONAL INFO -->
+            <div class="role-switch">
+
+                <div class="role-option">
+                    <input
+                        type="radio"
+                        name="role"
+                        id="roleBuyer"
+                        value="buyer"
+                        checked
+                    >
+
+                    <label for="roleBuyer">
+                        مشتري
+                    </label>
+                </div>
+
+                <div class="role-option">
+                    <input
+                        type="radio"
+                        name="role"
+                        id="roleSeller"
+                        value="seller"
+                    >
+
+                    <label for="roleSeller">
+                        بائع / صاحبة مشروع
+                    </label>
+                </div>
+
+            </div>
 
             <div class="form-grid">
 
                 <div class="field full">
-
-                    <label for="full_name">
+                    <label
+                        class="field-label"
+                        for="full_name"
+                    >
                         الاسم الكامل
                     </label>
 
@@ -595,17 +717,17 @@
                         id="full_name"
                         name="full_name"
                         type="text"
-                        placeholder="أدخلي اسمك الكامل"
-                        autocomplete="name"
                         required
+                        autocomplete="name"
+                        placeholder="اكتبي اسمك الكامل"
                     >
-
                 </div>
 
-
                 <div class="field">
-
-                    <label for="email">
+                    <label
+                        class="field-label"
+                        for="email"
+                    >
                         البريد الإلكتروني
                     </label>
 
@@ -613,17 +735,17 @@
                         id="email"
                         name="email"
                         type="email"
-                        placeholder="example@email.com"
-                        autocomplete="email"
                         required
+                        autocomplete="email"
+                        placeholder="example@email.com"
                     >
-
                 </div>
 
-
                 <div class="field">
-
-                    <label for="phone">
+                    <label
+                        class="field-label"
+                        for="phone"
+                    >
                         رقم الهاتف
                     </label>
 
@@ -631,160 +753,146 @@
                         id="phone"
                         name="phone"
                         type="tel"
-                        placeholder="05 / 06 / 07 ..."
                         autocomplete="tel"
+                        placeholder="05 / 06 / 07 ..."
                     >
-
                 </div>
-
 
                 <div class="field">
-
-                    <label for="password">
-                        كلمة السر
+                    <label
+                        class="field-label"
+                        for="password"
+                    >
+                        كلمة المرور
                     </label>
 
-                    <input
-                        id="password"
-                        name="password"
-                        type="password"
-                        placeholder="••••••••"
-                        autocomplete="new-password"
-                        required
-                    >
+                    <div class="password-wrap">
 
-                    <span class="hint">
-                        8 أحرف على الأقل + حرف + رقم + رمز.
-                    </span>
+                        <input
+                            id="password"
+                            name="password"
+                            type="password"
+                            required
+                            minlength="8"
+                            autocomplete="new-password"
+                            placeholder="8 أحرف أو أكثر"
+                        >
 
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            data-password-toggle="password"
+                            aria-label="إظهار كلمة المرور"
+                            title="إظهار كلمة المرور"
+                        >
+                            <svg viewBox="0 0 24 24">
+
+                                <path
+                                    d="M3 12s3.2-5 9-5 9 5 9 5-3.2 5-9 5-9-5-9-5Z"
+                                />
+
+                                <path
+                                    d="M9 9.5c.8-.9 2.7-.9 3.6 0 .9.9.9 2.6 0 3.5-.9.9-2.8.9-3.6 0-.9-.9-.9-2.6 0-3.5Z"
+                                />
+
+                                <path d="M5.4 8.4 4.1 6.9"/>
+                                <path d="M8 7.3 7.2 5.5"/>
+                                <path d="M11 7 10.8 5"/>
+                                <path d="M13 7 13.2 5"/>
+                            </svg>
+                        </button>
+
+                    </div>
+
+                    <div class="password-help">
+                        يُفضّل استعمال كلمة مرور طويلة وتضمين
+                        <strong>حروفًا وأرقامًا ورموزًا</strong>
+                        لزيادة الأمان. هذا مجرد اقتراح وليس شرطًا.
+                    </div>
                 </div>
-
 
                 <div class="field">
-
-                    <label for="confirm_password">
-                        تأكيد كلمة السر
-                    </label>
-
-                    <input
-                        id="confirm_password"
-                        name="confirm_password"
-                        type="password"
-                        placeholder="أعيدي كلمة السر"
-                        autocomplete="new-password"
-                        required
-                    >
-
-                </div>
-
-            </div>
-
-
-            <!-- ACCOUNT TYPE -->
-
-            <div class="role-title">
-                نوع الحساب
-            </div>
-
-            <div class="roles">
-
-                <div class="role-option">
-
-                    <input
-                        type="radio"
-                        id="buyer"
-                        name="role"
-                        value="buyer"
-                        checked
-                    >
-
                     <label
-                        class="role-card"
-                        for="buyer"
+                        class="field-label"
+                        for="confirm_password"
                     >
-
-                        <div class="role-name">
-                            🛍️ مشتري
-                        </div>
-
-                        <div class="role-description">
-                            تصفح المنتجات، أضيفيها للسلة،
-                            واطلبي من المتاجر.
-                        </div>
-
+                        تأكيد كلمة المرور
                     </label>
 
-                </div>
+                    <div class="password-wrap">
 
+                        <input
+                            id="confirm_password"
+                            name="confirm_password"
+                            type="password"
+                            required
+                            minlength="8"
+                            autocomplete="new-password"
+                            placeholder="أعيدي كتابة كلمة المرور"
+                        >
 
-                <div class="role-option">
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            data-password-toggle="confirm_password"
+                            aria-label="إظهار كلمة المرور"
+                            title="إظهار كلمة المرور"
+                        >
+                            <svg viewBox="0 0 24 24">
 
-                    <input
-                        type="radio"
-                        id="seller"
-                        name="role"
-                        value="seller"
-                    >
+                                <path
+                                    d="M3 12s3.2-5 9-5 9 5 9 5-3.2 5-9 5-9-5-9-5Z"
+                                />
 
-                    <label
-                        class="role-card"
-                        for="seller"
-                    >
+                                <path
+                                    d="M9 9.5c.8-.9 2.7-.9 3.6 0 .9.9.9 2.6 0 3.5-.9.9-2.8.9-3.6 0- .9-.9-.9-2.6 0-3.5Z"
+                                />
 
-                        <div class="role-name">
-                            🏪 بائع
-                        </div>
+                                <path d="M5.4 8.4 4.1 6.9"/>
+                                <path d="M8 7.3 7.2 5.5"/>
+                                <path d="M11 7 10.8 5"/>
+                                <path d="M13 7 13.2 5"/>
+                            </svg>
+                        </button>
 
-                        <div class="role-description">
-                            أنشئ متجرك واعرض منتجاتك
-                            بعد مراجعة الإدارة.
-                        </div>
-
-                    </label>
-
+                    </div>
                 </div>
 
             </div>
 
-
-            <!-- SELLER INFORMATION -->
-
-            <section
+            <!-- SELLER -->
+            <div
+                class="seller-section"
                 id="sellerSection"
-                class="seller-section hidden"
             >
 
-                <h3 class="seller-heading">
-                    معلومات المتجر
-                </h3>
-
-                <p class="seller-note">
-                    حساب البائع يخضع للمراجعة قبل السماح
-                    بنشر المنتجات والبيع.
-                </p>
-
+                <div class="seller-title">
+                    معلومات البائع
+                </div>
 
                 <div class="form-grid">
 
-                    <div class="field full">
-
-                        <label for="store_name">
-                            اسم المتجر
+                    <div class="field">
+                        <label
+                            class="field-label"
+                            for="store_name"
+                        >
+                            اسم المتجر / المشروع
                         </label>
 
                         <input
                             id="store_name"
                             name="store_name"
                             type="text"
-                            placeholder="مثال: Boutique DZ"
+                            placeholder="مثال: لمستي"
                         >
-
                     </div>
 
-
                     <div class="field">
-
-                        <label for="activity_type">
+                        <label
+                            class="field-label"
+                            for="activity_type"
+                        >
                             نوع النشاط
                         </label>
 
@@ -792,15 +900,15 @@
                             id="activity_type"
                             name="activity_type"
                             type="text"
-                            placeholder="ملابس، حلويات، حرف يدوية..."
+                            placeholder="ملابس، حلويات، إكسسوارات..."
                         >
-
                     </div>
 
-
                     <div class="field">
-
-                        <label for="wilaya">
+                        <label
+                            class="field-label"
+                            for="wilaya"
+                        >
                             الولاية
                         </label>
 
@@ -808,15 +916,15 @@
                             id="wilaya"
                             name="wilaya"
                             type="text"
-                            placeholder="مثال: وهران"
+                            placeholder="الولاية"
                         >
-
                     </div>
 
-
                     <div class="field">
-
-                        <label for="municipality">
+                        <label
+                            class="field-label"
+                            for="municipality"
+                        >
                             البلدية
                         </label>
 
@@ -824,41 +932,104 @@
                             id="municipality"
                             name="municipality"
                             type="text"
-                            placeholder="مثال: بئر الجير"
+                            placeholder="البلدية"
                         >
-
                     </div>
 
-
                     <div class="field full">
-
-                        <label for="verification_note">
-                            معلومات إضافية للإدارة
+                        <label
+                            class="field-label"
+                            for="verification_note"
+                        >
+                            ملاحظة التحقق
                         </label>
 
                         <textarea
                             id="verification_note"
                             name="verification_note"
-                            placeholder="أخبرينا باختصار عن نشاطك أو مشروعك..."
+                            placeholder="اكتبي معلومات مختصرة تساعد الإدارة على التحقق من نشاطك."
                         ></textarea>
+                    </div>
+
+                    <div class="field full">
+
+                        <div class="verification-box">
+
+                            <h3>
+                                وثيقة التحقق
+                            </h3>
+
+                            <p>
+                                للتحقق من هوية البائع فقط.
+                                لا تحتاجين إلى سجل تجاري.
+                                يمكن استعمال بطاقة التعريف الوطنية
+                                أو رخصة السياقة.
+                                الوثيقة ليست معروضة للمشترين.
+                            </p>
+
+                            <div class="document-choice">
+
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="verification_document_type"
+                                        value="national_id"
+                                    >
+
+                                    بطاقة التعريف الوطنية
+                                </label>
+
+                                <label>
+                                    <input
+                                        type="radio"
+                                        name="verification_document_type"
+                                        value="driving_license"
+                                    >
+
+                                    رخصة السياقة
+                                </label>
+
+                            </div>
+
+                            <div style="margin-top:12px;">
+
+                                <label
+                                    class="field-label"
+                                    for="verification_document"
+                                >
+                                    صورة الوثيقة
+                                </label>
+
+                                <input
+                                    id="verification_document"
+                                    name="verification_document"
+                                    type="file"
+                                    accept="image/jpeg,image/png,image/webp"
+                                >
+
+                            </div>
+
+                            <div class="document-note">
+                                تُستخدم الوثيقة لأغراض التحقق فقط
+                                ويجب حمايتها وعدم عرضها في صفحة المتجر.
+                            </div>
+
+                        </div>
 
                     </div>
 
                 </div>
 
-            </section>
+            </div>
 
+            <div class="field" style="margin-top:18px;">
 
-            <!-- REFERRAL -->
-
-            <div
-                class="field"
-                style="margin-top:18px;"
-            >
-
-                <label for="referral_code">
-                    كود الإحالة
-                    <span class="hint">
+                <label
+                    class="field-label"
+                    for="referral_code"
+                >
+                    رمز الإحالة
+                    <span style="font-weight:500;color:var(--muted);">
                         (اختياري)
                     </span>
                 </label>
@@ -867,14 +1038,10 @@
                     id="referral_code"
                     name="referral_code"
                     type="text"
-                    placeholder="DZ..."
-                    autocomplete="off"
+                    placeholder="إذا عندك رمز إحالة"
                 >
 
             </div>
-
-
-            <!-- TERMS -->
 
             <label class="terms">
 
@@ -886,21 +1053,11 @@
                 >
 
                 <span>
-                    أوافق على
-                    <a href="#">
-                        شروط الاستخدام
-                    </a>
-                    و
-                    <a href="#">
-                        سياسة الخصوصية
-                    </a>
-                    الخاصة بـ DZ MARKET.
+                    أوافق على شروط استخدام DZ MARKET
+                    وسياسة الخصوصية.
                 </span>
 
             </label>
-
-
-            <!-- SUBMIT -->
 
             <button
                 type="submit"
@@ -911,27 +1068,25 @@
 
         </form>
 
-
-        <!-- LOGIN -->
-
         <div class="login-link">
-
             عندك حساب من قبل؟
-
             <a href="{{ url_for('auth.login') }}">
                 تسجيل الدخول
             </a>
-
         </div>
 
-    </main>
+    </section>
 
 </div>
 
+<script src="{{ url_for('static', filename='app.js') }}"></script>
 
 <script>
-    const buyerRadio = document.getElementById("buyer");
-    const sellerRadio = document.getElementById("seller");
+    const buyerRadio =
+        document.getElementById("roleBuyer");
+
+    const sellerRadio =
+        document.getElementById("roleSeller");
 
     const sellerSection =
         document.getElementById("sellerSection");
@@ -939,78 +1094,59 @@
     const storeName =
         document.getElementById("store_name");
 
-    const activityType =
-        document.getElementById("activity_type");
-
-
-    function updateSellerSection() {
+    function updateSellerFields() {
 
         const isSeller =
             sellerRadio.checked;
 
-        if (isSeller) {
+        sellerSection.classList.toggle(
+            "active",
+            isSeller
+        );
 
-            sellerSection.classList.remove("hidden");
-
-            storeName.required = true;
-            activityType.required = true;
-
-        } else {
-
-            sellerSection.classList.add("hidden");
-
-            storeName.required = false;
-            activityType.required = false;
-
-        }
+        storeName.required = isSeller;
     }
-
 
     buyerRadio.addEventListener(
         "change",
-        updateSellerSection
+        updateSellerFields
     );
 
     sellerRadio.addEventListener(
         "change",
-        updateSellerSection
+        updateSellerFields
     );
 
+    updateSellerFields();
 
-    updateSellerSection();
+    /* Password confirmation */
+    document
+        .getElementById("registerForm")
+        .addEventListener(
+            "submit",
+            function (event) {
 
+                const password =
+                    document.getElementById(
+                        "password"
+                    ).value;
 
-    // ================================================
-    // Password confirmation
-    // ================================================
+                const confirmation =
+                    document.getElementById(
+                        "confirm_password"
+                    ).value;
 
-    const password =
-        document.getElementById("password");
+                if (password !== confirmation) {
 
-    const confirmPassword =
-        document.getElementById("confirm_password");
+                    event.preventDefault();
 
-
-    confirmPassword.addEventListener(
-        "input",
-        function () {
-
-            if (
-                confirmPassword.value &&
-                password.value !== confirmPassword.value
-            ) {
-
-                confirmPassword.setCustomValidity(
-                    "كلمتا السر غير متطابقتين."
-                );
-
-            } else {
-
-                confirmPassword.setCustomValidity("");
+                    alert(
+                        "كلمتا المرور غير متطابقتين."
+                    );
+                }
             }
-        }
-    );
+        );
 </script>
 
 </body>
-    </html>
+</html>
