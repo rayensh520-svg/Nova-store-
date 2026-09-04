@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>تفاصيل الطلب | DZ MARKET</title>
+
+    <style>
+        :root {
+            --primary: #800020;
+            --primary-dark: #5a0016;
+            --gold: #c9a227;
+            --gold-light: #e4c766;
+            --background: #f7f3f4;
+            --surface: #ffffff;
+            --surface-soft: #fcf9fa;
+            --text: #241d20;
+            --muted: #756b70;
+            --border: #eadfe3;
+            --success: #2e8b57;
+            --danger: #b3261e;
+            --shadow: 0 12px 35px rgba(70,0,25,.10);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, "Segoe UI", Tahoma, Arial, sans-serif;
+            background:
+                radial-gradient(circle at 10% 10%, rgba(128,0,32,.07), transparent 28%),
+                radial-gradient(circle at 90% 15%, rgba(201,162,39,.08), transparent 25%),
+                var(--background);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        body.dark-mode {
+            --background: #12090c;
+            --surface: #1d1014;
+            --surface-soft: #25151a;
+            --text: #f7eef1;
+            --muted: #bcaeb3;
+            --border: #3a252b;
+
+            background:
+                radial-gradient(circle at 10% 10%, rgba(128,0,32,.30), transparent 30%),
+                radial-gradient(circle at 90% 20%, rgba(201,162,39,.10), transparent 25%),
+                linear-gradient(145deg, #12090c, #1b0c11 55%, #10070a);
+        }
+
+        .page {
+            width: min(1050px, 94%);
+            margin: auto;
+            padding: 20px 0 50px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .back,
+        .theme {
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            border-radius: 14px;
+            padding: 11px 15px;
+            text-decoration: none;
+            cursor: pointer;
+            font: inherit;
+            box-shadow: var(--shadow);
+        }
+
+        .theme {
+            width: 45px;
+            height: 45px;
+            padding: 0;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 25px;
+            border-radius: 26px;
+            margin-bottom: 18px;
+            box-shadow: 0 18px 45px rgba(80,0,25,.20);
+        }
+
+        .hero-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .hero h1 {
+            margin: 0 0 7px;
+            font-size: clamp(25px, 5vw, 35px);
+        }
+
+        .hero p {
+            margin: 0;
+            opacity: .82;
+        }
+
+        .status {
+            padding: 8px 13px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.14);
+            border: 1px solid rgba(255,255,255,.20);
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1.35fr .65fr;
+            gap: 18px;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 21px;
+            padding: 21px;
+            box-shadow: var(--shadow);
+        }
+
+        .card h2 {
+            margin: 0 0 17px;
+            font-size: 20px;
+        }
+
+        .items {
+            display: grid;
+            gap: 12px;
+        }
+
+        .item {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 13px;
+            background: var(--surface-soft);
+            border: 1px solid var(--border);
+            border-radius: 17px;
+        }
+
+        .item-image {
+            width: 75px;
+            height: 75px;
+            flex: 0 0 75px;
+            border-radius: 15px;
+            object-fit: cover;
+            background: #eee;
+        }
+
+        .item-info {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .item-store,
+        .item-meta {
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .item-price {
+            font-weight: 900;
+            color: var(--primary);
+            white-space: nowrap;
+        }
+
+        body.dark-mode .item-price {
+            color: var(--gold-light);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 11px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .summary-row:last-child {
+            border-bottom: 0;
+        }
+
+        .summary-label {
+            color: var(--muted);
+        }
+
+        .total {
+            font-size: 21px;
+            font-weight: 900;
+            color: var(--primary);
+        }
+
+        body.dark-mode .total {
+            color: var(--gold-light);
+        }
+
+        .delivery-box {
+            background: var(--surface-soft);
+            border: 1px solid var(--border);
+            border-radius: 17px;
+            padding: 15px;
+        }
+
+        .delivery-row {
+            display: flex;
+            gap: 10px;
+            margin: 9px 0;
+            line-height: 1.6;
+        }
+
+        .delivery-icon {
+            width: 28px;
+            flex: 0 0 28px;
+        }
+
+        .timeline {
+            position: relative;
+            display: grid;
+            gap: 15px;
+        }
+
+        .step {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .dot {
+            width: 15px;
+            height: 15px;
+            margin-top: 4px;
+            border-radius: 50%;
+            background: var(--border);
+            border: 3px solid var(--surface);
+            box-shadow: 0 0 0 1px var(--border);
+            flex: 0 0 15px;
+        }
+
+        .step.active .dot {
+            background: var(--gold);
+            box-shadow: 0 0 0 1px var(--gold);
+        }
+
+        .step strong {
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .step span {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .actions {
+            margin-top: 18px;
+            display: grid;
+            gap: 10px;
+        }
+
+        .btn {
+            width: 100%;
+            border: 0;
+            border-radius: 14px;
+            padding: 13px 16px;
+            font: inherit;
+            font-weight: 800;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            display: block;
+        }
+
+        .btn-primary {
+            color: white;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        }
+
+        .btn-gold {
+            color: #241d20;
+            background: linear-gradient(135deg, var(--gold-light), var(--gold));
+        }
+
+        .btn-danger {
+            color: white;
+            background: var(--danger);
+        }
+
+        .review-box {
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 1px solid var(--border);
+        }
+
+        .stars {
+            display: flex;
+            direction: ltr;
+            gap: 5px;
+            margin: 10px 0;
+        }
+
+        .star {
+            width: 42px;
+            height: 42px;
+            border: 1px solid var(--border);
+            background: var(--surface-soft);
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .star.selected {
+            background: rgba(201,162,39,.18);
+            border-color: var(--gold);
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            resize: vertical;
+            padding: 12px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: var(--surface-soft);
+            color: var(--text);
+            font: inherit;
+            outline: none;
+        }
+
+        textarea:focus {
+            border-color: var(--gold);
+        }
+
+        .empty {
+            padding: 35px 15px;
+            text-align: center;
+            color: var(--muted);
+        }
+
+        @media (max-width: 800px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .page {
+                width: 92%;
+            }
+
+            .hero {
+                padding: 20px;
+                border-radius: 22px;
+            }
+
+            .hero-top {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .card {
+                padding: 17px;
+            }
+
+            .item {
+                align-items: flex-start;
+            }
+
+            .item-image {
+                width: 62px;
+                height: 62px;
+                flex-basis: 62px;
+            }
+
+            .item-price {
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <div class="topbar">
+        <a class="back" href="{{ url_for('auth.orders') }}">
+            ← طلباتي
+        </a>
+
+        <button class="theme" id="themeBtn" type="button">
+            🌙
+        </button>
+    </div>
+
+    {% if order %}
+
+    {% set status = order.status or 'pending' %}
+
+    {% set status_labels = {
+        'pending': 'في انتظار التأكيد',
+        'confirmed': 'تم التأكيد',
+        'preparing': 'قيد التحضير',
+        'shipped': 'تم الشحن',
+        'in_transit': 'في الطريق',
+        'delivered': 'تم التسليم',
+        'cancelled': 'ملغى',
+        'returned': 'مرتجع'
+    } %}
+
+    <section class="hero">
+        <div class="hero-top">
+            <div>
+                <h1>الطلب #{{ order.id }}</h1>
+
+                <p>
+                    تاريخ الطلب:
+                    {{ order.created_at }}
+                </p>
+            </div>
+
+            <div class="status">
+                {{ status_labels.get(status, status) }}
+            </div>
+        </div>
+    </section>
+
+    <div class="grid">
+
+        <main>
+
+            <section class="card">
+                <h2>🛍️ المنتجات</h2>
+
+                {% if items %}
+
+                <div class="items">
+
+                    {% for item in items %}
+
+                    {% set image = (item.images or '').split(',')[0].strip() %}
+
+                    <article class="item">
+
+                        {% if image %}
+                            <img
+                                class="item-image"
+                                src="{{ image }}"
+                                alt="{{ item.product_name }}"
+                                loading="lazy"
+                            >
+                        {% else %}
+                            <div class="item-image"
+                                 style="display:grid;place-items:center;font-size:25px;">
+                                🛍️
+                            </div>
+                        {% endif %}
+
+                        <div class="item-info">
+
+                            <div class="item-name">
+                                {{ item.product_name or 'منتج' }}
+                            </div>
+
+                            <div class="item-store">
+                                🏪 {{ item.store_name or 'متجر DZ MARKET' }}
+                            </div>
+
+                            <div class="item-meta">
+                                الكمية: {{ item.quantity }}
+                                {% if item.purchase_mode == 'made_to_order' %}
+                                    · حسب الطلب
+                                {% else %}
+                                    · من المخزون
+                                {% endif %}
+                            </div>
+
+                        </div>
+
+                        <div class="item-price">
+                            {{ "{:,.0f}".format((item.price or 0) * (item.quantity or 0)) }} دج
+                        </div>
+
+                    </article>
+
+                    {% endfor %}
+
+                </div>
+
+                {% else %}
+
+                <div class="empty">
+                    لا توجد تفاصيل للمنتجات في هذا الطلب.
+                </div>
+
+                {% endif %}
+            </section>
+
+            <section class="card" style="margin-top:18px;">
+                <h2>📍 معلومات التوصيل</h2>
+
+                <div class="delivery-box">
+
+                    <div class="delivery-row">
+                        <div class="delivery-icon">📍</div>
+                        <div>
+                            <strong>الولاية</strong><br>
+                            {{ order.delivery_wilaya or 'غير محددة' }}
+                        </div>
+                    </div>
+
+                    <div class="delivery-row">
+                        <div class="delivery-icon">🏠</div>
+                        <div>
+                            <strong>العنوان</strong><br>
+                            {{ order.delivery_address or 'غير محدد' }}
+                        </div>
+                    </div>
+
+                    <div class="delivery-row">
+                        <div class="delivery-icon">📱</div>
+                        <div>
+                            <strong>الهاتف</strong><br>
+                            {{ order.delivery_phone or 'غير محدد' }}
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            {% if status == 'delivered' and items %}
+
+            <section class="card review-box">
+
+                <h2>⭐ قيّم مشترياتك</h2>
+
+                <p style="color:var(--muted);margin-top:0;">
+                    يمكنك تقييم المنتجات التي استلمتها.
+                </p>
+
+                {% for item in items %}
+
+                <form method="POST"
+                      action="{{ url_for('auth.add_review') }}"
+                      style="margin-bottom:20px;">
+
+                    <input type="hidden"
+                           name="product_id"
+                           value="{{ item.product_id }}">
+
+                    <input type="hidden"
+                           name="order_id"
+                           value="{{ order.id }}">
+
+                    {% if item.order_item_id %}
+                    <input type="hidden"
+                           name="order_item_id"
+                           value="{{ item.order_item_id }}">
+                    {% endif %}
+
+                    <strong>
+                        {{ item.product_name or 'المنتج' }}
+                    </strong>
+
+                    <div class="stars" data-stars>
+                        {% for n in range(1, 6) %}
+                        <button
+                            type="button"
+                            class="star"
+                            data-value="{{ n }}"
+                            aria-label="تقييم {{ n }}"
+                        >★</button>
+                        {% endfor %}
+                    </div>
+
+                    <input type="hidden"
+                           name="rating"
+                           value="5">
+
+                    <textarea
+                        name="comment"
+                        maxlength="1000"
+                        placeholder="اكتب رأيك في المنتج..."
+                    ></textarea>
+
+                    <button class="btn btn-gold" type="submit">
+                        إرسال التقييم
+                    </button>
+
+                </form>
+
+                {% endfor %}
+
+            </section>
+
+            {% endif %}
+
+        </main>
+
+        <aside>
+
+            <section class="card">
+
+                <h2>💰 ملخص الطلب</h2>
+
+                <div class="summary-row">
+                    <span class="summary-label">عدد المنتجات</span>
+                    <strong>{{ items|length if items else 0 }}</strong>
+                </div>
+
+                <div class="summary-row">
+                    <span class="summary-label">المجموع</span>
+
+                    <strong class="total">
+                        {{ "{:,.0f}".format(order.total_amount or 0) }} دج
+                    </strong>
+                </div>
+
+            </section>
+
+            <section class="card" style="margin-top:18px;">
+
+                <h2>📦 حالة الطلب</h2>
+
+                <div class="timeline">
+
+                    {% set steps = [
+                        ('pending', 'تم إنشاء الطلب'),
+                        ('confirmed', 'تم تأكيد الطلب'),
+                        ('preparing', 'قيد التحضير'),
+                        ('shipped', 'تم الشحن'),
+                        ('in_transit', 'الطلب في الطريق'),
+                        ('delivered', 'تم التسليم')
+                    ] %}
+
+                    {% set status_order = {
+                        'pending': 1,
+                        'confirmed': 2,
+                        'preparing': 3,
+                        'shipped': 4,
+                        'in_transit': 5,
+                        'delivered': 6,
+                        'cancelled': 0,
+                        'returned': 0
+                    } %}
+
+                    {% for key, label in steps %}
+
+                    <div class="step
+                        {% if status_order.get(status, 0) >= status_order.get(key, 0) %}
+                            active
+                        {% endif %}
+                    ">
+
+                        <div class="dot"></div>
+
+                        <div>
+                            <strong>{{ label }}</strong>
+
+                            {% if status == key %}
+                                <span>الحالة الحالية</span>
+                            {% endif %}
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
+                </div>
+
+                <div class="actions">
+
+                    {% if status == 'delivered' %}
+                        <a href="{{ url_for('auth.complaints') }}"
+                           class="btn btn-primary">
+                            تحتاج مساعدة؟
+                        </a>
+                    {% elif status in ['pending', 'confirmed'] %}
+                        <a href="{{ url_for('auth.complaints') }}"
+                           class="btn btn-danger">
+                            الإبلاغ عن مشكلة
+                        </a>
+                    {% endif %}
+
+                    <a href="{{ url_for('auth.messages') }}"
+                       class="btn"
+                       style="background:var(--surface-soft);color:var(--text);border:1px solid var(--border);">
+                        💬 الرسائل
+                    </a>
+
+                </div>
+
+            </section>
+
+        </aside>
+
+    </div>
+
+    {% else %}
+
+    <section class="card empty">
+        <div style="font-size:45px;margin-bottom:10px;">📦</div>
+        <h2>الطلب غير موجود</h2>
+        <p>تعذر العثور على هذا الطلب.</p>
+
+        <a href="{{ url_for('auth.orders') }}"
+           class="btn btn-primary"
+           style="max-width:260px;margin:18px auto 0;">
+            العودة إلى الطلبات
+        </a>
+    </section>
+
+    {% endif %}
+
+</div>
+
+<script>
+    const body = document.body;
+    const themeBtn = document.getElementById("themeBtn");
+
+    function applyTheme() {
+        const theme = localStorage.getItem("dzmarket-theme") || "light";
+
+        if (theme === "dark") {
+            body.classList.add("dark-mode");
+            themeBtn.textContent = "☀️";
+        } else {
+            body.classList.remove("dark-mode");
+            themeBtn.textContent = "🌙";
+        }
+    }
+
+    if (themeBtn) {
+        themeBtn.addEventListener("click", function () {
+            const dark = body.classList.contains("dark-mode");
+
+            localStorage.setItem(
+                "dzmarket-theme",
+                dark ? "light" : "dark"
+            );
+
+            applyTheme();
+        });
+    }
+
+    applyTheme();
+
+    document.querySelectorAll("[data-stars]").forEach(function (group) {
+
+        const form = group.closest("form");
+        const ratingInput = form.querySelector(
+            'input[name="rating"]'
+        );
+
+        const stars = group.querySelectorAll(".star");
+
+        function paint(value) {
+            stars.forEach(function (star) {
+                const starValue = Number(
+                    star.dataset.value
+                );
+
+                star.classList.toggle(
+                    "selected",
+                    starValue <= value
+                );
+            });
+        }
+
+        stars.forEach(function (star) {
+
+            star.addEventListener("click", function () {
+
+                const value = Number(
+                    star.dataset.value
+                );
+
+                ratingInput.value = value;
+
+                paint(value);
+            });
+
+        });
+
+        paint(Number(ratingInput.value || 5));
+    });
+</script>
+
+</body>
+  </html>
