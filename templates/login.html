@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,154 +13,342 @@
 
 <body>
 
-    <main class="auth-page">
+<main class="auth-page">
 
-        <section class="auth-card">
+    <section class="auth-card">
 
-            <div class="auth-logo">
-                <div class="v-icon">V</div>
+        <!-- BRAND -->
+        <div class="auth-brand">
 
-                <div>
-                    <strong>VYORA</strong>
-                    <span>STORE</span>
-                </div>
+            <div class="mini-logo">V</div>
+
+            <div>
+                <h1>VYORA</h1>
+                <span>STORE</span>
             </div>
 
-            <div class="auth-heading">
-                <span>مرحباً بعودتك</span>
-                <h1>تسجيل الدخول</h1>
-                <p>ادخل إلى حسابك لمتابعة تجربتك في VYORA.</p>
+        </div>
+
+
+        <!-- TITLE -->
+        <div class="auth-heading">
+
+            <h2>مرحباً بعودتك</h2>
+
+            <p>
+                سجّل الدخول للمتابعة إلى VYORA STORE
+            </p>
+
+        </div>
+
+
+        <!-- LOGIN FORM -->
+        <form id="loginForm">
+
+            <!-- EMAIL -->
+            <div class="form-group">
+
+                <label for="email">
+                    البريد الإلكتروني
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="example@email.com"
+                    autocomplete="email"
+                    required
+                >
+
             </div>
 
-            <form class="auth-form" onsubmit="loginUser(event)">
 
-                <div class="form-group">
-                    <label for="email">البريد الإلكتروني</label>
+            <!-- PASSWORD -->
+            <div class="form-group">
+
+                <label for="password">
+                    كلمة السر
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="أدخل كلمة السر"
+                    autocomplete="current-password"
+                    required
+                >
+
+            </div>
+
+
+            <!-- OPTIONS -->
+            <div class="login-options">
+
+                <label class="remember-option">
 
                     <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        placeholder="example@email.com"
-                        autocomplete="email"
-                        required>
-                </div>
+                        type="checkbox"
+                        id="remember"
+                    >
 
-                <div class="form-group">
-                    <label for="password">كلمة المرور</label>
+                    <span>
+                        تذكرني
+                    </span>
 
-                    <input
-                        id="password"
-                        name="password"
-                        type="password"
-                        placeholder="أدخل كلمة المرور"
-                        autocomplete="current-password"
-                        required>
-                </div>
+                </label>
 
-                <div class="form-options">
 
-                    <label class="remember-option">
-                        <input type="checkbox" id="remember">
-                        <span>تذكرني</span>
-                    </label>
+                <a href="{{ url_for('forgot_password') }}">
+                    نسيت كلمة السر؟
+                </a>
 
-                    <button
-                        type="button"
-                        class="text-button"
-                        onclick="forgotPassword()">
-                        نسيت كلمة المرور؟
-                    </button>
-
-                </div>
-
-                <p id="loginMessage" class="form-message"></p>
-
-                <button type="submit" class="auth-submit">
-                    تسجيل الدخول
-                </button>
-
-            </form>
-
-            <div class="auth-divider">
-                <span>أو</span>
             </div>
+
+
+            <!-- ERROR -->
+            <div
+                id="loginError"
+                class="form-message error"
+                hidden>
+            </div>
+
+
+            <!-- SUCCESS -->
+            <div
+                id="loginSuccess"
+                class="form-message success"
+                hidden>
+            </div>
+
+
+            <!-- BUTTON -->
+            <button
+                type="submit"
+                class="primary-button"
+                id="loginButton">
+
+                تسجيل الدخول
+
+            </button>
+
+        </form>
+
+
+        <!-- REGISTER -->
+        <div class="auth-footer">
+
+            <span>
+                ليس لديك حساب؟
+            </span>
+
+            <a href="{{ url_for('register') }}">
+                إنشاء حساب
+            </a>
+
+        </div>
+
+
+        <!-- GUEST -->
+        <div class="guest-access">
 
             <button
                 type="button"
-                class="guest-button"
-                onclick="continueAsGuest()">
-                المتابعة كزائر
+                id="guestButton"
+                class="secondary-button">
+
+                متابعة كزائر
+
             </button>
 
-            <div class="auth-footer">
-                <span>ليس لديك حساب؟</span>
+        </div>
 
-                <button
-                    type="button"
-                    class="text-button"
-                    onclick="createAccount()">
-                    إنشاء حساب
-                </button>
-            </div>
+    </section>
 
-        </section>
-
-    </main>
+</main>
 
 
-    <script>
+<script>
 
-        function loginUser(event) {
+const loginForm =
+    document.getElementById("loginForm");
 
-            event.preventDefault();
+const loginButton =
+    document.getElementById("loginButton");
 
-            const email =
-                document.getElementById("email").value.trim();
+const loginError =
+    document.getElementById("loginError");
 
-            const password =
-                document.getElementById("password").value;
+const loginSuccess =
+    document.getElementById("loginSuccess");
 
-            const message =
-                document.getElementById("loginMessage");
+const guestButton =
+    document.getElementById("guestButton");
 
-            if (!email || !password) {
-                message.textContent =
-                    "يرجى إدخال البريد الإلكتروني وكلمة المرور.";
-                return;
+
+// ==============================
+// LOGIN
+// ==============================
+
+loginForm.addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    loginError.hidden = true;
+    loginSuccess.hidden = true;
+
+
+    const email =
+        document.getElementById("email").value.trim();
+
+    const password =
+        document.getElementById("password").value;
+
+
+    if (!email) {
+
+        showLoginError(
+            "يرجى إدخال البريد الإلكتروني."
+        );
+
+        return;
+    }
+
+
+    if (!password) {
+
+        showLoginError(
+            "يرجى إدخال كلمة السر."
+        );
+
+        return;
+    }
+
+
+    loginButton.disabled = true;
+
+    loginButton.textContent =
+        "جارٍ تسجيل الدخول...";
+
+
+    try {
+
+        const response = await fetch(
+            "/api/auth/login",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    email: email,
+                    password: password
+
+                })
+            }
+        );
+
+
+        const data =
+            await response.json();
+
+
+        // ==========================
+        // LOGIN ERROR
+        // ==========================
+
+        if (!response.ok || !data.success) {
+
+            showLoginError(
+                data.error ||
+                "البريد الإلكتروني أو كلمة السر غير صحيحة."
+            );
+
+            loginButton.disabled = false;
+
+            loginButton.textContent =
+                "تسجيل الدخول";
+
+            return;
+        }
+
+
+        // ==========================
+        // SUCCESS
+        // ==========================
+
+        loginSuccess.textContent =
+            "تم تسجيل الدخول بنجاح.";
+
+        loginSuccess.hidden = false;
+
+
+        // ==========================
+        // REDIRECT BY ROLE
+        // ==========================
+
+        setTimeout(function() {
+
+            if (data.user.role === "seller") {
+
+                window.location.href =
+                    "/seller/dashboard";
+
+            } else {
+
+                window.location.href =
+                    "/home";
+
             }
 
-            /*
-             * مؤقتاً:
-             * لاحقاً نربط النموذج بـ Flask API
-             * ونقوم بالتحقق الحقيقي من الحساب
-             * على الخادم.
-             */
-
-            message.textContent =
-                "جاري تسجيل الدخول...";
-
-            setTimeout(() => {
-                window.location.href = "/home";
-            }, 700);
-        }
+        }, 500);
 
 
-        function forgotPassword() {
-            window.location.href = "/forgot-password";
-        }
+    } catch (error) {
+
+        showLoginError(
+            "تعذر الاتصال بالخادم. حاول مرة أخرى."
+        );
+
+        loginButton.disabled = false;
+
+        loginButton.textContent =
+            "تسجيل الدخول";
+    }
+
+});
 
 
-        function createAccount() {
-            window.location.href = "/register";
-        }
+// ==============================
+// GUEST
+// ==============================
+
+guestButton.addEventListener(
+    "click",
+    function() {
+
+        window.location.href = "/home";
+
+    }
+);
 
 
-        function continueAsGuest() {
-            window.location.href = "/home";
-        }
+// ==============================
+// ERROR
+// ==============================
 
-    </script>
+function showLoginError(message) {
+
+    loginError.textContent = message;
+
+    loginError.hidden = false;
+}
+
+</script>
 
 </body>
 </html>
