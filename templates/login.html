@@ -4,23 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>تسجيل الدخول | DZ MARKET</title>
+    <title>تسجيل الدخول — DZ MARKET</title>
 
     <style>
         :root {
             --burgundy: #800020;
-            --burgundy-dark: #560014;
-            --burgundy-light: #a52a4a;
+            --burgundy-dark: #560015;
             --gold: #c9a227;
             --gold-light: #e4c766;
 
-            --cream: #faf6f2;
-            --surface: rgba(255,255,255,.94);
-            --text: #281d21;
-            --muted: #786c71;
-            --border: #eadfe3;
+            --bg: #f7f1ed;
+            --surface: #fffaf7;
+            --text: #281f22;
+            --muted: #756b70;
+            --border: #eadde0;
+            --danger: #b3261e;
 
-            --shadow: 0 25px 70px rgba(70, 0, 25, .18);
+            --shadow: 0 20px 60px rgba(70,0,25,.13);
         }
 
         * {
@@ -31,409 +31,416 @@
 
         body {
             min-height: 100vh;
+            padding: 18px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
             font-family:
                 system-ui,
                 -apple-system,
                 BlinkMacSystemFont,
                 "Segoe UI",
-                Tahoma,
                 Arial,
                 sans-serif;
 
-            background:
-                radial-gradient(circle at 10% 10%, rgba(201,162,39,.16), transparent 30%),
-                radial-gradient(circle at 90% 20%, rgba(165,42,74,.20), transparent 32%),
-                linear-gradient(145deg, #4d0013 0%, #800020 48%, #3d0010 100%);
-
             color: var(--text);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 22px;
+
+            background:
+                radial-gradient(
+                    circle at 10% 10%,
+                    rgba(128,0,32,.12),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 90% 90%,
+                    rgba(201,162,39,.12),
+                    transparent 28%
+                ),
+                linear-gradient(
+                    135deg,
+                    #fffaf7,
+                    #f5eaed
+                );
+
             overflow-x: hidden;
-            position: relative;
         }
 
-        /* خلفيات زخرفية */
-        body::before,
-        body::after {
-            content: "";
-            position: fixed;
-            border: 1px solid rgba(228,199,102,.22);
-            border-radius: 50%;
-            pointer-events: none;
+        body.dark-mode {
+            --bg: #12070b;
+            --surface: #1d0d13;
+            --text: #f8edf0;
+            --muted: #bcaeb3;
+            --border: #40232c;
+
+            background:
+                radial-gradient(
+                    circle at 10% 10%,
+                    rgba(128,0,32,.42),
+                    transparent 32%
+                ),
+                radial-gradient(
+                    circle at 90% 90%,
+                    rgba(201,162,39,.10),
+                    transparent 30%
+                ),
+                linear-gradient(
+                    135deg,
+                    #12070b,
+                    #280914,
+                    #16080d
+                );
         }
 
-        body::before {
-            width: 360px;
-            height: 360px;
-            top: -170px;
-            right: -120px;
-        }
-
-        body::after {
-            width: 280px;
-            height: 280px;
-            bottom: -150px;
-            left: -100px;
+        a {
+            color: inherit;
+            text-decoration: none;
         }
 
         .page {
-            width: 100%;
-            max-width: 440px;
+            width: min(100%, 460px);
             position: relative;
             z-index: 2;
         }
 
-        /* الشعار */
-        .brand {
-            text-align: center;
-            color: white;
-            margin-bottom: 22px;
-        }
-
-        .logo {
-            width: 72px;
-            height: 72px;
-            margin: 0 auto 13px;
-
+        .topbar {
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
 
-            border-radius: 22px;
+            margin-bottom: 18px;
+        }
+
+        .brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+
+            color: var(--burgundy);
+            font-weight: 950;
+        }
+
+        body.dark-mode .brand {
+            color: var(--gold-light);
+        }
+
+        .brand-mark {
+            width: 40px;
+            height: 40px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 13px;
+
+            color: white;
 
             background:
-                linear-gradient(145deg, #e4c766, #c9a227);
-
-            color: #5a0016;
-            font-size: 27px;
-            font-weight: 900;
+                linear-gradient(
+                    145deg,
+                    var(--burgundy),
+                    var(--burgundy-dark)
+                );
 
             box-shadow:
-                0 12px 30px rgba(0,0,0,.20),
-                inset 0 1px 0 rgba(255,255,255,.55);
-
-            transform: rotate(-3deg);
+                0 8px 22px rgba(128,0,32,.23);
         }
 
-        .brand h1 {
-            font-size: 27px;
-            letter-spacing: .5px;
-            margin-bottom: 5px;
+        .brand-mark svg {
+            width: 22px;
+            height: 22px;
+
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
-        .brand p {
-            color: rgba(255,255,255,.76);
-            font-size: 13px;
-        }
+        .theme-btn {
+            width: 42px;
+            height: 42px;
 
-        /* البطاقة */
-        .card {
+            display: grid;
+            place-items: center;
+
+            border: 1px solid var(--border);
+            border-radius: 13px;
+
             background: var(--surface);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
+            color: var(--text);
 
-            border: 1px solid rgba(255,255,255,.65);
-            border-radius: 30px;
+            cursor: pointer;
+        }
 
-            padding: 28px 24px;
+        .theme-btn svg {
+            width: 20px;
+            height: 20px;
+
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .card {
+            padding: 32px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 28px;
+
+            background:
+                rgba(255,250,247,.94);
 
             box-shadow: var(--shadow);
+
+            backdrop-filter: blur(18px);
         }
 
-        .card-header {
-            margin-bottom: 23px;
+        body.dark-mode .card {
+            background:
+                rgba(29,13,19,.93);
         }
 
-        .card-header h2 {
-            font-size: 23px;
-            color: var(--burgundy-dark);
+        .heading {
+            margin-bottom: 25px;
+        }
+
+        .heading h1 {
+            font-size: clamp(27px, 7vw, 36px);
             margin-bottom: 7px;
         }
 
-        .card-header p {
-            font-size: 13px;
+        .heading p {
             color: var(--muted);
+            font-size: 14px;
             line-height: 1.7;
         }
 
-        /* الرسائل */
         .flash {
-            border-radius: 13px;
-            padding: 11px 13px;
             margin-bottom: 16px;
+            padding: 12px 14px;
+
+            border-radius: 13px;
+
+            color: var(--danger);
+            background: rgba(179,38,30,.08);
+            border: 1px solid rgba(179,38,30,.18);
+
             font-size: 13px;
-            line-height: 1.6;
-            background: #fff4f5;
-            color: #8b1e2d;
-            border: 1px solid #f0cfd4;
+            font-weight: 750;
         }
 
-        /* الحقول */
         .field {
             margin-bottom: 17px;
         }
 
-        .field label {
+        .field-label {
             display: block;
+
             margin-bottom: 7px;
+
             font-size: 13px;
-            font-weight: 750;
-            color: #3b3034;
+            font-weight: 850;
         }
 
-        .input-wrap {
-            position: relative;
-        }
-
-        .input-icon {
-            position: absolute;
-            right: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 16px;
-            opacity: .72;
-            pointer-events: none;
-        }
-
-        input[type="email"],
-        input[type="password"] {
+        input {
             width: 100%;
-            height: 52px;
+            min-height: 48px;
 
-            border: 1px solid var(--border);
-            border-radius: 15px;
+            padding: 11px 14px;
 
-            background: #fff;
-            color: var(--text);
+            border:
+                1px solid var(--border);
 
-            padding: 0 43px 0 14px;
+            border-radius: 13px;
 
-            font-size: 14px;
             outline: none;
+
+            background: var(--surface);
+            color: var(--text);
 
             transition: .2s ease;
         }
 
-        input[type="email"]:focus,
-        input[type="password"]:focus {
-            border-color: var(--gold);
-            box-shadow: 0 0 0 4px rgba(201,162,39,.12);
+        input:focus {
+            border-color: var(--burgundy);
+
+            box-shadow:
+                0 0 0 4px rgba(128,0,32,.07);
         }
 
-        input::placeholder {
-            color: #a69a9f;
+        .password-wrap {
+            position: relative;
         }
 
-        /* خيارات */
+        .password-wrap input {
+            padding-left: 52px;
+        }
+
+        .password-toggle {
+            position: absolute;
+
+            left: 7px;
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            width: 37px;
+            height: 37px;
+
+            display: grid;
+            place-items: center;
+
+            border: 0;
+            background: transparent;
+
+            color: var(--muted);
+
+            cursor: pointer;
+        }
+
+        .password-toggle:hover {
+            color: var(--burgundy);
+        }
+
+        body.dark-mode .password-toggle:hover {
+            color: var(--gold-light);
+        }
+
+        .password-toggle svg {
+            width: 22px;
+            height: 22px;
+
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 1.65;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .password-help {
+            margin-top: 7px;
+
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.6;
+        }
+
+        .password-help strong {
+            color: var(--gold);
+        }
+
         .options {
             display: flex;
             align-items: center;
             justify-content: space-between;
+
             gap: 10px;
+
             margin: 3px 0 20px;
+
+            font-size: 12px;
         }
 
         .remember {
             display: flex;
             align-items: center;
             gap: 7px;
-            font-size: 12px;
+
             color: var(--muted);
-            cursor: pointer;
         }
 
         .remember input {
-            accent-color: var(--burgundy);
-            width: 15px;
-            height: 15px;
+            width: 17px;
+            min-height: 17px;
         }
 
         .forgot {
-            border: 0;
-            background: transparent;
             color: var(--burgundy);
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
+            font-weight: 850;
         }
 
-        .forgot:hover {
-            color: var(--gold);
+        body.dark-mode .forgot {
+            color: var(--gold-light);
         }
 
-        /* زر الدخول */
-        .submit-btn {
+        .submit {
             width: 100%;
-            height: 53px;
+            min-height: 51px;
 
             border: 0;
-            border-radius: 16px;
+            border-radius: 15px;
+
+            color: white;
 
             background:
                 linear-gradient(
                     135deg,
                     var(--burgundy),
-                    var(--burgundy-light)
+                    var(--burgundy-dark)
                 );
 
-            color: white;
             font-size: 15px;
-            font-weight: 800;
+            font-weight: 950;
 
             cursor: pointer;
 
             box-shadow:
-                0 10px 24px rgba(128,0,32,.24);
+                0 12px 28px rgba(128,0,32,.20);
 
-            transition: .22s ease;
+            transition: .2s ease;
         }
 
-        .submit-btn:hover {
+        .submit:hover {
             transform: translateY(-2px);
-            box-shadow:
-                0 14px 30px rgba(128,0,32,.30);
         }
 
-        .submit-btn:active {
-            transform: translateY(0);
-        }
+        .register {
+            margin-top: 20px;
 
-        /* فاصل */
-        .divider {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin: 22px 0;
-            color: #a1969b;
-            font-size: 11px;
-        }
-
-        .divider::before,
-        .divider::after {
-            content: "";
-            flex: 1;
-            height: 1px;
-            background: var(--border);
-        }
-
-        /* إنشاء حساب */
-        .register-box {
             text-align: center;
-            padding: 14px;
-            border-radius: 15px;
-            background: #fcf8f9;
-            border: 1px solid #f0e5e8;
-        }
 
-        .register-box span {
-            font-size: 13px;
             color: var(--muted);
+
+            font-size: 13px;
         }
 
-        .register-box a {
+        .register a {
             color: var(--burgundy);
-            font-weight: 800;
-            text-decoration: none;
-            margin-right: 4px;
+            font-weight: 900;
         }
 
-        .register-box a:hover {
-            color: var(--gold);
+        body.dark-mode .register a {
+            color: var(--gold-light);
         }
 
-        /* أسفل الصفحة */
-        .footer {
+        .security-note {
+            margin-top: 20px;
+            padding-top: 18px;
+
+            border-top: 1px solid var(--border);
+
             text-align: center;
-            color: rgba(255,255,255,.62);
+
+            color: var(--muted);
             font-size: 11px;
-            margin-top: 17px;
             line-height: 1.7;
         }
 
-        /* =========================
-           DARK MODE
-        ========================= */
-
-        body.dark-mode {
-            background:
-                radial-gradient(circle at 10% 10%, rgba(201,162,39,.10), transparent 30%),
-                radial-gradient(circle at 90% 20%, rgba(165,42,74,.18), transparent 32%),
-                linear-gradient(145deg, #17070c 0%, #300913 48%, #100508 100%);
-        }
-
-        body.dark-mode .card {
-            background: rgba(29,16,20,.94);
-            border-color: rgba(201,162,39,.16);
-        }
-
-        body.dark-mode .card-header h2 {
-            color: #f3d98a;
-        }
-
-        body.dark-mode .card-header p,
-        body.dark-mode .field label {
-            color: #c5b5ba;
-        }
-
-        body.dark-mode input[type="email"],
-        body.dark-mode input[type="password"] {
-            background: #241419;
-            border-color: #40262d;
-            color: #f8eef1;
-        }
-
-        body.dark-mode input::placeholder {
-            color: #8f7c82;
-        }
-
-        body.dark-mode .remember {
-            color: #bcaeb3;
-        }
-
-        body.dark-mode .register-box {
-            background: #241419;
-            border-color: #3a252b;
-        }
-
-        body.dark-mode .register-box span {
-            color: #bcaeb3;
-        }
-
-        body.dark-mode .flash {
-            background: #32161d;
-            border-color: #5a2934;
-            color: #f0b6bf;
-        }
-
-        body.dark-mode .divider {
-            color: #8f7c82;
-        }
-
-        body.dark-mode .divider::before,
-        body.dark-mode .divider::after {
-            background: #3a252b;
-        }
-
-        /* موبايل صغير */
-        @media (max-width: 420px) {
-            body {
-                padding: 16px;
-            }
-
+        @media (max-width: 480px) {
             .card {
-                padding: 24px 19px;
-                border-radius: 25px;
+                padding: 24px 18px;
+                border-radius: 23px;
             }
 
-            .brand h1 {
-                font-size: 24px;
-            }
-
-            .logo {
-                width: 64px;
-                height: 64px;
+            .options {
+                align-items: flex-start;
+                flex-direction: column;
             }
         }
     </style>
@@ -443,18 +450,63 @@
 
 <div class="page">
 
-    <div class="brand">
-        <div class="logo">DZ</div>
-        <h1>DZ MARKET</h1>
-        <p>سوقك الجزائري، في مكان واحد 🇩🇿</p>
+    <div class="topbar">
+
+        <a
+            href="{{ url_for('auth.index') }}"
+            class="brand"
+        >
+            <span class="brand-mark">
+                <svg viewBox="0 0 24 24">
+                    <path d="M5 8.5 12 4l7 4.5v7L12 20l-7-4.5z"/>
+                    <path d="M8.5 10.5 12 8l3.5 2.5"/>
+                    <path d="M9 14h6"/>
+                </svg>
+            </span>
+
+            DZ MARKET
+        </a>
+
+        <button
+            type="button"
+            class="theme-btn"
+            data-theme-toggle
+            aria-label="تغيير الوضع"
+            title="تغيير الوضع"
+        >
+            <svg
+                data-icon-moon
+                viewBox="0 0 24 24"
+            >
+                <path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5Z"/>
+            </svg>
+
+            <svg
+                data-icon-sun
+                viewBox="0 0 24 24"
+                style="display:none"
+            >
+                <circle cx="12" cy="12" r="4"/>
+                <path d="M12 2v2"/>
+                <path d="M12 20v2"/>
+                <path d="m4.93 4.93 1.42 1.42"/>
+                <path d="m17.65 17.65 1.42 1.42"/>
+                <path d="M2 12h2"/>
+                <path d="M20 12h2"/>
+                <path d="m4.93 19.07 1.42-1.42"/>
+                <path d="m17.65 6.35 1.42-1.42"/>
+            </svg>
+        </button>
+
     </div>
 
-    <main class="card">
+    <section class="card">
 
-        <div class="card-header">
-            <h2>مرحباً بعودتك 👋</h2>
+        <div class="heading">
+            <h1>تسجيل الدخول</h1>
+
             <p>
-                سجل الدخول إلى حسابك وتابع طلباتك ومتجرك ومحادثاتك.
+                مرحبًا بعودتك إلى DZ MARKET.
             </p>
         </div>
 
@@ -468,105 +520,157 @@
             {% endif %}
         {% endwith %}
 
-        <form method="POST"
-              action="{{ url_for('auth.login') }}"
-              autocomplete="on">
+        <form
+            method="POST"
+            action="{{ url_for('auth.login') }}"
+        >
 
             <div class="field">
-                <label for="email">البريد الإلكتروني</label>
 
-                <div class="input-wrap">
-                    <span class="input-icon">✉</span>
+                <label
+                    class="field-label"
+                    for="email"
+                >
+                    البريد الإلكتروني
+                </label>
 
-                    <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        placeholder="example@email.com"
-                        autocomplete="email"
-                        required
-                    >
-                </div>
+                <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    required
+                    autocomplete="email"
+                    placeholder="example@email.com"
+                >
+
             </div>
 
             <div class="field">
-                <label for="password">كلمة المرور</label>
 
-                <div class="input-wrap">
-                    <span class="input-icon">🔒</span>
+                <label
+                    class="field-label"
+                    for="password"
+                >
+                    كلمة المرور
+                </label>
+
+                <div class="password-wrap">
 
                     <input
-                        type="password"
                         id="password"
                         name="password"
-                        placeholder="أدخل كلمة المرور"
-                        autocomplete="current-password"
+                        type="password"
                         required
+                        autocomplete="current-password"
+                        placeholder="أدخلي كلمة المرور"
                     >
+
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        data-password-toggle="password"
+                        aria-label="إظهار كلمة المرور"
+                        title="إظهار كلمة المرور"
+                    >
+
+                        <!-- عين SVG أنيقة، بدون Emoji -->
+                        <svg viewBox="0 0 24 24">
+
+                            <path
+                                d="M3 12s3.2-5 9-5 9 5 9 5-3.2 5-9 5-9-5-9-5Z"
+                            />
+
+                            <path
+                                d="M9.3 12a2.7 2.7 0 1 0 5.4 0 2.7 2.7 0 0 0-5.4 0Z"
+                            />
+
+                            <path d="M5.4 8.4 4.1 6.9"/>
+                            <path d="M8 7.3 7.2 5.5"/>
+                            <path d="M11 7 10.8 5"/>
+                            <path d="M13 7 13.2 5"/>
+                        </svg>
+
+                    </button>
+
                 </div>
+
+                <div class="password-help">
+                    نصيحة أمان:
+                    <strong>
+                        استعملي كلمة مرور طويلة وفريدة
+                    </strong>
+                    ولا تشاركيها مع أي شخص.
+                </div>
+
             </div>
 
             <div class="options">
 
                 <label class="remember">
+
                     <input
                         type="checkbox"
                         name="remember"
                         value="1"
                     >
-                    <span>تذكرني</span>
+
+                    تذكرني
+
                 </label>
 
-                <button
-                    type="button"
+                <a
+                    href="#"
                     class="forgot"
-                    onclick="showForgotMessage()"
+                    id="forgotPassword"
                 >
                     نسيت كلمة المرور؟
-                </button>
+                </a>
 
             </div>
 
-            <button type="submit" class="submit-btn">
+            <button
+                type="submit"
+                class="submit"
+            >
                 تسجيل الدخول
             </button>
 
         </form>
 
-        <div class="divider">
-            أو
-        </div>
-
-        <div class="register-box">
-            <span>ليس لديك حساب؟</span>
+        <div class="register">
+            ما عندكش حساب؟
             <a href="{{ url_for('auth.register') }}">
                 إنشاء حساب جديد
             </a>
         </div>
 
-    </main>
+        <div class="security-note">
+            حسابك محمي، ولا يتم عرض كلمة المرور داخل الموقع.
+        </div>
 
-    <div class="footer">
-        © 2026 DZ MARKET — منصة جزائرية للتجارة الإلكترونية
-    </div>
+    </section>
 
 </div>
 
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+
 <script>
-    function showForgotMessage() {
-        alert(
-            "ميزة استرجاع كلمة المرور سيتم تفعيلها في المرحلة القادمة 🔐"
+    const forgotPassword =
+        document.getElementById("forgotPassword");
+
+    if (forgotPassword) {
+        forgotPassword.addEventListener(
+            "click",
+            function (event) {
+
+                event.preventDefault();
+
+                alert(
+                    "استرجاع كلمة المرور سيتم تفعيله في خطوة الأمان القادمة."
+                );
+            }
         );
     }
-
-    /* توحيد الوضع الليلي مع باقي المشروع */
-    (function () {
-        const savedTheme = localStorage.getItem("dzmarket-theme");
-
-        if (savedTheme === "dark") {
-            document.body.classList.add("dark-mode");
-        }
-    })();
 </script>
 
 </body>
