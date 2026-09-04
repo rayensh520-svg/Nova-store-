@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>الشكاوى والدعم | DZ MARKET</title>
+
+    <style>
+        :root {
+            --primary: #800020;
+            --primary-dark: #5a0016;
+            --gold: #c9a227;
+            --gold-light: #e4c766;
+
+            --background: #f7f3f4;
+            --surface: #ffffff;
+            --surface-soft: #fcf9fa;
+
+            --text: #241d20;
+            --muted: #756b70;
+            --border: #eadfe3;
+
+            --success: #2e8b57;
+            --warning: #b7791f;
+            --danger: #b3261e;
+
+            --shadow: 0 12px 35px rgba(70, 0, 25, .10);
+            --radius: 22px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family:
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Tahoma,
+                Arial,
+                sans-serif;
+
+            background:
+                radial-gradient(circle at 10% 10%, rgba(128,0,32,.07), transparent 28%),
+                radial-gradient(circle at 90% 20%, rgba(201,162,39,.08), transparent 25%),
+                var(--background);
+
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            width: 260px;
+            height: 260px;
+            border: 1px solid rgba(128,0,32,.08);
+            border-radius: 50%;
+            top: -120px;
+            left: -100px;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            width: 220px;
+            height: 220px;
+            border: 1px solid rgba(201,162,39,.10);
+            border-radius: 50%;
+            bottom: -100px;
+            right: -80px;
+            pointer-events: none;
+        }
+
+        body.dark-mode {
+            --background: #12090c;
+            --surface: #1d1014;
+            --surface-soft: #25151a;
+            --text: #f7eef1;
+            --muted: #bcaeb3;
+            --border: #3a252b;
+
+            background:
+                radial-gradient(circle at 10% 10%, rgba(128,0,32,.30), transparent 30%),
+                radial-gradient(circle at 90% 20%, rgba(201,162,39,.10), transparent 25%),
+                linear-gradient(145deg, #12090c, #1b0c11 55%, #10070a);
+
+            color: var(--text);
+        }
+
+        .page {
+            width: min(1100px, 94%);
+            margin: auto;
+            padding: 24px 0 50px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 22px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            text-decoration: none;
+            color: var(--text);
+
+            background: var(--surface);
+            border: 1px solid var(--border);
+
+            padding: 11px 16px;
+            border-radius: 14px;
+
+            box-shadow: var(--shadow);
+            transition: .2s ease;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .theme-btn {
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+
+            width: 44px;
+            height: 44px;
+
+            border-radius: 14px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+
+            background:
+                linear-gradient(135deg, rgba(128,0,32,.98), rgba(90,0,22,.95));
+
+            color: white;
+            border-radius: 28px;
+            padding: 28px;
+
+            box-shadow:
+                0 20px 55px rgba(70,0,25,.22);
+
+            margin-bottom: 22px;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            width: 190px;
+            height: 190px;
+            border: 1px solid rgba(255,255,255,.13);
+            border-radius: 50%;
+            top: -90px;
+            left: -50px;
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border: 1px solid rgba(228,199,102,.18);
+            border-radius: 50%;
+            bottom: -85px;
+            right: 30px;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            margin: 0 0 8px;
+            font-size: clamp(25px, 5vw, 38px);
+        }
+
+        .hero p {
+            margin: 0;
+            color: rgba(255,255,255,.82);
+            line-height: 1.8;
+            max-width: 720px;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) minmax(280px, .8fr);
+            gap: 20px;
+            align-items: start;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 22px;
+            box-shadow: var(--shadow);
+        }
+
+        .card h2 {
+            margin: 0 0 18px;
+            font-size: 21px;
+        }
+
+        .field {
+            margin-bottom: 15px;
+        }
+
+        .field label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            border: 1px solid var(--border);
+            background: var(--surface-soft);
+            color: var(--text);
+
+            border-radius: 14px;
+            padding: 13px 14px;
+
+            font: inherit;
+            outline: none;
+
+            transition: .2s ease;
+        }
+
+        textarea {
+            min-height: 145px;
+            resize: vertical;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(201,162,39,.12);
+        }
+
+        .submit-btn {
+            width: 100%;
+            border: none;
+            cursor: pointer;
+
+            padding: 14px 18px;
+            border-radius: 15px;
+
+            background:
+                linear-gradient(135deg, var(--primary), var(--primary-dark));
+
+            color: white;
+            font-weight: 800;
+            font-size: 16px;
+
+            box-shadow: 0 10px 25px rgba(128,0,32,.20);
+            transition: .2s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .help-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .help-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+
+            padding: 14px;
+            border-radius: 16px;
+
+            background: var(--surface-soft);
+            border: 1px solid var(--border);
+        }
+
+        .help-icon {
+            width: 40px;
+            height: 40px;
+
+            flex: 0 0 40px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 12px;
+
+            background: rgba(128,0,32,.09);
+            color: var(--primary);
+
+            font-size: 18px;
+        }
+
+        body.dark-mode .help-icon {
+            background: rgba(201,162,39,.10);
+            color: var(--gold-light);
+        }
+
+        .help-item strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .help-item span {
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .complaints {
+            margin-top: 20px;
+        }
+
+        .complaint {
+            padding: 17px;
+            border: 1px solid var(--border);
+            border-radius: 17px;
+            background: var(--surface-soft);
+            margin-bottom: 12px;
+        }
+
+        .complaint:last-child {
+            margin-bottom: 0;
+        }
+
+        .complaint-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .complaint-title {
+            font-weight: 800;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .status-open {
+            background: rgba(183,121,31,.12);
+            color: var(--warning);
+        }
+
+        .status-in_review {
+            background: rgba(128,0,32,.10);
+            color: var(--primary);
+        }
+
+        .status-resolved {
+            background: rgba(46,139,87,.12);
+            color: var(--success);
+        }
+
+        .status-closed {
+            background: rgba(117,107,112,.13);
+            color: var(--muted);
+        }
+
+        body.dark-mode .status-in_review {
+            color: var(--gold-light);
+        }
+
+        .complaint-message {
+            color: var(--muted);
+            line-height: 1.7;
+            margin: 8px 0;
+            white-space: pre-wrap;
+        }
+
+        .complaint-date {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 30px 15px;
+            color: var(--muted);
+        }
+
+        .note {
+            margin-top: 14px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        @media (max-width: 800px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .page {
+                width: 92%;
+                padding-top: 16px;
+            }
+
+            .hero {
+                padding: 23px 19px;
+                border-radius: 22px;
+            }
+
+            .card {
+                padding: 17px;
+            }
+
+            .topbar {
+                margin-bottom: 15px;
+            }
+
+            .back-btn {
+                padding: 10px 13px;
+            }
+
+            .complaint-head {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <div class="topbar">
+        <a href="{{ url_for('auth.account') }}" class="back-btn">
+            ← العودة إلى الحساب
+        </a>
+
+        <button class="theme-btn" id="themeBtn" type="button" aria-label="تغيير المظهر">
+            ◐
+        </button>
+    </div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>مركز الشكاوى والدعم</h1>
+
+            <p>
+                إذا واجهت مشكلة في طلب، منتج، متجر أو تعامل داخل
+                DZ MARKET، أرسل لنا شكواك وسيتولى فريق الدعم مراجعتها.
+            </p>
+        </div>
+    </section>
+
+    <div class="layout">
+
+        <!-- إنشاء شكوى -->
+        <section class="card">
+
+            <h2>إرسال شكوى جديدة</h2>
+
+            <form method="POST" action="{{ url_for('auth.complaints') }}">
+
+                <div class="field">
+                    <label for="subject">موضوع الشكوى</label>
+
+                    <input
+                        type="text"
+                        id="subject"
+                        name="subject"
+                        maxlength="150"
+                        placeholder="مثلاً: مشكلة في الطلب"
+                        required
+                    >
+                </div>
+
+                <div class="field">
+                    <label for="order_id">
+                        رقم الطلب
+                        <span style="color:var(--muted);font-weight:400;">
+                            (اختياري)
+                        </span>
+                    </label>
+
+                    <input
+                        type="number"
+                        id="order_id"
+                        name="order_id"
+                        min="1"
+                        placeholder="مثلاً: 125"
+                    >
+                </div>
+
+                <div class="field">
+                    <label for="message">شرح المشكلة</label>
+
+                    <textarea
+                        id="message"
+                        name="message"
+                        maxlength="3000"
+                        placeholder="اشرح لنا المشكلة بالتفصيل..."
+                        required
+                    ></textarea>
+                </div>
+
+                <button class="submit-btn" type="submit">
+                    إرسال الشكوى
+                </button>
+
+                <div class="note">
+                    حاول كتابة أكبر قدر ممكن من المعلومات حتى يتمكن فريق
+                    DZ MARKET من معالجة المشكلة بسرعة.
+                </div>
+
+            </form>
+
+        </section>
+
+        <!-- الدعم -->
+        <aside class="card">
+
+            <h2>كيف نقدر نساعدك؟</h2>
+
+            <div class="help-list">
+
+                <div class="help-item">
+                    <div class="help-icon">📦</div>
+
+                    <div>
+                        <strong>مشاكل الطلبات</strong>
+                        <span>
+                            تأخر الطلب، مشكلة في الاستلام أو حالة الطلب.
+                        </span>
+                    </div>
+                </div>
+
+                <div class="help-item">
+                    <div class="help-icon">🛍️</div>
+
+                    <div>
+                        <strong>مشاكل المنتجات</strong>
+                        <span>
+                            منتج مختلف، معلومات غير صحيحة أو مشكلة في المنتج.
+                        </span>
+                    </div>
+                </div>
+
+                <div class="help-item">
+                    <div class="help-icon">🏪</div>
+
+                    <div>
+                        <strong>مشاكل المتاجر</strong>
+                        <span>
+                            تعامل غير مناسب أو مشكلة مرتبطة بأحد البائعين.
+                        </span>
+                    </div>
+                </div>
+
+                <div class="help-item">
+                    <div class="help-icon">🔒</div>
+
+                    <div>
+                        <strong>مشاكل الحساب</strong>
+                        <span>
+                            مشاكل الدخول أو الحساب أو الخصوصية.
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+    <!-- الشكاوى السابقة -->
+    <section class="card complaints">
+
+        <h2>شكاواي السابقة</h2>
+
+        {% if complaints %}
+
+            {% for complaint in complaints %}
+
+                <article class="complaint">
+
+                    <div class="complaint-head">
+
+                        <div class="complaint-title">
+                            {{ complaint.subject }}
+                        </div>
+
+                        {% set status = complaint.status or 'open' %}
+
+                        <span class="badge status-{{ status }}">
+                            {% if status == 'open' %}
+                                مفتوحة
+                            {% elif status == 'in_review' %}
+                                قيد المراجعة
+                            {% elif status == 'resolved' %}
+                                تم الحل
+                            {% elif status == 'closed' %}
+                                مغلقة
+                            {% else %}
+                                {{ status }}
+                            {% endif %}
+                        </span>
+
+                    </div>
+
+                    <div class="complaint-message">
+                        {{ complaint.message or complaint.body or '' }}
+                    </div>
+
+                    {% if complaint.order_id %}
+                        <div class="complaint-date">
+                            رقم الطلب: #{{ complaint.order_id }}
+                        </div>
+                    {% endif %}
+
+                    <div class="complaint-date">
+                        {{ complaint.created_at }}
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="empty">
+                <div style="font-size:38px;margin-bottom:8px;">💬</div>
+
+                <strong style="display:block;margin-bottom:5px;">
+                    لا توجد شكاوى حالياً
+                </strong>
+
+                إذا واجهت أي مشكلة، يمكنك إرسال شكوى من النموذج أعلاه.
+            </div>
+
+        {% endif %}
+
+    </section>
+
+</div>
+
+<script>
+    const body = document.body;
+    const themeBtn = document.getElementById("themeBtn");
+
+    function applyTheme() {
+        const theme = localStorage.getItem("dzmarket-theme") || "light";
+
+        if (theme === "dark") {
+            body.classList.add("dark-mode");
+            themeBtn.textContent = "☀️";
+        } else {
+            body.classList.remove("dark-mode");
+            themeBtn.textContent = "🌙";
+        }
+    }
+
+    themeBtn.addEventListener("click", function () {
+        const isDark = body.classList.contains("dark-mode");
+
+        localStorage.setItem(
+            "dzmarket-theme",
+            isDark ? "light" : "dark"
+        );
+
+        applyTheme();
+    });
+
+    applyTheme();
+</script>
+
+</body>
+  </html>
