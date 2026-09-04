@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>404 | DZ MARKET</title>
+
+    <style>
+        :root {
+            --burgundy: #800020;
+            --burgundy-dark: #560015;
+            --gold: #c9a227;
+            --gold-light: #e6ce78;
+
+            --cream: #f7f2ed;
+            --surface: #fffaf6;
+            --text: #241d20;
+            --muted: #766d71;
+
+            --border: rgba(128, 0, 32, .10);
+            --shadow: 0 22px 60px rgba(67, 0, 25, .12);
+        }
+
+        body.dark-mode {
+            --cream: #11080b;
+            --surface: #1d1014;
+            --text: #f8eef1;
+            --muted: #bbaeb2;
+            --border: rgba(230, 206, 120, .12);
+
+            background: var(--cream);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            padding: 24px;
+
+            font-family:
+                "Segoe UI",
+                Tahoma,
+                Arial,
+                sans-serif;
+
+            color: var(--text);
+            background:
+                radial-gradient(
+                    circle at 85% 15%,
+                    rgba(201, 162, 39, .10),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 10% 85%,
+                    rgba(128, 0, 32, .08),
+                    transparent 32%
+                ),
+                var(--cream);
+
+            transition: .3s ease;
+            overflow: hidden;
+        }
+
+        .decoration {
+            position: fixed;
+            border: 1px solid rgba(201, 162, 39, .14);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .one {
+            width: 430px;
+            height: 430px;
+            top: -250px;
+            right: -170px;
+        }
+
+        .two {
+            width: 300px;
+            height: 300px;
+            bottom: -190px;
+            left: -150px;
+        }
+
+        .card {
+            width: min(560px, 100%);
+
+            position: relative;
+            z-index: 2;
+
+            padding: 45px 30px;
+
+            text-align: center;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 30px;
+
+            background: var(--surface);
+
+            box-shadow: var(--shadow);
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+
+            margin: 0 auto 22px;
+
+            display: grid;
+            place-items: center;
+
+            border-radius: 16px;
+
+            color: white;
+
+            font-size: 14px;
+            font-weight: 900;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--burgundy),
+                    var(--burgundy-dark)
+                );
+
+            box-shadow:
+                0 10px 28px rgba(128, 0, 32, .20);
+        }
+
+        .code {
+            margin: 0;
+
+            color: var(--burgundy);
+
+            font-size: clamp(68px, 16vw, 110px);
+            line-height: .9;
+
+            font-weight: 950;
+
+            letter-spacing: -5px;
+        }
+
+        body.dark-mode .code {
+            color: var(--gold-light);
+        }
+
+        .gold-line {
+            width: 65px;
+            height: 3px;
+
+            margin: 23px auto;
+
+            border-radius: 20px;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    var(--burgundy),
+                    var(--gold),
+                    var(--burgundy)
+                );
+        }
+
+        h1 {
+            margin: 0 0 9px;
+
+            font-size: 25px;
+            font-weight: 900;
+        }
+
+        p {
+            max-width: 400px;
+
+            margin: 0 auto;
+
+            color: var(--muted);
+
+            font-size: 14px;
+            line-height: 1.9;
+        }
+
+        .actions {
+            display: flex;
+
+            justify-content: center;
+            flex-wrap: wrap;
+
+            gap: 10px;
+
+            margin-top: 27px;
+        }
+
+        .button {
+            min-height: 44px;
+
+            padding: 0 20px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+
+            border-radius: 13px;
+
+            font-size: 12px;
+            font-weight: 800;
+
+            transition: .25s ease;
+        }
+
+        .button.primary {
+            color: white;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--burgundy),
+                    var(--burgundy-dark)
+                );
+
+            box-shadow:
+                0 8px 20px rgba(128, 0, 32, .16);
+        }
+
+        .button.secondary {
+            color: var(--burgundy);
+
+            border:
+                1px solid var(--border);
+
+            background: transparent;
+        }
+
+        body.dark-mode .button.secondary {
+            color: var(--gold-light);
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+        }
+
+        .theme-button {
+            position: fixed;
+
+            top: 18px;
+            left: 18px;
+
+            width: 40px;
+            height: 40px;
+
+            display: grid;
+            place-items: center;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 12px;
+
+            color: var(--text);
+            background: var(--surface);
+
+            cursor: pointer;
+        }
+
+        .theme-button svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .mini {
+            margin-top: 25px;
+
+            color: var(--muted);
+
+            font-size: 10px;
+        }
+
+        @media (max-width: 450px) {
+            .card {
+                padding: 38px 20px;
+                border-radius: 24px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            p {
+                font-size: 13px;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="decoration one"></div>
+    <div class="decoration two"></div>
+
+    <button
+        class="theme-button"
+        id="themeToggle"
+        type="button"
+        aria-label="تغيير المظهر"
+        title="تغيير المظهر"
+    >
+        <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+        >
+            <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3 6.7 6.7 0 0 0 21 12.8Z"></path>
+        </svg>
+    </button>
+
+    <main class="card">
+
+        <div class="logo">
+            DZ
+        </div>
+
+        <div class="code">
+            404
+        </div>
+
+        <div class="gold-line"></div>
+
+        <h1>
+            الصفحة غير موجودة
+        </h1>
+
+        <p>
+            يبدو أن الصفحة التي تبحثين عنها غير موجودة،
+            أو ربما تغيّر رابطها. لا تقلقي، نرجعوكِ للسوق.
+        </p>
+
+        <div class="actions">
+
+            <a
+                href="{{ url_for('auth.index') }}"
+                class="button primary"
+            >
+                العودة للرئيسية
+            </a>
+
+            {% if current_user_id %}
+
+                <a
+                    href="{{ url_for('auth.account') }}"
+                    class="button secondary"
+                >
+                    حسابي
+                </a>
+
+            {% else %}
+
+                <a
+                    href="{{ url_for('auth.login') }}"
+                    class="button secondary"
+                >
+                    تسجيل الدخول
+                </a>
+
+            {% endif %}
+
+        </div>
+
+        <div class="mini">
+            DZ MARKET — سوق جزائري يجمعنا 🇩🇿
+        </div>
+
+    </main>
+
+    <script>
+        const savedTheme =
+            localStorage.getItem("dzmarket-theme");
+
+        if (savedTheme === "dark") {
+            document.body.classList.add("dark-mode");
+        }
+
+        document
+            .getElementById("themeToggle")
+            .addEventListener("click", function () {
+
+                document.body.classList.toggle("dark-mode");
+
+                localStorage.setItem(
+                    "dzmarket-theme",
+                    document.body.classList.contains("dark-mode")
+                        ? "dark"
+                        : "light"
+                );
+            });
+    </script>
+
+</body>
+</html>
