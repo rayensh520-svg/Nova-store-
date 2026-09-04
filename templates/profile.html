@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>حسابي | VYORA STORE</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<main class="page-container">
+
+    <!-- HEADER -->
+    <header class="page-header">
+
+        <button
+            type="button"
+            class="back-button"
+            onclick="history.back()">
+            رجوع
+        </button>
+
+        <div>
+            <h1>حسابي</h1>
+            <span>VYORA STORE</span>
+        </div>
+
+    </header>
+
+
+    <!-- PROFILE -->
+    <section class="profile-card">
+
+        <div class="profile-avatar">
+            V
+        </div>
+
+        <div class="profile-main">
+
+            <h2 id="profileName">
+                جارٍ التحميل...
+            </h2>
+
+            <p id="profileEmail">
+                ...
+            </p>
+
+            <span
+                id="profileRole"
+                class="profile-role">
+            </span>
+
+        </div>
+
+    </section>
+
+
+    <!-- ACCOUNT -->
+    <section class="profile-section">
+
+        <h3>الحساب</h3>
+
+        <div class="profile-menu">
+
+            <a href="/orders" class="profile-item">
+                <span>طلباتي</span>
+                <span>›</span>
+            </a>
+
+            <a href="/favorites" class="profile-item">
+                <span>المفضلة</span>
+                <span>›</span>
+            </a>
+
+            <a href="/notifications" class="profile-item">
+                <span>الإشعارات</span>
+                <span>›</span>
+            </a>
+
+            <a href="/chat" class="profile-item">
+                <span>المحادثات</span>
+                <span>›</span>
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- SELLER -->
+    <section
+        class="profile-section"
+        id="sellerSection"
+        hidden>
+
+        <h3>متجري</h3>
+
+        <div class="profile-menu">
+
+            <a href="/seller/dashboard"
+               class="profile-item">
+
+                <span>
+                    لوحة تحكم البائع
+                </span>
+
+                <span>›</span>
+
+            </a>
+
+            <a href="/seller/products"
+               class="profile-item">
+
+                <span>
+                    منتجاتي
+                </span>
+
+                <span>›</span>
+
+            </a>
+
+            <a href="/seller/orders"
+               class="profile-item">
+
+                <span>
+                    طلبات المتجر
+                </span>
+
+                <span>›</span>
+
+            </a>
+
+            <a href="/seller/wallet"
+               class="profile-item">
+
+                <span>
+                    المحفظة والأرباح
+                </span>
+
+                <span>›</span>
+
+            </a>
+
+            <a href="/seller/analytics"
+               class="profile-item">
+
+                <span>
+                    التحليلات
+                </span>
+
+                <span>›</span>
+
+            </a>
+
+            <a href="/seller/settings"
+               class="profile-item">
+
+                <span>
+                    إعدادات المتجر
+                </span>
+
+                <span>›</span>
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- GENERAL -->
+    <section class="profile-section">
+
+        <h3>الإعدادات</h3>
+
+        <div class="profile-menu">
+
+            <a href="/forgot-password"
+               class="profile-item">
+
+                <span>
+                    تغيير كلمة السر
+                </span>
+
+                <span>›</span>
+
+            </a>
+
+        </div>
+
+    </section>
+
+
+    <!-- LOGOUT -->
+    <section class="profile-actions">
+
+        <button
+            type="button"
+            id="logoutButton"
+            class="danger-button">
+
+            تسجيل الخروج
+
+        </button>
+
+    </section>
+
+
+    <!-- MESSAGE -->
+    <div
+        id="profileMessage"
+        class="form-message"
+        hidden>
+    </div>
+
+</main>
+
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+
+    <a href="/home">
+        الرئيسية
+    </a>
+
+    <a href="/categories">
+        التصنيفات
+    </a>
+
+    <a href="/favorites">
+        المفضلة
+    </a>
+
+    <a href="/cart">
+        السلة
+    </a>
+
+    <a href="/profile" class="active">
+        حسابي
+    </a>
+
+</nav>
+
+
+<script>
+
+// =====================================
+// LOAD CURRENT USER
+// =====================================
+
+async function loadProfile() {
+
+    try {
+
+        const response = await fetch(
+            "/api/auth/me"
+        );
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok ||
+            !data.success ||
+            !data.authenticated) {
+
+            window.location.href =
+                "/login";
+
+            return;
+        }
+
+
+        const user = data.user;
+
+
+        document.getElementById(
+            "profileName"
+        ).textContent =
+            user.name || "مستخدم VYORA";
+
+
+        document.getElementById(
+            "profileEmail"
+        ).textContent =
+            user.email || "";
+
+
+        const roleElement =
+            document.getElementById(
+                "profileRole"
+            );
+
+
+        const sellerSection =
+            document.getElementById(
+                "sellerSection"
+            );
+
+
+        if (user.role === "seller") {
+
+            roleElement.textContent =
+                "بائع";
+
+            sellerSection.hidden =
+                false;
+
+        } else {
+
+            roleElement.textContent =
+                "مشتري";
+
+            sellerSection.hidden =
+                true;
+        }
+
+
+    } catch (error) {
+
+        window.location.href =
+            "/login";
+    }
+}
+
+
+// =====================================
+// LOGOUT
+// =====================================
+
+document.getElementById(
+    "logoutButton"
+).addEventListener(
+    "click",
+    async function() {
+
+        const button = this;
+
+        button.disabled = true;
+
+        button.textContent =
+            "جارٍ تسجيل الخروج...";
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/auth/logout",
+                    {
+                        method: "POST"
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (data.success) {
+
+                window.location.href =
+                    "/login";
+
+                return;
+            }
+
+
+            button.disabled = false;
+
+            button.textContent =
+                "تسجيل الخروج";
+
+
+        } catch (error) {
+
+            button.disabled = false;
+
+            button.textContent =
+                "تسجيل الخروج";
+
+            showMessage(
+                "تعذر تسجيل الخروج. حاول مرة أخرى."
+            );
+        }
+
+    }
+);
+
+
+// =====================================
+// MESSAGE
+// =====================================
+
+function showMessage(message) {
+
+    const element =
+        document.getElementById(
+            "profileMessage"
+        );
+
+    element.textContent = message;
+
+    element.hidden = false;
+}
+
+
+// =====================================
+// START
+// =====================================
+
+loadProfile();
+
+</script>
+
+</body>
+</html>
