@@ -1,6 +1,7 @@
 from flask import jsonify, request, session
 
 from . import auth_bp
+from .guards import login_required
 from .service import (
     LoginError,
     RegistrationError,
@@ -66,3 +67,23 @@ def login():
             "success": False,
             "error": str(error)
         }), 401
+
+
+@auth_bp.post("/logout")
+def logout():
+    session.clear()
+
+    return jsonify({
+        "success": True,
+        "message": "Logged out successfully."
+    })
+
+
+@auth_bp.get("/me")
+@login_required
+def current_user():
+    return jsonify({
+        "success": True,
+        "user_id": session["user_id"],
+        "role": session["user_role"]
+    })
