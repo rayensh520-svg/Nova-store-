@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>إتمام الطلب | DZ MARKET</title>
+
+    <style>
+        :root {
+            --primary:#800020;
+            --primary-dark:#5a0016;
+            --primary-light:#a52a4a;
+            --gold:#c9a227;
+            --gold-light:#e4c766;
+
+            --background:#f7f3f4;
+            --surface:#fff;
+            --surface-soft:#fcf9fa;
+
+            --text:#241d20;
+            --muted:#756b70;
+            --border:#eadfe3;
+
+            --danger:#b3261e;
+            --success:#2e8b57;
+
+            --shadow-sm:0 5px 18px rgba(70,0,25,.07);
+            --shadow:0 12px 35px rgba(70,0,25,.11);
+
+            --radius:20px;
+            --radius-lg:28px;
+        }
+
+        body.dark-mode {
+            --background:#12090c;
+            --surface:#1d1014;
+            --surface-soft:#25151a;
+            --text:#f7eef1;
+            --muted:#bcaeb3;
+            --border:#3a252b;
+
+            background:
+                radial-gradient(circle at 10% 10%,rgba(128,0,32,.22),transparent 28%),
+                radial-gradient(circle at 90% 80%,rgba(201,162,39,.08),transparent 25%),
+                var(--background);
+        }
+
+        * {
+            box-sizing:border-box;
+            margin:0;
+            padding:0;
+        }
+
+        body {
+            font-family:system-ui,-apple-system,BlinkMacSystemFont,
+            "Segoe UI",Tahoma,Arial,sans-serif;
+
+            background:
+                radial-gradient(circle at 5% 10%,rgba(128,0,32,.07),transparent 25%),
+                radial-gradient(circle at 95% 85%,rgba(201,162,39,.07),transparent 25%),
+                var(--background);
+
+            color:var(--text);
+            min-height:100vh;
+        }
+
+        button,
+        input,
+        textarea {
+            font:inherit;
+        }
+
+        .page {
+            width:min(1000px,94%);
+            margin:auto;
+            padding:18px 0 45px;
+        }
+
+        .topbar {
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            gap:12px;
+            margin-bottom:20px;
+        }
+
+        .title {
+            display:flex;
+            align-items:center;
+            gap:11px;
+        }
+
+        .back {
+            width:42px;
+            height:42px;
+            display:grid;
+            place-items:center;
+
+            background:var(--surface);
+            border:1px solid var(--border);
+            border-radius:14px;
+
+            box-shadow:var(--shadow-sm);
+        }
+
+        .title h1 {
+            font-size:21px;
+            font-weight:900;
+        }
+
+        .title span {
+            display:block;
+            color:var(--muted);
+            font-size:11px;
+            margin-top:2px;
+        }
+
+        .theme {
+            width:42px;
+            height:42px;
+
+            border:1px solid var(--border);
+            border-radius:14px;
+
+            background:var(--surface);
+            color:var(--text);
+
+            cursor:pointer;
+        }
+
+        .layout {
+            display:grid;
+            grid-template-columns:1fr 340px;
+            gap:18px;
+            align-items:start;
+        }
+
+        .card {
+            background:var(--surface);
+            border:1px solid var(--border);
+            border-radius:var(--radius);
+            padding:20px;
+            box-shadow:var(--shadow-sm);
+        }
+
+        .card + .card {
+            margin-top:14px;
+        }
+
+        .card h2 {
+            font-size:16px;
+            margin-bottom:15px;
+            font-weight:900;
+        }
+
+        /* FORM */
+
+        .field {
+            margin-bottom:14px;
+        }
+
+        .field label {
+            display:block;
+            font-size:12px;
+            font-weight:800;
+            margin-bottom:7px;
+        }
+
+        .field input,
+        .field textarea {
+            width:100%;
+            border:1px solid var(--border);
+            border-radius:13px;
+            background:var(--surface-soft);
+            color:var(--text);
+            padding:12px 13px;
+            outline:none;
+            transition:.2s;
+        }
+
+        .field input:focus,
+        .field textarea:focus {
+            border-color:var(--primary);
+            box-shadow:0 0 0 3px rgba(128,0,32,.08);
+        }
+
+        .field textarea {
+            min-height:100px;
+            resize:vertical;
+        }
+
+        .required {
+            color:var(--danger);
+        }
+
+        .hint {
+            color:var(--muted);
+            font-size:10px;
+            margin-top:5px;
+            line-height:1.6;
+        }
+
+        .security {
+            display:flex;
+            gap:10px;
+            padding:12px;
+            border-radius:14px;
+            background:rgba(46,139,87,.07);
+            color:var(--success);
+            font-size:11px;
+            line-height:1.6;
+        }
+
+        /* SUMMARY */
+
+        .summary {
+            position:sticky;
+            top:15px;
+        }
+
+        .product {
+            display:flex;
+            align-items:center;
+            gap:10px;
+            padding:10px 0;
+            border-bottom:1px solid var(--border);
+        }
+
+        .product:last-child {
+            border-bottom:0;
+        }
+
+        .product-image {
+            width:58px;
+            height:58px;
+            border-radius:13px;
+            object-fit:cover;
+            background:var(--surface-soft);
+            border:1px solid var(--border);
+            flex:0 0 58px;
+        }
+
+        .product-info {
+            flex:1;
+            min-width:0;
+        }
+
+        .product-name {
+            font-size:12px;
+            font-weight:800;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
+        }
+
+        .product-meta {
+            color:var(--muted);
+            font-size:10px;
+            margin-top:3px;
+        }
+
+        .product-price {
+            color:var(--primary);
+            font-weight:900;
+            font-size:12px;
+            white-space:nowrap;
+        }
+
+        body.dark-mode .product-price {
+            color:var(--gold-light);
+        }
+
+        .total {
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+
+            margin-top:15px;
+            padding-top:15px;
+
+            border-top:1px solid var(--border);
+        }
+
+        .total span {
+            color:var(--muted);
+            font-size:13px;
+        }
+
+        .total strong {
+            color:var(--primary);
+            font-size:20px;
+        }
+
+        body.dark-mode .total strong {
+            color:var(--gold-light);
+        }
+
+        .confirm {
+            width:100%;
+            margin-top:16px;
+            padding:14px;
+
+            border:0;
+            border-radius:15px;
+
+            background:linear-gradient(
+                135deg,
+                var(--primary),
+                var(--primary-light)
+            );
+
+            color:white;
+            font-weight:900;
+            cursor:pointer;
+        }
+
+        .back-cart {
+            display:block;
+            text-align:center;
+            margin-top:10px;
+            padding:11px;
+
+            border:1px solid var(--border);
+            border-radius:13px;
+
+            color:var(--muted);
+            font-size:12px;
+        }
+
+        .empty {
+            text-align:center;
+            padding:45px 20px;
+            background:var(--surface);
+            border:1px solid var(--border);
+            border-radius:var(--radius-lg);
+        }
+
+        .empty-icon {
+            font-size:40px;
+            margin-bottom:12px;
+        }
+
+        .empty h2 {
+            font-size:19px;
+            margin-bottom:7px;
+        }
+
+        .empty p {
+            color:var(--muted);
+            font-size:12px;
+            margin-bottom:17px;
+        }
+
+        .home-btn {
+            display:inline-block;
+            padding:12px 18px;
+            border-radius:14px;
+
+            color:white;
+            background:linear-gradient(
+                135deg,
+                var(--primary),
+                var(--primary-light)
+            );
+
+            font-weight:800;
+        }
+
+        @media(max-width:760px) {
+            .layout {
+                grid-template-columns:1fr;
+            }
+
+            .summary {
+                position:static;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <header class="topbar">
+
+        <div class="title">
+
+            <a
+                href="{{ url_for('auth.cart') }}"
+                class="back">
+                →
+            </a>
+
+            <div>
+                <h1>إتمام الطلب</h1>
+                <span>DZ MARKET 🇩🇿</span>
+            </div>
+
+        </div>
+
+        <button
+            class="theme"
+            type="button"
+            onclick="toggleTheme()">
+            ◐
+        </button>
+
+    </header>
+
+
+    {% if items %}
+
+    <div class="layout">
+
+        <!-- DELIVERY FORM -->
+
+        <section>
+
+            <form
+                method="POST"
+                action="{{ url_for('auth.checkout') }}"
+                id="checkoutForm">
+
+                <div class="card">
+
+                    <h2>📍 معلومات التوصيل</h2>
+
+                    <div class="field">
+
+                        <label>
+                            رقم الهاتف
+                            <span class="required">*</span>
+                        </label>
+
+                        <input
+                            type="tel"
+                            name="delivery_phone"
+                            value="{{ user.phone if user else '' }}"
+                            placeholder="05 XX XX XX XX"
+                            required>
+
+                        <div class="hint">
+                            أدخل رقم يمكن لشركة التوصيل التواصل معك من خلاله.
+                        </div>
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            الولاية
+                            <span class="required">*</span>
+                        </label>
+
+                        <input
+                            type="text"
+                            name="delivery_wilaya"
+                            value="{{ user.wilaya if user else '' }}"
+                            placeholder="مثال: وهران"
+                            required>
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label>
+                            عنوان التوصيل
+                            <span class="required">*</span>
+                        </label>
+
+                        <textarea
+                            name="delivery_address"
+                            placeholder="البلدية، الحي، الشارع، رقم المنزل..."
+                            required></textarea>
+
+                        <div class="hint">
+                            اكتب العنوان بشكل واضح لتسهيل وصول الطلب.
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h2>🛡️ قبل تأكيد الطلب</h2>
+
+                    <div class="security">
+                        🔒
+                        <span>
+                            راجع معلومات التوصيل والمنتجات والكمية جيدا
+                            قبل تأكيد الطلب.
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="confirm"
+                    id="confirmBtn">
+                    تأكيد الطلب
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- SUMMARY -->
+
+        <aside class="summary">
+
+            <div class="card">
+
+                <h2>🛒 ملخص الطلب</h2>
+
+                {% for item in items %}
+
+                <div class="product">
+
+                    {% set image_list = (item.images or '').split(',') %}
+
+                    {% if image_list and image_list[0].strip() %}
+
+                        <img
+                            src="{{ image_list[0].strip() }}"
+                            class="product-image"
+                            alt="{{ item.name }}">
+
+                    {% else %}
+
+                        <div class="product-image"
+                             style="display:grid;place-items:center;">
+                            🛍️
+                        </div>
+
+                    {% endif %}
+
+
+                    <div class="product-info">
+
+                        <div class="product-name">
+                            {{ item.name }}
+                        </div>
+
+                        <div class="product-meta">
+
+                            الكمية: {{ item.quantity }}
+
+                            ·
+
+                            {% if item.purchase_mode == 'made_to_order' %}
+                                يُحضّر عند الطلب
+                            {% else %}
+                                جاهز
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    {% set unit_price = item.price - (item.discount or 0) %}
+
+                    <div class="product-price">
+                        {{ "{:,.0f}".format(unit_price * item.quantity) }} دج
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+
+                <div class="total">
+
+                    <span>
+                        المجموع النهائي
+                    </span>
+
+                    <strong>
+                        {{ "{:,.0f}".format(total|default(0)) }} دج
+                    </strong>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    form="checkoutForm"
+                    class="confirm">
+                    تأكيد وإرسال الطلب
+                </button>
+
+
+                <a
+                    href="{{ url_for('auth.cart') }}"
+                    class="back-cart">
+                    العودة إلى السلة
+                </a>
+
+            </div>
+
+        </aside>
+
+    </div>
+
+
+    {% else %}
+
+    <section class="empty">
+
+        <div class="empty-icon">
+            🛒
+        </div>
+
+        <h2>
+            السلة فارغة
+        </h2>
+
+        <p>
+            لا توجد منتجات لإتمام الطلب حاليا.
+        </p>
+
+        <a
+            href="{{ url_for('auth.index') }}"
+            class="home-btn">
+            العودة للتسوق
+        </a>
+
+    </section>
+
+    {% endif %}
+
+</div>
+
+
+<script>
+    function applyTheme() {
+
+        const theme =
+            localStorage.getItem("dzmarket-theme");
+
+        if (theme === "dark") {
+            document.body.classList.add("dark-mode");
+        } else {
+            document.body.classList.remove("dark-mode");
+        }
+    }
+
+
+    function toggleTheme() {
+
+        const dark =
+            document.body.classList.toggle("dark-mode");
+
+        localStorage.setItem(
+            "dzmarket-theme",
+            dark ? "dark" : "light"
+        );
+    }
+
+
+    document
+        .getElementById("checkoutForm")
+        ?.addEventListener("submit", function () {
+
+            const button =
+                document.getElementById("confirmBtn");
+
+            if (button) {
+
+                button.disabled = true;
+
+                button.textContent =
+                    "جاري تأكيد الطلب...";
+
+            }
+
+        });
+
+
+    applyTheme();
+</script>
+
+</body>
+</html>
