@@ -1,18 +1,29 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, session, redirect, url_for
 from database import init_db
+from auth import register_user, login_user, logout_user
 
 app = Flask(__name__)
 
+# ==============================
+# APP CONFIG
+# ==============================
+
 app.config["JSON_SORT_KEYS"] = False
 
+# مفتاح الجلسات
+# مهم: في الإنتاج يجب وضعه في Environment Variables
+app.config["SECRET_KEY"] = "CHANGE_THIS_TO_A_LONG_RANDOM_SECRET_KEY"
+
+
 # ==============================
-# DATABASE INITIALIZATION
+# DATABASE
 # ==============================
+
 try:
     init_db()
     print("VYORA database initialized successfully.")
-except Exception as e:
-    print(f"Database initialization error: {e}")
+except Exception as error:
+    print(f"Database initialization error: {error}")
 
 
 # ==============================
@@ -113,6 +124,112 @@ def ai_assistant():
 
 
 # ==============================
+# AUTH API
+# ==============================
+
+@app.route("/api/auth/register", methods=["POST"])
+def api_register():
+
+    data = request.get_json(silent=True) or {}
+
+    full_name = data.get("full_name")
+    email = data.get("email")
+    password = data.get("password")
+    role = data.get("role", "buyer")
+
+    success, result = register_user(
+        full_name,
+        email,
+        password,
+        role
+    )
+
+    if not success:
+        return jsonify({
+            "success": False,
+            "error": result
+        }), 400
+
+    # إنشاء جلسة للمستخدم بعد التسجيل
+    session["user_id"] = result["user_id"]
+    session["user_role"] = result["role"]
+    session["user_name"] = result["full_name"]
+
+    return jsonify({
+        "success": True,
+        "message": "Account created successfully.",
+        "user": {
+            "id": result["user_id"],
+            "name": result["full_name"],
+            "email": result["email"],
+            "role": result["role"]
+        }
+    }), 201
+
+
+@app.route("/api/auth/login", methods=["POST"])
+def api_login():
+
+    data = request.get_json(silent=True) or {}
+
+    email = data.get("email")
+    password = data.get("password")
+
+    success, result = login_user(
+        email,
+        password
+    )
+
+    if not success:
+        return jsonify({
+            "success": False,
+            "error": result
+        }), 401
+
+    return jsonify({
+        "success": True,
+        "message": "Login successful.",
+        "user": {
+            "id": result["user_id"],
+            "name": result["full_name"],
+            "email": result["email"],
+            "role": result["role"]
+        }
+    })
+
+
+@app.route("/api/auth/logout", methods=["POST"])
+def api_logout():
+
+    logout_user()
+
+    return jsonify({
+        "success": True,
+        "message": "Logged out successfully."
+    })
+
+
+@app.route("/api/auth/me", methods=["GET"])
+def api_current_user():
+
+    if "user_id" not in session:
+        return jsonify({
+            "success": False,
+            "authenticated": False
+        }), 401
+
+    return jsonify({
+        "success": True,
+        "authenticated": True,
+        "user": {
+            "id": session["user_id"],
+            "name": session.get("user_name"),
+            "role": session.get("user_role")
+        }
+    })
+
+
+# ==============================
 # SELLER PAGES
 # ==============================
 
@@ -185,11 +302,12 @@ def seller_store(seller_id):
 
 
 # ==============================
-# API
+# API SYSTEM
 # ==============================
 
 @app.route("/api/health")
 def health():
+
     return jsonify({
         "success": True,
         "app": "VYORA STORE",
@@ -199,17 +317,19 @@ def health():
 
 @app.route("/api/status")
 def api_status():
+
     return jsonify({
         "success": True,
         "environment": "development",
         "database": "connected",
-        "authentication": "not_connected",
-        "message": "VYORA backend is ready for authentication integration."
+        "authentication": "connected",
+        "message": "VYORA backend authentication is connected."
     })
 
 
 @app.route("/api/test", methods=["GET"])
 def api_test():
+
     return jsonify({
         "success": True,
         "message": "VYORA API is working."
@@ -218,6 +338,7 @@ def api_test():
 
 @app.route("/api/test", methods=["POST"])
 def api_test_post():
+
     data = request.get_json(silent=True) or {}
 
     return jsonify({
@@ -232,6 +353,7 @@ def api_test_post():
 
 @app.errorhandler(404)
 def not_found(error):
+
     return jsonify({
         "success": False,
         "error": "Page not found"
@@ -240,6 +362,7 @@ def not_found(error):
 
 @app.errorhandler(405)
 def method_not_allowed(error):
+
     return jsonify({
         "success": False,
         "error": "Method not allowed"
@@ -248,6 +371,7 @@ def method_not_allowed(error):
 
 @app.errorhandler(500)
 def server_error(error):
+
     return jsonify({
         "success": False,
         "error": "Internal server error"
@@ -259,8 +383,9 @@ def server_error(error):
 # ==============================
 
 if __name__ == "__main__":
+
     app.run(
         host="0.0.0.0",
         port=5001,
         debug=True
-)
+            )
