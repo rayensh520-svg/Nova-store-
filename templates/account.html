@@ -3,710 +3,804 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>حسابي | DZ MARKET</title>
 
     <style>
+        :root {
+            --primary: #800020;
+            --primary-dark: #5a0016;
+            --primary-light: #a52a4a;
+            --gold: #c9a227;
+            --gold-light: #e4c766;
+
+            --background: #f7f3f4;
+            --surface: #ffffff;
+            --surface-soft: #fcf9fa;
+
+            --text: #241d20;
+            --muted: #756b70;
+            --border: #eadfe3;
+
+            --success: #2e8b57;
+            --danger: #b3261e;
+
+            --shadow-sm: 0 5px 18px rgba(70,0,25,.07);
+            --shadow: 0 12px 35px rgba(70,0,25,.11);
+
+            --radius-sm: 12px;
+            --radius: 20px;
+            --radius-lg: 28px;
+        }
+
+        body.dark-mode {
+            --background: #12090c;
+            --surface: #1d1014;
+            --surface-soft: #25151a;
+            --text: #f7eef1;
+            --muted: #bcaeb3;
+            --border: #3a252b;
+
+            background:
+                radial-gradient(circle at 10% 10%, rgba(128,0,32,.22), transparent 28%),
+                radial-gradient(circle at 90% 80%, rgba(201,162,39,.08), transparent 25%),
+                var(--background);
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
 
-        :root {
-            --burgundy: #721b3a;
-            --dark: #421024;
-            --gold: #c69b4d;
-            --cream: #faf7f2;
-            --white: #ffffff;
-            --text: #29151e;
-            --muted: #81737a;
-            --border: #eee3e6;
-        }
-
         body {
-            font-family: Arial, sans-serif;
-            background: var(--cream);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont,
+                         "Segoe UI", Tahoma, Arial, sans-serif;
+            background:
+                radial-gradient(circle at 5% 10%, rgba(128,0,32,.07), transparent 25%),
+                radial-gradient(circle at 95% 85%, rgba(201,162,39,.07), transparent 25%),
+                var(--background);
             color: var(--text);
-            padding-bottom: 78px;
+            min-height: 100vh;
+            transition: .25s ease;
         }
 
-        button,
-        input {
-            font-family: inherit;
+        a {
+            text-decoration: none;
+            color: inherit;
         }
 
-        .app {
-            width: 100%;
-            max-width: 650px;
+        button {
+            font: inherit;
+        }
+
+        .page {
+            width: min(1100px, 94%);
             margin: auto;
+            padding: 20px 0 40px;
         }
 
         /* HEADER */
-
-        header {
-            padding: 14px 15px 10px;
+        .topbar {
             display: flex;
             align-items: center;
-            gap: 12px;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 22px;
         }
 
-        .back {
-            width: 40px;
-            height: 40px;
-            border: 1px solid var(--border);
-            background: white;
-            border-radius: 11px;
-            font-size: 18px;
-            cursor: pointer;
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .header-title h1 {
-            color: var(--burgundy);
-            font-size: 19px;
-        }
-
-        .header-title p {
-            color: var(--muted);
-            font-size: 10px;
-            margin-top: 3px;
-        }
-
-        /* PROFILE */
-
-        .profile-card {
-            margin: 5px 15px 13px;
-            padding: 17px;
-            border-radius: 17px;
+        .brand-mark {
+            width: 44px;
+            height: 44px;
+            border-radius: 15px;
+            display: grid;
+            place-items: center;
+            color: white;
+            font-weight: 900;
             background: linear-gradient(
                 135deg,
-                var(--burgundy),
-                var(--dark)
+                var(--primary),
+                var(--primary-light)
             );
+            box-shadow: var(--shadow-sm);
+        }
+
+        .brand-text h1 {
+            font-size: 18px;
+            font-weight: 900;
+        }
+
+        .brand-text span {
+            display: block;
+            color: var(--muted);
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 42px;
+            height: 42px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text);
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            transition: .2s;
+        }
+
+        .icon-btn:hover {
+            transform: translateY(-2px);
+            border-color: var(--gold);
+        }
+
+        /* PROFILE HERO */
+        .profile-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: var(--radius-lg);
+            padding: 28px;
             color: white;
+            background:
+                radial-gradient(
+                    circle at 90% 15%,
+                    rgba(201,162,39,.25),
+                    transparent 28%
+                ),
+                radial-gradient(
+                    circle at 10% 100%,
+                    rgba(255,255,255,.08),
+                    transparent 25%
+                ),
+                linear-gradient(
+                    135deg,
+                    #5a0016,
+                    #800020 55%,
+                    #a52a4a
+                );
+            box-shadow: var(--shadow);
+        }
+
+        .profile-card::before,
+        .profile-card::after {
+            content: "";
+            position: absolute;
+            border: 1px solid rgba(255,255,255,.12);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .profile-card::before {
+            width: 220px;
+            height: 220px;
+            left: -90px;
+            bottom: -150px;
+        }
+
+        .profile-card::after {
+            width: 160px;
+            height: 160px;
+            right: -70px;
+            top: -90px;
+        }
+
+        .profile-content {
+            position: relative;
+            z-index: 1;
             display: flex;
             align-items: center;
-            gap: 13px;
-            box-shadow: 0 8px 25px rgba(66, 16, 36, .15);
+            gap: 18px;
         }
 
         .avatar {
-            width: 62px;
-            height: 62px;
-            flex-shrink: 0;
-            border-radius: 50%;
-            background: rgba(255,255,255,.15);
-            border: 2px solid rgba(255,255,255,.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 78px;
+            height: 78px;
+            flex: 0 0 78px;
+            border-radius: 24px;
+            object-fit: cover;
+            border: 3px solid rgba(255,255,255,.8);
+            background: rgba(255,255,255,.16);
+        }
+
+        .avatar-placeholder {
+            display: grid;
+            place-items: center;
+            color: white;
             font-size: 28px;
+            font-weight: 900;
         }
 
         .profile-info {
             min-width: 0;
-        }
-
-        .profile-info h2 {
-            font-size: 16px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .profile-info p {
-            margin-top: 5px;
-            font-size: 10px;
-            opacity: .8;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .role {
-            display: inline-block;
-            margin-top: 7px;
-            padding: 4px 8px;
-            border-radius: 20px;
-            background: rgba(198,155,77,.2);
-            color: #f4d997;
-            font-size: 9px;
-            font-weight: 800;
-        }
-
-        /* SECTIONS */
-
-        .section {
-            margin: 0 15px 12px;
-        }
-
-        .section-title {
-            font-size: 14px;
-            margin-bottom: 8px;
-        }
-
-        .card {
-            background: white;
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            overflow: hidden;
-        }
-
-        .item {
-            width: 100%;
-            min-height: 48px;
-            padding: 10px 12px;
-            border: 0;
-            border-bottom: 1px solid var(--border);
-            background: white;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-align: right;
-            cursor: pointer;
-        }
-
-        .item:last-child {
-            border-bottom: 0;
-        }
-
-        .item:hover {
-            background: #fcf7f8;
-        }
-
-        .icon {
-            width: 34px;
-            height: 34px;
-            border-radius: 9px;
-            background: #f8edf1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 17px;
-            flex-shrink: 0;
-        }
-
-        .item-content {
             flex: 1;
         }
 
-        .item-content strong {
-            display: block;
-            font-size: 11px;
+        .profile-info h2 {
+            font-size: 23px;
+            font-weight: 900;
+            margin-bottom: 5px;
         }
 
-        .item-content small {
-            display: block;
-            margin-top: 3px;
+        .profile-email {
+            opacity: .82;
+            font-size: 13px;
+            word-break: break-word;
+        }
+
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 10px;
+            padding: 6px 11px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.13);
+            border: 1px solid rgba(255,255,255,.18);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* QUICK STATS */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 18px 0;
+        }
+
+        .stat {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 18px 14px;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-number {
+            font-size: 23px;
+            font-weight: 900;
+            color: var(--primary);
+        }
+
+        body.dark-mode .stat-number {
+            color: var(--gold-light);
+        }
+
+        .stat-label {
+            margin-top: 5px;
             color: var(--muted);
-            font-size: 9px;
+            font-size: 12px;
+        }
+
+        /* SECTIONS */
+        .section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 26px 2px 11px;
+        }
+
+        .section-title h3 {
+            font-size: 16px;
+            font-weight: 900;
+        }
+
+        .section-title span {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .menu {
+            display: grid;
+            gap: 9px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 15px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 17px;
+            box-shadow: var(--shadow-sm);
+            transition: .2s;
+        }
+
+        .menu-item:hover {
+            transform: translateY(-2px);
+            border-color: rgba(128,0,32,.25);
+        }
+
+        .menu-icon {
+            width: 42px;
+            height: 42px;
+            flex: 0 0 42px;
+            border-radius: 14px;
+            display: grid;
+            place-items: center;
+            background: rgba(128,0,32,.08);
+            color: var(--primary);
+            font-size: 19px;
+        }
+
+        body.dark-mode .menu-icon {
+            background: rgba(201,162,39,.10);
+            color: var(--gold-light);
+        }
+
+        .menu-text {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .menu-text strong {
+            display: block;
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+
+        .menu-text span {
+            display: block;
+            color: var(--muted);
+            font-size: 11px;
+            line-height: 1.5;
         }
 
         .arrow {
-            color: var(--gold);
-            font-size: 18px;
+            color: var(--muted);
+            font-size: 19px;
         }
 
-        /* FLASH */
+        /* SELLER */
+        .seller-box {
+            margin-top: 18px;
+            padding: 19px;
+            border-radius: var(--radius);
+            border: 1px solid rgba(201,162,39,.35);
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(201,162,39,.08),
+                    rgba(128,0,32,.06)
+                ),
+                var(--surface);
+        }
 
-        .flash {
-            margin: 0 15px 10px;
-            padding: 10px 12px;
-            border-radius: 10px;
-            background: #edf8f0;
-            border: 1px solid #d5ead9;
-            color: #24643a;
-            font-size: 11px;
+        .seller-box h3 {
+            font-size: 15px;
+            margin-bottom: 7px;
+        }
+
+        .seller-box p {
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.7;
+            margin-bottom: 13px;
+        }
+
+        .seller-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 11px 15px;
+            border-radius: 13px;
+            color: white;
+            background: linear-gradient(
+                135deg,
+                var(--primary),
+                var(--primary-light)
+            );
+            font-size: 13px;
+            font-weight: 800;
         }
 
         /* LOGOUT */
-
         .logout {
             width: 100%;
-            height: 45px;
-            border: 0;
-            border-radius: 12px;
-            background: #fff0f1;
-            color: #a52d45;
-            font-size: 12px;
-            font-weight: 900;
+            margin-top: 22px;
+            padding: 14px;
+            border-radius: 16px;
+            border: 1px solid rgba(179,38,30,.18);
+            background: rgba(179,38,30,.06);
+            color: var(--danger);
             cursor: pointer;
+            font-weight: 800;
         }
 
-        /* BOTTOM NAV */
-
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            right: 0;
-            left: 0;
-            height: 64px;
-            background: rgba(255,255,255,.97);
-            border-top: 1px solid var(--border);
-            z-index: 30;
-            box-shadow: 0 -5px 20px rgba(40,15,25,.06);
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            color: var(--muted);
+            font-size: 11px;
+            margin-top: 28px;
+            line-height: 1.7;
         }
 
-        .nav-inner {
-            width: 100%;
-            max-width: 650px;
-            height: 100%;
-            margin: auto;
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
+        .footer strong {
+            color: var(--primary);
         }
 
-        .nav-item {
-            border: 0;
-            background: transparent;
-            color: #87777e;
-            font-size: 9px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 3px;
-            cursor: pointer;
+        body.dark-mode .footer strong {
+            color: var(--gold-light);
         }
 
-        .nav-item span {
-            font-size: 20px;
+        /* MOBILE */
+        @media (max-width: 600px) {
+            .page {
+                width: 92%;
+                padding-top: 14px;
+            }
+
+            .profile-card {
+                padding: 22px 18px;
+            }
+
+            .profile-content {
+                align-items: flex-start;
+            }
+
+            .avatar {
+                width: 65px;
+                height: 65px;
+                flex-basis: 65px;
+                border-radius: 20px;
+            }
+
+            .profile-info h2 {
+                font-size: 19px;
+            }
+
+            .stats {
+                gap: 8px;
+            }
+
+            .stat {
+                padding: 14px 7px;
+            }
+
+            .stat-number {
+                font-size: 19px;
+            }
         }
 
-        .nav-item.active {
-            color: var(--burgundy);
-            font-weight: 900;
+        @media (min-width: 800px) {
+            .menu {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
     </style>
 </head>
 
 <body>
 
-<div class="app">
+<div class="page">
 
-    <header>
+    <!-- TOP BAR -->
+    <header class="topbar">
 
-        <button
-            class="back"
-            onclick="window.location.href='{{ url_for('home') }}'"
-        >
-            ←
-        </button>
+        <div class="brand">
+            <div class="brand-mark">DZ</div>
 
-        <div class="header-title">
-            <h1>حسابي 👤</h1>
-            <p>إدارة حسابك في DZ MARKET</p>
+            <div class="brand-text">
+                <h1>حسابي</h1>
+                <span>DZ MARKET</span>
+            </div>
+        </div>
+
+        <div class="top-actions">
+            <button
+                class="icon-btn"
+                type="button"
+                onclick="toggleTheme()"
+                title="تغيير المظهر"
+                aria-label="تغيير المظهر">
+                ◐
+            </button>
+
+            <a
+                href="{{ url_for('auth.index') }}"
+                class="icon-btn"
+                title="الرئيسية"
+                aria-label="الرئيسية">
+                ⌂
+            </a>
         </div>
 
     </header>
 
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-        {% for category, message in messages %}
-            <div class="flash">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endwith %}
-
-
     <!-- PROFILE -->
-
     <section class="profile-card">
 
-        <div class="avatar">
-            {% if user and user['avatar'] %}
+        <div class="profile-content">
+
+            {% if user and user.avatar %}
+
                 <img
-                    src="{{ user['avatar'] }}"
+                    src="{{ user.avatar }}"
                     alt="الصورة الشخصية"
-                    style="width:100%;height:100%;object-fit:cover;border-radius:50%;"
-                >
+                    class="avatar">
+
             {% else %}
-                👤
+
+                <div class="avatar avatar-placeholder">
+                    {{ (user.full_name if user and user.full_name else 'D')[0]|upper }}
+                </div>
+
             {% endif %}
-        </div>
-
-        <div class="profile-info">
-
-            <h2>
-                {{ user['full_name'] if user else 'مستخدم DZ MARKET' }}
-            </h2>
-
-            <p>
-                {{ user['email'] if user else '' }}
-            </p>
-
-            <span class="role">
-                {% if user and user['role'] == 'seller' %}
-                    🏪 بائع
-                {% else %}
-                    🛍️ مشتري
-                {% endif %}
-            </span>
-
-        </div>
-
-    </section>
 
 
-    <!-- SHOPPING -->
+            <div class="profile-info">
 
-    <section class="section">
+                <h2>
+                    {{ user.full_name if user and user.full_name else 'مستخدم DZ MARKET' }}
+                </h2>
 
-        <div class="section-title">
-            التسوق
-        </div>
-
-        <div class="card">
-
-            <button
-                class="item"
-                onclick="showMessage('📦 صفحة طلباتي قادمة')"
-            >
-
-                <div class="icon">
-                    📦
+                <div class="profile-email">
+                    {{ user.email if user else '' }}
                 </div>
 
-                <div class="item-content">
-                    <strong>طلباتي</strong>
-                    <small>
-                        تابع حالة طلباتك من التحضير حتى التسليم
-                    </small>
+                <div class="role-badge">
+
+                    {% if user and user.role == 'seller' %}
+                        🏪 بائع
+                    {% elif user and user.role == 'admin' %}
+                        🛡️ مدير
+                    {% else %}
+                        🛍️ مشتري
+                    {% endif %}
+
                 </div>
 
-                <div class="arrow">‹</div>
-
-            </button>
-
-
-            <button
-                class="item"
-                onclick="showMessage('❤️ صفحة المفضلة قادمة')"
-            >
-
-                <div class="icon">
-                    ❤️
-                </div>
-
-                <div class="item-content">
-                    <strong>المفضلة</strong>
-                    <small>
-                        المنتجات والمتاجر التي أعجبتك
-                    </small>
-                </div>
-
-                <div class="arrow">‹</div>
-
-            </button>
-
-
-            <button
-                class="item"
-                onclick="showMessage('🎟️ بطاقات الخصم والمكافآت قادمة')"
-            >
-
-                <div class="icon">
-                    🎟️
-                </div>
-
-                <div class="item-content">
-                    <strong>بطاقاتي ومكافآتي</strong>
-                    <small>
-                        الخصومات، الهدايا، ومكافآت الطلبات
-                    </small>
-                </div>
-
-                <div class="arrow">‹</div>
-
-            </button>
+            </div>
 
         </div>
 
     </section>
 
 
-    <!-- SETTINGS -->
+    <!-- STATS -->
+    <section class="stats">
 
-    <section class="section">
-
-        <div class="section-title">
-            الحساب والإعدادات
+        <div class="stat">
+            <div class="stat-number">
+                {{ orders_count|default(0) }}
+            </div>
+            <div class="stat-label">
+                الطلبات
+            </div>
         </div>
 
-        <div class="card">
+        <div class="stat">
+            <div class="stat-number">
+                {{ favorites_count|default(0) }}
+            </div>
+            <div class="stat-label">
+                المفضلة
+            </div>
+        </div>
 
-            <button
-                class="item"
-                onclick="showMessage('⚙️ إعدادات الحساب قادمة')"
-            >
-
-                <div class="icon">
-                    ⚙️
-                </div>
-
-                <div class="item-content">
-                    <strong>الإعدادات</strong>
-                    <small>
-                        المعلومات الشخصية والتفضيلات
-                    </small>
-                </div>
-
-                <div class="arrow">‹</div>
-
-            </button>
-
-
-            <button
-                class="item"
-                onclick="window.location.href='{{ url_for('auth.chat_settings') }}'"
-            >
-
-                <div class="icon">
-                    🎙️
-                </div>
-
-                <div class="item-content">
-                    <strong>إعدادات الدردشة</strong>
-                    <small>
-                        الصوت، اللغة، وأسلوب الدردشة
-                    </small>
-                </div>
-
-                <div class="arrow">‹</div>
-
-            </button>
-
-
-            <button
-                class="item"
-                onclick="toggleDarkMode()"
-            >
-
-                <div class="icon">
-                    🌙
-                </div>
-
-                <div class="item-content">
-                    <strong>الوضع الليلي</strong>
-                    <small>
-                        تغيير مظهر التطبيق
-                    </small>
-                </div>
-
-                <div class="arrow">‹</div>
-
-            </button>
-
-
-            <button
-                class="item"
-                onclick="showMessage('🌐 إعدادات اللغة قادمة')"
-            >
-
-                <div class="icon">
-                    🌐
-                </div>
-
-                <div class="item-content">
-                    <strong>اللغة</strong>
-                    <small>
-                        العربية، الدارجة، Français، English
-                    </small>
-                </div>
-
-                <div class="arrow">‹</div>
-
-            </button>
-
+        <div class="stat">
+            <div class="stat-number">
+                {{ cards_count|default(0) }}
+            </div>
+            <div class="stat-label">
+                المكافآت
+            </div>
         </div>
 
     </section>
 
 
-    <!-- HELP -->
+    <!-- ACCOUNT -->
+    <div class="section-title">
+        <h3>إدارة الحساب</h3>
+        <span>ملفك وإعداداتك</span>
+    </div>
 
-    <section class="section">
+    <div class="menu">
 
-        <div class="section-title">
-            المساعدة والأمان
-        </div>
+        <a
+            href="{{ url_for('auth.account') }}"
+            class="menu-item">
 
-        <div class="card">
+            <div class="menu-icon">👤</div>
 
-            <button
-                class="item"
-                onclick="showMessage('🆘 مركز المساعدة قادم')"
-            >
+            <div class="menu-text">
+                <strong>الملف الشخصي</strong>
+                <span>تعديل معلوماتك الشخصية وبيانات الحساب</span>
+            </div>
 
-                <div class="icon">
-                    🆘
-                </div>
+            <div class="arrow">‹</div>
 
-                <div class="item-content">
-                    <strong>طلب المساعدة</strong>
-                    <small>
-                        تحتاج مساعدة؟ نحن هنا
-                    </small>
-                </div>
-
-                <div class="arrow">‹</div>
-
-            </button>
+        </a>
 
 
-            <button
-                class="item"
-                onclick="showMessage('📢 مركز الشكاوى قادم')"
-            >
+        <a
+            href="{{ url_for('auth.orders') }}"
+            class="menu-item">
 
-                <div class="icon">
-                    📢
-                </div>
+            <div class="menu-icon">📦</div>
 
-                <div class="item-content">
-                    <strong>تقديم شكوى</strong>
-                    <small>
-                        أرسل مشكلة أو بلّغ عن طلب
-                    </small>
-                </div>
+            <div class="menu-text">
+                <strong>طلباتي</strong>
+                <span>تابع حالة الطلبات والطلبات السابقة</span>
+            </div>
 
-                <div class="arrow">‹</div>
+            <div class="arrow">‹</div>
 
-            </button>
+        </a>
 
 
-            <button
-                class="item"
-                onclick="showMessage('🔒 إعدادات الخصوصية والأمان قادمة')"
-            >
+        <a
+            href="{{ url_for('auth.favorites') }}"
+            class="menu-item">
 
-                <div class="icon">
-                    🔒
-                </div>
+            <div class="menu-icon">♡</div>
 
-                <div class="item-content">
-                    <strong>الخصوصية والأمان</strong>
-                    <small>
-                        حماية معلوماتك وحسابك
-                    </small>
-                </div>
+            <div class="menu-text">
+                <strong>المفضلة</strong>
+                <span>المنتجات والمتاجر التي حفظتها</span>
+            </div>
 
-                <div class="arrow">‹</div>
+            <div class="arrow">‹</div>
 
-            </button>
-
-        </div>
-
-    </section>
+        </a>
 
 
-    <!-- LOGOUT -->
+        <a
+            href="{{ url_for('auth.cards') }}"
+            class="menu-item">
 
-    {% if user %}
+            <div class="menu-icon">🎁</div>
 
-    <section class="section">
+            <div class="menu-text">
+                <strong>بطاقاتي ومكافآتي</strong>
+                <span>الكوبونات والمكافآت الخاصة بك</span>
+            </div>
 
-        <a href="{{ url_for('auth.logout') }}">
-            <button class="logout">
-                🚪 تسجيل الخروج
-            </button>
+            <div class="arrow">‹</div>
+
+        </a>
+
+
+        <a
+            href="{{ url_for('auth.referral') }}"
+            class="menu-item">
+
+            <div class="menu-icon">🤝</div>
+
+            <div class="menu-text">
+                <strong>دعوة الأصدقاء</strong>
+                <span>شارك DZ MARKET واحصل على مكافآت</span>
+            </div>
+
+            <div class="arrow">‹</div>
+
+        </a>
+
+
+        <a
+            href="{{ url_for('auth.chat_settings') }}"
+            class="menu-item">
+
+            <div class="menu-icon">💬</div>
+
+            <div class="menu-text">
+                <strong>إعدادات المحادثة</strong>
+                <span>اللغة ونمط المساعد وإعدادات الصوت</span>
+            </div>
+
+            <div class="arrow">‹</div>
+
+        </a>
+
+    </div>
+
+
+    <!-- SELLER -->
+    {% if user and user.role == 'seller' %}
+
+    <section class="seller-box">
+
+        <h3>🏪 مساحة البائع</h3>
+
+        <p>
+            عندك متجر في DZ MARKET؟
+            ادخل إلى لوحة البائع لإدارة المنتجات،
+            الطلبات والمتجر والإحصائيات.
+        </p>
+
+        <a
+            href="{{ url_for('auth.seller_dashboard') }}"
+            class="seller-btn">
+            فتح لوحة البائع
         </a>
 
     </section>
 
     {% endif %}
 
+
+    <!-- ADMIN -->
+    {% if user and user.role == 'admin' %}
+
+    <section class="seller-box">
+
+        <h3>🛡️ لوحة الإدارة</h3>
+
+        <p>
+            هذه المساحة مخصصة لإدارة ومراقبة منصة DZ MARKET.
+        </p>
+
+        <a
+            href="{{ url_for('auth.admin_dashboard') }}"
+            class="seller-btn">
+            فتح لوحة الإدارة
+        </a>
+
+    </section>
+
+    {% endif %}
+
+
+    <!-- LOGOUT -->
+    <button
+        type="button"
+        class="logout"
+        onclick="logoutUser()">
+        تسجيل الخروج
+    </button>
+
+
+    <div class="footer">
+        <strong>DZ MARKET</strong><br>
+        سوق جزائري يجمع البائع والمشتري في مكان واحد 🇩🇿
+    </div>
+
 </div>
 
 
-<!-- BOTTOM NAV -->
-
-<nav class="bottom-nav">
-
-    <div class="nav-inner">
-
-        <button
-            class="nav-item"
-            onclick="window.location.href='{{ url_for('home') }}'"
-        >
-            <span>🏠</span>
-            الرئيسية
-        </button>
-
-        <button
-            class="nav-item"
-            onclick="showMessage('◈ الاستكشاف قريبًا')"
-        >
-            <span>◈</span>
-            الاستكشاف
-        </button>
-
-        <button
-            class="nav-item"
-            onclick="showMessage('🛒 السلة قريبًا')"
-        >
-            <span>🛒</span>
-            السلة
-        </button>
-
-        <button
-            class="nav-item"
-            onclick="window.location.href='{{ url_for('auth.messages') }}'"
-        >
-            <span>💬</span>
-            الرسائل
-        </button>
-
-        <button
-            class="nav-item"
-            onclick="showMessage('🎟️ بطاقات الخصم والمكافآت قريبًا')"
-        >
-            <span>🎟️</span>
-            بطاقاتي
-        </button>
-
-    </div>
-
-</nav>
-
-
 <script>
+    function applyTheme() {
+        const theme = localStorage.getItem("dzmarket-theme");
 
-function showMessage(message) {
-    alert(message);
-}
-
-
-function toggleDarkMode() {
-
-    const dark =
-        document.body.classList.toggle("dark");
-
-    localStorage.setItem(
-        "dzmarket_dark",
-        dark ? "1" : "0"
-    );
-
-    if (dark) {
-
-        document.body.style.background = "#160c11";
-        document.body.style.color = "#fff";
-
-    } else {
-
-        document.body.style.background = "";
-        document.body.style.color = "";
+        if (theme === "dark") {
+            document.body.classList.add("dark-mode");
+        } else {
+            document.body.classList.remove("dark-mode");
+        }
     }
-}
 
+    function toggleTheme() {
+        const isDark = document.body.classList.toggle("dark-mode");
 
-if (
-    localStorage.getItem("dzmarket_dark") === "1"
-) {
-    toggleDarkMode();
-}
+        localStorage.setItem(
+            "dzmarket-theme",
+            isDark ? "dark" : "light"
+        );
+    }
 
+    function logoutUser() {
+        if (confirm("هل تريد تسجيل الخروج من حسابك؟")) {
+            window.location.href = "{{ url_for('auth.logout') }}";
+        }
+    }
+
+    applyTheme();
 </script>
 
 </body>
