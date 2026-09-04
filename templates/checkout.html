@@ -1,692 +1,729 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>إتمام الطلب | DZ MARKET</title>
+    <title>إتمام الطلب | VYORA STORE</title>
 
-    <style>
-        :root {
-            --primary:#800020;
-            --primary-dark:#5a0016;
-            --primary-light:#a52a4a;
-            --gold:#c9a227;
-            --gold-light:#e4c766;
-
-            --background:#f7f3f4;
-            --surface:#fff;
-            --surface-soft:#fcf9fa;
-
-            --text:#241d20;
-            --muted:#756b70;
-            --border:#eadfe3;
-
-            --danger:#b3261e;
-            --success:#2e8b57;
-
-            --shadow-sm:0 5px 18px rgba(70,0,25,.07);
-            --shadow:0 12px 35px rgba(70,0,25,.11);
-
-            --radius:20px;
-            --radius-lg:28px;
-        }
-
-        body.dark-mode {
-            --background:#12090c;
-            --surface:#1d1014;
-            --surface-soft:#25151a;
-            --text:#f7eef1;
-            --muted:#bcaeb3;
-            --border:#3a252b;
-
-            background:
-                radial-gradient(circle at 10% 10%,rgba(128,0,32,.22),transparent 28%),
-                radial-gradient(circle at 90% 80%,rgba(201,162,39,.08),transparent 25%),
-                var(--background);
-        }
-
-        * {
-            box-sizing:border-box;
-            margin:0;
-            padding:0;
-        }
-
-        body {
-            font-family:system-ui,-apple-system,BlinkMacSystemFont,
-            "Segoe UI",Tahoma,Arial,sans-serif;
-
-            background:
-                radial-gradient(circle at 5% 10%,rgba(128,0,32,.07),transparent 25%),
-                radial-gradient(circle at 95% 85%,rgba(201,162,39,.07),transparent 25%),
-                var(--background);
-
-            color:var(--text);
-            min-height:100vh;
-        }
-
-        button,
-        input,
-        textarea {
-            font:inherit;
-        }
-
-        .page {
-            width:min(1000px,94%);
-            margin:auto;
-            padding:18px 0 45px;
-        }
-
-        .topbar {
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            gap:12px;
-            margin-bottom:20px;
-        }
-
-        .title {
-            display:flex;
-            align-items:center;
-            gap:11px;
-        }
-
-        .back {
-            width:42px;
-            height:42px;
-            display:grid;
-            place-items:center;
-
-            background:var(--surface);
-            border:1px solid var(--border);
-            border-radius:14px;
-
-            box-shadow:var(--shadow-sm);
-        }
-
-        .title h1 {
-            font-size:21px;
-            font-weight:900;
-        }
-
-        .title span {
-            display:block;
-            color:var(--muted);
-            font-size:11px;
-            margin-top:2px;
-        }
-
-        .theme {
-            width:42px;
-            height:42px;
-
-            border:1px solid var(--border);
-            border-radius:14px;
-
-            background:var(--surface);
-            color:var(--text);
-
-            cursor:pointer;
-        }
-
-        .layout {
-            display:grid;
-            grid-template-columns:1fr 340px;
-            gap:18px;
-            align-items:start;
-        }
-
-        .card {
-            background:var(--surface);
-            border:1px solid var(--border);
-            border-radius:var(--radius);
-            padding:20px;
-            box-shadow:var(--shadow-sm);
-        }
-
-        .card + .card {
-            margin-top:14px;
-        }
-
-        .card h2 {
-            font-size:16px;
-            margin-bottom:15px;
-            font-weight:900;
-        }
-
-        /* FORM */
-
-        .field {
-            margin-bottom:14px;
-        }
-
-        .field label {
-            display:block;
-            font-size:12px;
-            font-weight:800;
-            margin-bottom:7px;
-        }
-
-        .field input,
-        .field textarea {
-            width:100%;
-            border:1px solid var(--border);
-            border-radius:13px;
-            background:var(--surface-soft);
-            color:var(--text);
-            padding:12px 13px;
-            outline:none;
-            transition:.2s;
-        }
-
-        .field input:focus,
-        .field textarea:focus {
-            border-color:var(--primary);
-            box-shadow:0 0 0 3px rgba(128,0,32,.08);
-        }
-
-        .field textarea {
-            min-height:100px;
-            resize:vertical;
-        }
-
-        .required {
-            color:var(--danger);
-        }
-
-        .hint {
-            color:var(--muted);
-            font-size:10px;
-            margin-top:5px;
-            line-height:1.6;
-        }
-
-        .security {
-            display:flex;
-            gap:10px;
-            padding:12px;
-            border-radius:14px;
-            background:rgba(46,139,87,.07);
-            color:var(--success);
-            font-size:11px;
-            line-height:1.6;
-        }
-
-        /* SUMMARY */
-
-        .summary {
-            position:sticky;
-            top:15px;
-        }
-
-        .product {
-            display:flex;
-            align-items:center;
-            gap:10px;
-            padding:10px 0;
-            border-bottom:1px solid var(--border);
-        }
-
-        .product:last-child {
-            border-bottom:0;
-        }
-
-        .product-image {
-            width:58px;
-            height:58px;
-            border-radius:13px;
-            object-fit:cover;
-            background:var(--surface-soft);
-            border:1px solid var(--border);
-            flex:0 0 58px;
-        }
-
-        .product-info {
-            flex:1;
-            min-width:0;
-        }
-
-        .product-name {
-            font-size:12px;
-            font-weight:800;
-            white-space:nowrap;
-            overflow:hidden;
-            text-overflow:ellipsis;
-        }
-
-        .product-meta {
-            color:var(--muted);
-            font-size:10px;
-            margin-top:3px;
-        }
-
-        .product-price {
-            color:var(--primary);
-            font-weight:900;
-            font-size:12px;
-            white-space:nowrap;
-        }
-
-        body.dark-mode .product-price {
-            color:var(--gold-light);
-        }
-
-        .total {
-            display:flex;
-            justify-content:space-between;
-            align-items:center;
-
-            margin-top:15px;
-            padding-top:15px;
-
-            border-top:1px solid var(--border);
-        }
-
-        .total span {
-            color:var(--muted);
-            font-size:13px;
-        }
-
-        .total strong {
-            color:var(--primary);
-            font-size:20px;
-        }
-
-        body.dark-mode .total strong {
-            color:var(--gold-light);
-        }
-
-        .confirm {
-            width:100%;
-            margin-top:16px;
-            padding:14px;
-
-            border:0;
-            border-radius:15px;
-
-            background:linear-gradient(
-                135deg,
-                var(--primary),
-                var(--primary-light)
-            );
-
-            color:white;
-            font-weight:900;
-            cursor:pointer;
-        }
-
-        .back-cart {
-            display:block;
-            text-align:center;
-            margin-top:10px;
-            padding:11px;
-
-            border:1px solid var(--border);
-            border-radius:13px;
-
-            color:var(--muted);
-            font-size:12px;
-        }
-
-        .empty {
-            text-align:center;
-            padding:45px 20px;
-            background:var(--surface);
-            border:1px solid var(--border);
-            border-radius:var(--radius-lg);
-        }
-
-        .empty-icon {
-            font-size:40px;
-            margin-bottom:12px;
-        }
-
-        .empty h2 {
-            font-size:19px;
-            margin-bottom:7px;
-        }
-
-        .empty p {
-            color:var(--muted);
-            font-size:12px;
-            margin-bottom:17px;
-        }
-
-        .home-btn {
-            display:inline-block;
-            padding:12px 18px;
-            border-radius:14px;
-
-            color:white;
-            background:linear-gradient(
-                135deg,
-                var(--primary),
-                var(--primary-light)
-            );
-
-            font-weight:800;
-        }
-
-        @media(max-width:760px) {
-            .layout {
-                grid-template-columns:1fr;
-            }
-
-            .summary {
-                position:static;
-            }
-        }
-    </style>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
 
-<div class="page">
+<div class="page-shell checkout-page">
 
-    <header class="topbar">
+    <!-- =========================
+         HEADER
+    ========================== -->
+    <header class="top-header">
 
-        <div class="title">
+        <button class="icon-button"
+                type="button"
+                onclick="goBack()"
+                aria-label="رجوع">
+            <span class="ui-icon">‹</span>
+        </button>
 
-            <a
-                href="{{ url_for('auth.cart') }}"
-                class="back">
-                →
-            </a>
-
-            <div>
-                <h1>إتمام الطلب</h1>
-                <span>DZ MARKET 🇩🇿</span>
-            </div>
-
+        <div class="brand-mini">
+            <strong>VYORA</strong>
+            <span>STORE</span>
         </div>
 
-        <button
-            class="theme"
-            type="button"
-            onclick="toggleTheme()">
-            ◐
-        </button>
+        <div class="header-spacer"></div>
 
     </header>
 
 
-    {% if items %}
+    <main>
 
-    <div class="layout">
+        <!-- =========================
+             PAGE TITLE
+        ========================== -->
 
-        <!-- DELIVERY FORM -->
+        <section class="page-heading">
 
-        <section>
+            <div>
 
-            <form
-                method="POST"
-                action="{{ url_for('auth.checkout') }}"
-                id="checkoutForm">
+                <span class="eyebrow">
+                    VYORA STORE
+                </span>
 
-                <div class="card">
+                <h1>
+                    إتمام الطلب
+                </h1>
 
-                    <h2>📍 معلومات التوصيل</h2>
+                <p>
+                    راجع معلوماتك قبل تأكيد الطلب.
+                </p>
 
-                    <div class="field">
-
-                        <label>
-                            رقم الهاتف
-                            <span class="required">*</span>
-                        </label>
-
-                        <input
-                            type="tel"
-                            name="delivery_phone"
-                            value="{{ user.phone if user else '' }}"
-                            placeholder="05 XX XX XX XX"
-                            required>
-
-                        <div class="hint">
-                            أدخل رقم يمكن لشركة التوصيل التواصل معك من خلاله.
-                        </div>
-
-                    </div>
-
-
-                    <div class="field">
-
-                        <label>
-                            الولاية
-                            <span class="required">*</span>
-                        </label>
-
-                        <input
-                            type="text"
-                            name="delivery_wilaya"
-                            value="{{ user.wilaya if user else '' }}"
-                            placeholder="مثال: وهران"
-                            required>
-
-                    </div>
-
-
-                    <div class="field">
-
-                        <label>
-                            عنوان التوصيل
-                            <span class="required">*</span>
-                        </label>
-
-                        <textarea
-                            name="delivery_address"
-                            placeholder="البلدية، الحي، الشارع، رقم المنزل..."
-                            required></textarea>
-
-                        <div class="hint">
-                            اكتب العنوان بشكل واضح لتسهيل وصول الطلب.
-                        </div>
-
-                    </div>
-
-                </div>
-
-
-                <div class="card">
-
-                    <h2>🛡️ قبل تأكيد الطلب</h2>
-
-                    <div class="security">
-                        🔒
-                        <span>
-                            راجع معلومات التوصيل والمنتجات والكمية جيدا
-                            قبل تأكيد الطلب.
-                        </span>
-                    </div>
-
-                </div>
-
-
-                <button
-                    type="submit"
-                    class="confirm"
-                    id="confirmBtn">
-                    تأكيد الطلب
-                </button>
-
-            </form>
+            </div>
 
         </section>
 
 
-        <!-- SUMMARY -->
+        <!-- =========================
+             CHECKOUT STEPS
+        ========================== -->
 
-        <aside class="summary">
+        <section class="checkout-steps">
 
-            <div class="card">
+            <div class="checkout-step active">
+                <span>01</span>
+                <strong>المعلومات</strong>
+            </div>
 
-                <h2>🛒 ملخص الطلب</h2>
+            <div class="checkout-step">
+                <span>02</span>
+                <strong>المراجعة</strong>
+            </div>
 
-                {% for item in items %}
+            <div class="checkout-step">
+                <span>03</span>
+                <strong>التأكيد</strong>
+            </div>
 
-                <div class="product">
-
-                    {% set image_list = (item.images or '').split(',') %}
-
-                    {% if image_list and image_list[0].strip() %}
-
-                        <img
-                            src="{{ image_list[0].strip() }}"
-                            class="product-image"
-                            alt="{{ item.name }}">
-
-                    {% else %}
-
-                        <div class="product-image"
-                             style="display:grid;place-items:center;">
-                            🛍️
-                        </div>
-
-                    {% endif %}
+        </section>
 
 
-                    <div class="product-info">
+        <!-- =========================
+             DELIVERY INFORMATION
+        ========================== -->
 
-                        <div class="product-name">
-                            {{ item.name }}
-                        </div>
+        <section class="checkout-card">
 
-                        <div class="product-meta">
+            <div class="section-title-row">
 
-                            الكمية: {{ item.quantity }}
-
-                            ·
-
-                            {% if item.purchase_mode == 'made_to_order' %}
-                                يُحضّر عند الطلب
-                            {% else %}
-                                جاهز
-                            {% endif %}
-
-                        </div>
-
-                    </div>
-
-
-                    {% set unit_price = item.price - (item.discount or 0) %}
-
-                    <div class="product-price">
-                        {{ "{:,.0f}".format(unit_price * item.quantity) }} دج
-                    </div>
-
-                </div>
-
-                {% endfor %}
-
-
-                <div class="total">
-
-                    <span>
-                        المجموع النهائي
+                <div>
+                    <span class="eyebrow">
+                        DELIVERY
                     </span>
 
-                    <strong>
-                        {{ "{:,.0f}".format(total|default(0)) }} دج
-                    </strong>
-
+                    <h2>
+                        معلومات التوصيل
+                    </h2>
                 </div>
-
-
-                <button
-                    type="submit"
-                    form="checkoutForm"
-                    class="confirm">
-                    تأكيد وإرسال الطلب
-                </button>
-
-
-                <a
-                    href="{{ url_for('auth.cart') }}"
-                    class="back-cart">
-                    العودة إلى السلة
-                </a>
 
             </div>
 
-        </aside>
 
-    </div>
+            <div class="form-group">
+
+                <label for="fullName">
+                    الاسم الكامل
+                </label>
+
+                <input
+                    id="fullName"
+                    class="form-control"
+                    type="text"
+                    autocomplete="name"
+                    placeholder="أدخل الاسم الكامل">
+
+            </div>
 
 
-    {% else %}
+            <div class="form-group">
 
-    <section class="empty">
+                <label for="phone">
+                    رقم الهاتف
+                </label>
 
-        <div class="empty-icon">
-            🛒
-        </div>
+                <input
+                    id="phone"
+                    class="form-control"
+                    type="tel"
+                    inputmode="tel"
+                    autocomplete="tel"
+                    placeholder="أدخل رقم الهاتف">
 
-        <h2>
-            السلة فارغة
-        </h2>
+            </div>
 
-        <p>
-            لا توجد منتجات لإتمام الطلب حاليا.
-        </p>
 
-        <a
-            href="{{ url_for('auth.index') }}"
-            class="home-btn">
-            العودة للتسوق
+            <div class="form-group">
+
+                <label for="wilaya">
+                    الولاية
+                </label>
+
+                <select
+                    id="wilaya"
+                    class="form-control">
+
+                    <option value="">
+                        اختر الولاية
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="city">
+                    البلدية / المنطقة
+                </label>
+
+                <input
+                    id="city"
+                    class="form-control"
+                    type="text"
+                    placeholder="أدخل البلدية أو المنطقة">
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="address">
+                    عنوان التوصيل
+                </label>
+
+                <textarea
+                    id="address"
+                    class="form-control"
+                    rows="4"
+                    placeholder="اكتب العنوان بالتفصيل"></textarea>
+
+            </div>
+
+
+            <div class="form-group">
+
+                <label for="deliveryNote">
+                    ملاحظة للتوصيل
+                    <span class="optional">
+                        اختياري
+                    </span>
+                </label>
+
+                <textarea
+                    id="deliveryNote"
+                    class="form-control"
+                    rows="3"
+                    placeholder="أي معلومات تساعد في الوصول إليك"></textarea>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             PAYMENT
+        ========================== -->
+
+        <section class="checkout-card">
+
+            <div class="section-title-row">
+
+                <div>
+
+                    <span class="eyebrow">
+                        PAYMENT
+                    </span>
+
+                    <h2>
+                        طريقة الدفع
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="payment-options">
+
+                <label class="payment-option">
+
+                    <input
+                        type="radio"
+                        name="payment"
+                        value="cash_on_delivery"
+                        checked>
+
+                    <div class="payment-option-content">
+
+                        <div>
+
+                            <strong>
+                                الدفع عند الاستلام
+                            </strong>
+
+                            <span>
+                                الدفع مباشرة عند استلام الطلب.
+                            </span>
+
+                        </div>
+
+                        <span class="radio-indicator"></span>
+
+                    </div>
+
+                </label>
+
+
+                <label class="payment-option disabled">
+
+                    <input
+                        type="radio"
+                        name="payment"
+                        value="online"
+                        disabled>
+
+                    <div class="payment-option-content">
+
+                        <div>
+
+                            <strong>
+                                الدفع الإلكتروني
+                            </strong>
+
+                            <span>
+                                سيتوفر لاحقاً بعد تفعيل بوابة الدفع.
+                            </span>
+
+                        </div>
+
+                        <span class="radio-indicator"></span>
+
+                    </div>
+
+                </label>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             ORDER NOTE
+        ========================== -->
+
+        <section class="checkout-card">
+
+            <div class="section-title-row">
+
+                <h2>
+                    ملاحظة للطلب
+                </h2>
+
+                <span class="optional">
+                    اختياري
+                </span>
+
+            </div>
+
+            <textarea
+                id="orderNote"
+                class="form-control"
+                rows="4"
+                placeholder="اكتب أي تفاصيل إضافية للبائع"></textarea>
+
+        </section>
+
+
+        <!-- =========================
+             ORDER ITEMS
+        ========================== -->
+
+        <section class="checkout-card">
+
+            <div class="section-title-row">
+
+                <h2>
+                    المنتجات
+                </h2>
+
+                <span>
+                    {{ cart|length if cart else 0 }}
+                </span>
+
+            </div>
+
+
+            {% if cart %}
+
+            <div class="checkout-items">
+
+                {% for item in cart %}
+
+                <article class="checkout-item">
+
+                    <div class="checkout-item-image">
+
+                        {% if item.image %}
+
+                        <img
+                            src="{{ item.image }}"
+                            alt="{{ item.name|default('المنتج') }}">
+
+                        {% else %}
+
+                        <div class="media-placeholder">
+                            <span>V</span>
+                        </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="checkout-item-info">
+
+                        <span class="product-category">
+                            {{ item.category|default('منتج') }}
+                        </span>
+
+                        <h3>
+                            {{ item.name|default('اسم المنتج') }}
+                        </h3>
+
+                        {% if item.variant %}
+
+                        <p>
+                            {{ item.variant }}
+                        </p>
+
+                        {% endif %}
+
+                        <div class="checkout-item-meta">
+
+                            <span>
+                                الكمية:
+                                {{ item.quantity|default(1) }}
+                            </span>
+
+                            <strong>
+                                {{ item.price|default('—') }} دج
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </article>
+
+                {% endfor %}
+
+            </div>
+
+            {% else %}
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+                    V
+                </div>
+
+                <h3>
+                    لا توجد منتجات
+                </h3>
+
+                <p>
+                    السلة فارغة حالياً.
+                </p>
+
+            </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- =========================
+             PRICE SUMMARY
+        ========================== -->
+
+        <section class="checkout-card order-summary">
+
+            <div class="section-title-row">
+
+                <h2>
+                    ملخص الدفع
+                </h2>
+
+            </div>
+
+
+            <div class="summary-row">
+
+                <span>
+                    مجموع المنتجات
+                </span>
+
+                <strong id="subtotal">
+                    —
+                </strong>
+
+                <span>
+                    دج
+                </span>
+
+            </div>
+
+
+            <div class="summary-row">
+
+                <span>
+                    رسوم التوصيل
+                </span>
+
+                <strong id="deliveryFee">
+                    —
+                </strong>
+
+                <span>
+                    دج
+                </span>
+
+            </div>
+
+
+            <div class="summary-divider"></div>
+
+
+            <div class="summary-total">
+
+                <span>
+                    الإجمالي
+                </span>
+
+                <strong id="grandTotal">
+                    —
+                </strong>
+
+                <span>
+                    دج
+                </span>
+
+            </div>
+
+
+            <div class="checkout-security-note">
+
+                <strong>
+                    مراجعة آمنة
+                </strong>
+
+                <p>
+                    يتم التحقق من السعر والكمية ورسوم التوصيل من الخادم
+                    قبل إنشاء الطلب النهائي.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             TERMS
+        ========================== -->
+
+        <section class="checkout-confirmation">
+
+            <label class="checkbox-row">
+
+                <input
+                    id="terms"
+                    type="checkbox">
+
+                <span>
+                    أؤكد أن معلومات التوصيل صحيحة وأوافق على شروط الطلب.
+                </span>
+
+            </label>
+
+        </section>
+
+
+        <!-- =========================
+             CONFIRM BUTTON
+        ========================== -->
+
+        <section class="checkout-action">
+
+            <button
+                id="confirmOrderButton"
+                class="primary-action"
+                type="button"
+                onclick="confirmOrder()">
+
+                تأكيد الطلب
+
+            </button>
+
+            <p class="checkout-action-note">
+                لن يتم إنشاء طلب حقيقي حتى يتم ربط هذه الصفحة بالنظام الخلفي.
+            </p>
+
+        </section>
+
+    </main>
+
+
+    <!-- =========================
+         BOTTOM NAV
+    ========================== -->
+
+    <nav class="bottom-nav">
+
+        <a href="/home" class="nav-item">
+            <span class="nav-icon">⌂</span>
+            <span>الرئيسية</span>
         </a>
 
-    </section>
+        <a href="/search" class="nav-item">
+            <span class="nav-icon">⌕</span>
+            <span>البحث</span>
+        </a>
 
-    {% endif %}
+        <a href="/favorites" class="nav-item">
+            <span class="nav-icon">♡</span>
+            <span>المفضلة</span>
+        </a>
+
+        <a href="/cart" class="nav-item active">
+            <span class="nav-icon">□</span>
+            <span>السلة</span>
+        </a>
+
+        <a href="/profile" class="nav-item">
+            <span class="nav-icon">○</span>
+            <span>حسابي</span>
+        </a>
+
+    </nav>
 
 </div>
 
 
 <script>
-    function applyTheme() {
 
-        const theme =
-            localStorage.getItem("dzmarket-theme");
+function goBack() {
+    window.history.back();
+}
 
-        if (theme === "dark") {
-            document.body.classList.add("dark-mode");
-        } else {
-            document.body.classList.remove("dark-mode");
-        }
+
+function validateCheckout() {
+
+    const fullName =
+        document.getElementById("fullName")?.value.trim();
+
+    const phone =
+        document.getElementById("phone")?.value.trim();
+
+    const wilaya =
+        document.getElementById("wilaya")?.value;
+
+    const city =
+        document.getElementById("city")?.value.trim();
+
+    const address =
+        document.getElementById("address")?.value.trim();
+
+    const terms =
+        document.getElementById("terms")?.checked;
+
+
+    if (!fullName) {
+        alert("يرجى إدخال الاسم الكامل.");
+        return false;
     }
 
 
-    function toggleTheme() {
+    if (!phone) {
+        alert("يرجى إدخال رقم الهاتف.");
+        return false;
+    }
 
-        const dark =
-            document.body.classList.toggle("dark-mode");
 
-        localStorage.setItem(
-            "dzmarket-theme",
-            dark ? "dark" : "light"
+    if (!wilaya) {
+        alert("يرجى اختيار الولاية.");
+        return false;
+    }
+
+
+    if (!city) {
+        alert("يرجى إدخال البلدية أو المنطقة.");
+        return false;
+    }
+
+
+    if (!address) {
+        alert("يرجى إدخال عنوان التوصيل.");
+        return false;
+    }
+
+
+    if (!terms) {
+        alert("يرجى تأكيد صحة المعلومات والموافقة على شروط الطلب.");
+        return false;
+    }
+
+
+    return true;
+}
+
+
+function confirmOrder() {
+
+    if (!validateCheckout()) {
+        return;
+    }
+
+
+    const button =
+        document.getElementById("confirmOrderButton");
+
+
+    if (button) {
+
+        button.disabled = true;
+
+        button.textContent =
+            "جارٍ التحقق...";
+
+    }
+
+
+    /*
+        لاحقاً:
+        سيتم إرسال البيانات إلى Flask API.
+
+        الخادم هو المسؤول عن:
+        - التحقق من المستخدم
+        - التحقق من السعر
+        - التحقق من المخزون
+        - التحقق من الكمية
+        - حساب التوصيل
+        - حساب الإجمالي
+        - إنشاء Order ID
+        - إنشاء سجل مالي
+        - تحديث حالة الطلب
+    */
+
+    setTimeout(() => {
+
+        alert(
+            "الواجهة جاهزة. سيتم ربط إنشاء الطلب الحقيقي بالنظام الخلفي في المرحلة التالية."
         );
-    }
 
+        if (button) {
 
-    document
-        .getElementById("checkoutForm")
-        ?.addEventListener("submit", function () {
+            button.disabled = false;
 
-            const button =
-                document.getElementById("confirmBtn");
+            button.textContent =
+                "تأكيد الطلب";
 
-            if (button) {
+        }
 
-                button.disabled = true;
+    }, 600);
 
-                button.textContent =
-                    "جاري تأكيد الطلب...";
+}
 
-            }
-
-        });
-
-
-    applyTheme();
 </script>
 
 </body>
