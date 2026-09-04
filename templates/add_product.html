@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>إضافة منتج | VYORA STORE</title>
+    <title>تفاصيل المنتج | VYORA STORE</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='style.css') }}">
@@ -13,538 +12,790 @@
 
 <body>
 
-<main class="seller-page">
+<div class="page-shell product-page">
 
-    <!-- HEADER -->
-    <header class="seller-header">
+    <!-- =========================
+         HEADER
+    ========================== -->
+    <header class="top-header">
 
-        <div class="brand">
+        <button class="icon-button"
+                type="button"
+                onclick="goBack()"
+                aria-label="رجوع">
+            <span class="ui-icon">‹</span>
+        </button>
 
-            <div class="brand-mark">V</div>
-
-            <div class="brand-name">
-                <strong>VYORA</strong>
-                <span>STORE</span>
-            </div>
-
+        <div class="brand-mini">
+            <strong>VYORA</strong>
+            <span>STORE</span>
         </div>
 
-        <button
-            type="button"
-            class="text-button"
-            onclick="goDashboard()">
-            لوحة التحكم
-        </button>
+        <div class="header-actions">
+
+            <button class="icon-button"
+                    type="button"
+                    onclick="toggleFavorite()"
+                    aria-label="المفضلة">
+                <span id="favoriteIcon" class="ui-icon">♡</span>
+            </button>
+
+            <button class="icon-button"
+                    type="button"
+                    onclick="openCart()"
+                    aria-label="السلة">
+                <span class="ui-icon">□</span>
+            </button>
+
+        </div>
 
     </header>
 
 
-    <!-- PAGE HEADING -->
-    <section class="seller-welcome">
+    <!-- =========================
+         PRODUCT MEDIA
+    ========================== -->
+    <main>
 
-        <span>إدارة المنتجات</span>
+        <section class="product-media-section">
 
-        <h1>
-            إضافة منتج جديد
-        </h1>
+            <div class="product-main-media">
 
-        <p>
-            أدخل معلومات المنتج واختر الطريقة التي تريد عرضه بها.
-        </p>
+                {% if product and product.image %}
+                    <img
+                        id="mainProductImage"
+                        src="{{ product.image }}"
+                        alt="{{ product.name|default('المنتج') }}">
+                {% else %}
+                    <div class="media-placeholder">
+                        <span>VYORA</span>
+                    </div>
+                {% endif %}
 
-    </section>
+                <button class="media-arrow media-arrow-right"
+                        type="button"
+                        onclick="previousImage()"
+                        aria-label="الصورة السابقة">
+                    ‹
+                </button>
 
+                <button class="media-arrow media-arrow-left"
+                        type="button"
+                        onclick="nextImage()"
+                        aria-label="الصورة التالية">
+                    ›
+                </button>
 
-    <!-- PRODUCT FORM -->
-    <section class="seller-card">
-
-        <form
-            class="seller-form"
-            onsubmit="saveProduct(event)">
-
-            <!-- PRODUCT NAME -->
-            <div class="form-group">
-
-                <label for="productName">
-                    اسم المنتج
-                </label>
-
-                <input
-                    id="productName"
-                    name="productName"
-                    type="text"
-                    placeholder="مثال: كيك مخصص"
-                    maxlength="120"
-                    required>
-
-            </div>
-
-
-            <!-- DESCRIPTION -->
-            <div class="form-group">
-
-                <label for="productDescription">
-                    وصف المنتج
-                </label>
-
-                <textarea
-                    id="productDescription"
-                    name="productDescription"
-                    rows="5"
-                    maxlength="2000"
-                    placeholder="اكتب تفاصيل المنتج، المكونات، المقاسات أو أي معلومات مهمة..."
-                    required></textarea>
+                <div class="media-counter">
+                    <span id="currentImage">1</span>
+                    <span>/</span>
+                    <span id="totalImages">
+                        {{ product.images|length if product and product.images else 1 }}
+                    </span>
+                </div>
 
             </div>
 
 
-            <!-- CATEGORY -->
-            <div class="form-group">
+            <!-- الصور المصغرة -->
+            <div class="product-thumbnails">
 
-                <label for="productCategory">
-                    التصنيف
-                </label>
+                {% if product and product.images %}
 
-                <select
-                    id="productCategory"
-                    name="productCategory"
-                    required>
+                    {% for image in product.images %}
 
-                    <option value="">
-                        اختر التصنيف
-                    </option>
+                    <button class="thumbnail {% if loop.first %}active{% endif %}"
+                            type="button"
+                            onclick="selectImage({{ loop.index0 }})">
 
-                    <option value="fashion">
-                        الأزياء
-                    </option>
+                        <img src="{{ image }}"
+                             alt="صورة المنتج {{ loop.index }}">
 
-                    <option value="beauty">
-                        الجمال
-                    </option>
+                    </button>
 
-                    <option value="home">
-                        المنزل
-                    </option>
+                    {% endfor %}
 
-                    <option value="technology">
-                        التقنية
-                    </option>
+                {% else %}
 
-                    <option value="gifts">
-                        الهدايا
-                    </option>
+                    <button class="thumbnail active"
+                            type="button">
+                        <span>V</span>
+                    </button>
 
-                    <option value="food">
-                        الأغذية
-                    </option>
-
-                    <option value="handmade">
-                        منتجات يدوية
-                    </option>
-
-                    <option value="other">
-                        أخرى
-                    </option>
-
-                </select>
+                {% endif %}
 
             </div>
 
 
-            <!-- PRICE -->
-            <div class="form-row">
+            <!-- فيديو المنتج -->
+            <div class="product-video-card">
 
-                <div class="form-group">
+                <div class="video-header">
+                    <div>
+                        <strong>فيديو المنتج</strong>
+                        <span>10–15 ثانية</span>
+                    </div>
+                </div>
 
-                    <label for="productPrice">
-                        السعر
-                    </label>
+                {% if product and product.video %}
 
-                    <input
-                        id="productPrice"
-                        name="productPrice"
-                        type="number"
-                        min="0"
-                        step="1"
-                        placeholder="مثال: 2500"
-                        required>
+                    <video
+                        controls
+                        playsinline
+                        preload="metadata"
+                        class="product-video">
+
+                        <source src="{{ product.video }}">
+                    </video>
+
+                {% else %}
+
+                    <div class="video-placeholder">
+                        <span class="video-play">▶</span>
+                        <p>لا يوجد فيديو لهذا المنتج</p>
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             PRODUCT INFORMATION
+        ========================== -->
+        <section class="product-info-section">
+
+            <div class="product-heading">
+
+                <div>
+
+                    <span class="product-category">
+                        {{ product.category|default('المنتج') }}
+                    </span>
+
+                    <h1>
+                        {{ product.name|default('اسم المنتج') }}
+                    </h1>
 
                 </div>
 
+                <button class="favorite-large"
+                        type="button"
+                        onclick="toggleFavorite()"
+                        aria-label="إضافة للمفضلة">
 
-                <div class="form-group">
+                    <span id="favoriteIconLarge">♡</span>
 
-                    <label for="currency">
-                        العملة
+                </button>
+
+            </div>
+
+
+            <!-- التقييم -->
+            <div class="rating-row">
+
+                <div class="stars">
+                    ★★★★★
+                </div>
+
+                <strong>
+                    {{ product.rating|default('—') }}
+                </strong>
+
+                <span class="review-count">
+                    {{ product.reviews_count|default('0') }} تقييم
+                </span>
+
+            </div>
+
+
+            <!-- السعر -->
+            <div class="price-section">
+
+                <div class="price-main">
+
+                    <strong>
+                        {{ product.price|default('—') }}
+                    </strong>
+
+                    {% if product and product.currency %}
+                        <span>{{ product.currency }}</span>
+                    {% else %}
+                        <span>دج</span>
+                    {% endif %}
+
+                </div>
+
+                {% if product and product.old_price %}
+                    <div class="old-price">
+                        {{ product.old_price }} دج
+                    </div>
+                {% endif %}
+
+            </div>
+
+
+            <!-- =========================
+                 AVAILABILITY
+            ========================== -->
+            <div class="availability-card">
+
+                <div class="section-title-row">
+                    <h2>التوفر</h2>
+                </div>
+
+                {% if product and product.availability_mode == 'made_to_order' %}
+
+                    <div class="availability-status made-to-order">
+
+                        <span class="status-dot"></span>
+
+                        <div>
+                            <strong>يصنع عند الطلب</strong>
+                            <p>
+                                الكمية ومدة التحضير يتم الاتفاق عليها مع البائع.
+                            </p>
+                        </div>
+
+                    </div>
+
+                {% else %}
+
+                    <div class="availability-status in-stock">
+
+                        <span class="status-dot"></span>
+
+                        <div>
+                            <strong>متوفر في المخزون</strong>
+
+                            {% if product and product.quantity is defined %}
+                                <p>
+                                    المتبقي:
+                                    {{ product.quantity }}
+                                </p>
+                            {% else %}
+                                <p>الكمية متاحة حسب المخزون الحالي.</p>
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- =========================
+                 DESCRIPTION
+            ========================== -->
+            <div class="product-description">
+
+                <div class="section-title-row">
+                    <h2>عن المنتج</h2>
+                </div>
+
+                <p>
+                    {{ product.description|default('لا توجد معلومات إضافية عن هذا المنتج حالياً.') }}
+                </p>
+
+            </div>
+
+
+            <!-- =========================
+                 OPTIONS / VARIANTS
+            ========================== -->
+            {% if product and product.variants %}
+
+            <div class="product-options">
+
+                <div class="section-title-row">
+                    <h2>الخيارات</h2>
+                </div>
+
+                {% for variant in product.variants %}
+
+                <div class="option-group">
+
+                    <label>
+                        {{ variant.name }}
                     </label>
 
-                    <select id="currency"
-                            name="currency">
+                    <select class="product-select"
+                            data-variant="{{ variant.name }}">
 
-                        <option value="DZD">
-                            دج
-                        </option>
+                        {% for option in variant.options %}
+
+                            <option value="{{ option }}">
+                                {{ option }}
+                            </option>
+
+                        {% endfor %}
 
                     </select>
 
                 </div>
 
+                {% endfor %}
+
             </div>
 
-
-            <!-- AVAILABILITY MODE -->
-            <div class="form-group">
-
-                <label>
-                    طريقة توفر المنتج
-                </label>
-
-                <div class="availability-options">
-
-                    <!-- STOCK -->
-                    <label class="availability-option">
-
-                        <input
-                            type="radio"
-                            name="availabilityMode"
-                            value="stock"
-                            checked
-                            onchange="updateAvailability()">
-
-                        <span>
-
-                            <strong>
-                                متوفر في المخزون
-                            </strong>
-
-                            <small>
-                                المنتج جاهز والكمية يحددها البائع.
-                            </small>
-
-                        </span>
-
-                    </label>
+            {% endif %}
 
 
-                    <!-- MADE TO ORDER -->
-                    <label class="availability-option">
+            <!-- =========================
+                 QUANTITY
+            ========================== -->
+            <div class="quantity-section">
 
-                        <input
-                            type="radio"
-                            name="availabilityMode"
-                            value="made_to_order"
-                            onchange="updateAvailability()">
-
-                        <span>
-
-                            <strong>
-                                عند الطلب
-                            </strong>
-
-                            <small>
-                                المنتج يتم تحضيره بعد طلب الزبون.
-                            </small>
-
-                        </span>
-
-                    </label>
-
+                <div class="section-title-row">
+                    <h2>الكمية</h2>
                 </div>
 
-            </div>
+                <div class="quantity-control">
 
-
-            <!-- STOCK SETTINGS -->
-            <div
-                id="stockSettings"
-                class="conditional-section">
-
-                <div class="form-group">
-
-                    <label for="stockQuantity">
-                        الكمية المتوفرة
-                    </label>
+                    <button type="button"
+                            onclick="changeQuantity(-1)"
+                            aria-label="تقليل الكمية">
+                        −
+                    </button>
 
                     <input
-                        id="stockQuantity"
-                        name="stockQuantity"
+                        id="quantityInput"
                         type="number"
-                        min="0"
-                        step="1"
+                        min="1"
                         value="1"
-                        placeholder="مثال: 10">
+                        inputmode="numeric">
 
-                    <small>
-                        البائع هو الذي يحدد الكمية.
-                    </small>
+                    <button type="button"
+                            onclick="changeQuantity(1)"
+                            aria-label="زيادة الكمية">
+                        +
+                    </button>
+
+                </div>
+
+                <p class="quantity-note" id="quantityNote">
+                    يتم التحقق من الكمية النهائية من الخادم عند الطلب.
+                </p>
+
+            </div>
+
+
+            <!-- =========================
+                 SELLER
+            ========================== -->
+            <div class="seller-card">
+
+                <div class="seller-avatar">
+                    V
+                </div>
+
+                <div class="seller-main">
+
+                    <span>البائع</span>
+
+                    <strong>
+                        {{ product.seller_name|default('متجر VYORA') }}
+                    </strong>
+
+                    <div class="seller-meta">
+
+                        <span>
+                            موثوق
+                        </span>
+
+                        <span>
+                            {{ product.seller_rating|default('—') }} تقييم
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <button class="seller-arrow"
+                        type="button"
+                        onclick="openSeller()"
+                        aria-label="فتح المتجر">
+                    ‹
+                </button>
+
+            </div>
+
+
+            <!-- =========================
+                 LOCATION & DELIVERY
+            ========================== -->
+            <div class="delivery-card">
+
+                <div class="delivery-row">
+
+                    <span class="delivery-icon">
+                        ⌖
+                    </span>
+
+                    <div>
+
+                        <strong>موقع البائع</strong>
+
+                        <p>
+                            {{ product.location|default('غير محدد') }}
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="delivery-row">
+
+                    <span class="delivery-icon">
+                        ⇢
+                    </span>
+
+                    <div>
+
+                        <strong>التوصيل</strong>
+
+                        <p>
+                            {{ product.delivery_info|default('معلومات التوصيل يحددها البائع.') }}
+                        </p>
+
+                    </div>
 
                 </div>
 
             </div>
 
 
-            <!-- MADE TO ORDER SETTINGS -->
-            <div
-                id="madeToOrderSettings"
-                class="conditional-section"
-                style="display: none;">
+            <!-- =========================
+                 ACTIONS
+            ========================== -->
+            <div class="product-actions">
 
-                <div class="info-box">
+                <button class="secondary-action"
+                        type="button"
+                        onclick="contactSeller()">
 
-                    <strong>
-                        منتج عند الطلب
-                    </strong>
+                    <span>مراسلة البائع</span>
+
+                </button>
+
+                <button class="primary-action"
+                        type="button"
+                        onclick="addToCart()">
+
+                    <span>إضافة إلى السلة</span>
+
+                </button>
+
+            </div>
+
+            <button class="buy-now-button"
+                    type="button"
+                    onclick="buyNow()">
+
+                شراء الآن
+
+            </button>
+
+
+            <!-- =========================
+                 REVIEWS
+            ========================== -->
+            <section class="reviews-section">
+
+                <div class="section-title-row">
+
+                    <h2>التقييمات والتعليقات</h2>
+
+                    <span>
+                        {{ product.reviews_count|default('0') }}
+                    </span>
+
+                </div>
+
+
+                <div class="reviews-summary">
+
+                    <div class="review-score">
+
+                        <strong>
+                            {{ product.rating|default('—') }}
+                        </strong>
+
+                        <div class="stars">
+                            ★★★★★
+                        </div>
+
+                    </div>
+
+                    <div class="review-bars">
+
+                        <div>
+                            <span>5</span>
+                            <div class="review-bar">
+                                <span style="width: 0%;"></span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span>4</span>
+                            <div class="review-bar">
+                                <span style="width: 0%;"></span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span>3</span>
+                            <div class="review-bar">
+                                <span style="width: 0%;"></span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span>2</span>
+                            <div class="review-bar">
+                                <span style="width: 0%;"></span>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span>1</span>
+                            <div class="review-bar">
+                                <span style="width: 0%;"></span>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="reviews-empty">
+
+                    <div class="empty-icon">
+                        V
+                    </div>
+
+                    <h3>لا توجد تقييمات بعد</h3>
 
                     <p>
-                        لا تحتاج إلى إدخال كمية أو مدة تحضير إجبارية.
-                        يمكن للبائع والزبون الاتفاق على التفاصيل عبر المحادثة.
+                        ستظهر تقييمات المشترين هنا بعد توفرها.
                     </p>
 
                 </div>
 
-            </div>
+            </section>
+
+        </section>
+
+    </main>
 
 
-            <!-- DELIVERY -->
-            <div class="form-group">
+    <!-- =========================
+         BOTTOM NAV
+    ========================== -->
+    <nav class="bottom-nav">
 
-                <label for="deliveryInfo">
-                    معلومات التوصيل
-                </label>
+        <a href="/home" class="nav-item">
+            <span class="nav-icon">⌂</span>
+            <span>الرئيسية</span>
+        </a>
 
-                <textarea
-                    id="deliveryInfo"
-                    name="deliveryInfo"
-                    rows="3"
-                    maxlength="800"
-                    placeholder="اكتب الولايات أو طرق التوصيل المتاحة..."></textarea>
+        <a href="/search" class="nav-item">
+            <span class="nav-icon">⌕</span>
+            <span>البحث</span>
+        </a>
 
-            </div>
+        <a href="/favorites" class="nav-item">
+            <span class="nav-icon">♡</span>
+            <span>المفضلة</span>
+        </a>
 
+        <a href="/cart" class="nav-item">
+            <span class="nav-icon">□</span>
+            <span>السلة</span>
+        </a>
 
-            <!-- VISIBILITY -->
-            <div class="form-group">
+        <a href="/profile" class="nav-item">
+            <span class="nav-icon">○</span>
+            <span>حسابي</span>
+        </a>
 
-                <label>
-                    حالة المنتج
-                </label>
+    </nav>
 
-                <div class="visibility-options">
-
-                    <label class="visibility-option">
-
-                        <input
-                            type="radio"
-                            name="visibility"
-                            value="visible"
-                            checked>
-
-                        <span>
-                            ظاهر للزبائن
-                        </span>
-
-                    </label>
+</div>
 
 
-                    <label class="visibility-option">
-
-                        <input
-                            type="radio"
-                            name="visibility"
-                            value="hidden">
-
-                        <span>
-                            مخفي
-                        </span>
-
-                    </label>
-
-                </div>
-
-            </div>
-
-
-            <!-- MESSAGE -->
-            <p
-                id="productMessage"
-                class="form-message">
-            </p>
-
-
-            <!-- ACTIONS -->
-            <div class="form-actions">
-
-                <button
-                    type="button"
-                    class="secondary-action"
-                    onclick="goProducts()">
-                    إلغاء
-                </button>
-
-                <button
-                    type="submit"
-                    class="auth-submit">
-                    حفظ المنتج
-                </button>
-
-            </div>
-
-        </form>
-
-    </section>
-
-</main>
-
+<!-- =========================
+     JAVASCRIPT
+========================== -->
 
 <script>
 
-function updateAvailability() {
+    let currentImageIndex = 0;
 
-    const mode =
-        document.querySelector(
-            'input[name="availabilityMode"]:checked'
-        ).value;
-
-    const stockSettings =
-        document.getElementById("stockSettings");
-
-    const madeToOrderSettings =
-        document.getElementById("madeToOrderSettings");
-
-    const stockQuantity =
-        document.getElementById("stockQuantity");
+    const productImages = [
+        {% if product and product.images %}
+            {% for image in product.images %}
+                "{{ image|e }}"
+                {% if not loop.last %},{% endif %}
+            {% endfor %}
+        {% endif %}
+    ];
 
 
-    if (mode === "stock") {
-
-        stockSettings.style.display = "block";
-        madeToOrderSettings.style.display = "none";
-
-        stockQuantity.required = true;
-
-    } else {
-
-        stockSettings.style.display = "none";
-        madeToOrderSettings.style.display = "block";
-
-        stockQuantity.required = false;
-
-    }
-}
-
-
-function saveProduct(event) {
-
-    event.preventDefault();
-
-    const name =
-        document.getElementById("productName")
-        .value
-        .trim();
-
-    const description =
-        document.getElementById("productDescription")
-        .value
-        .trim();
-
-    const category =
-        document.getElementById("productCategory")
-        .value;
-
-    const price =
-        Number(
-            document.getElementById("productPrice").value
-        );
-
-    const mode =
-        document.querySelector(
-            'input[name="availabilityMode"]:checked'
-        ).value;
-
-    const message =
-        document.getElementById("productMessage");
-
-
-    if (!name || !description || !category) {
-
-        message.textContent =
-            "يرجى إكمال معلومات المنتج.";
-
-        return;
+    function goBack() {
+        window.history.back();
     }
 
 
-    if (!Number.isFinite(price) || price < 0) {
+    function selectImage(index) {
 
-        message.textContent =
-            "يرجى إدخال سعر صحيح.";
-
-        return;
-    }
-
-
-    if (mode === "stock") {
-
-        const quantity =
-            Number(
-                document.getElementById("stockQuantity").value
-            );
-
-        if (!Number.isInteger(quantity) || quantity < 0) {
-
-            message.textContent =
-                "يرجى إدخال كمية صحيحة.";
-
+        if (!productImages.length) {
             return;
+        }
+
+        if (index < 0 || index >= productImages.length) {
+            return;
+        }
+
+        currentImageIndex = index;
+
+        const image = document.getElementById("mainProductImage");
+
+        if (image) {
+            image.src = productImages[index];
+        }
+
+        document.querySelectorAll(".thumbnail").forEach((item, i) => {
+            item.classList.toggle("active", i === index);
+        });
+
+        const current = document.getElementById("currentImage");
+
+        if (current) {
+            current.textContent = index + 1;
         }
     }
 
 
-    message.textContent =
-        "جاري حفظ المنتج...";
+    function nextImage() {
+
+        if (!productImages.length) {
+            return;
+        }
+
+        let next = currentImageIndex + 1;
+
+        if (next >= productImages.length) {
+            next = 0;
+        }
+
+        selectImage(next);
+    }
 
 
-    /*
-     * مؤقتاً فقط.
-     *
-     * لاحقاً نرسل البيانات إلى Flask API
-     * ليتم:
-     *
-     * - إنشاء Product ID حقيقي
-     * - ربط المنتج بالمتجر
-     * - حفظ السعر في الخادم
-     * - حفظ طريقة التوفر
-     * - تطبيق قواعد المخزون
-     * - حفظ الصور والفيديو
-     * - تطبيق صلاحيات البائع
-     */
+    function previousImage() {
+
+        if (!productImages.length) {
+            return;
+        }
+
+        let previous = currentImageIndex - 1;
+
+        if (previous < 0) {
+            previous = productImages.length - 1;
+        }
+
+        selectImage(previous);
+    }
 
 
-    setTimeout(() => {
+    function changeQuantity(amount) {
 
-        window.location.href =
-            "/seller/products";
+        const input = document.getElementById("quantityInput");
 
-    }, 900);
-}
+        if (!input) {
+            return;
+        }
+
+        let value = parseInt(input.value, 10) || 1;
+
+        value += amount;
+
+        if (value < 1) {
+            value = 1;
+        }
+
+        input.value = value;
+    }
 
 
-function goProducts() {
+    function toggleFavorite() {
 
-    window.location.href =
-        "/seller/products";
+        const icon = document.getElementById("favoriteIcon");
+        const largeIcon = document.getElementById("favoriteIconLarge");
 
-}
+        const active =
+            icon && icon.textContent === "♥";
+
+        if (icon) {
+            icon.textContent = active ? "♡" : "♥";
+        }
+
+        if (largeIcon) {
+            largeIcon.textContent = active ? "♡" : "♥";
+        }
+    }
 
 
-function goDashboard() {
+    function addToCart() {
 
-    window.location.href =
-        "/seller/dashboard";
+        const quantity =
+            document.getElementById("quantityInput")?.value || 1;
 
-}
+        alert(
+            "سيتم ربط إضافة المنتج إلى السلة مع النظام الخلفي.\nالكمية: "
+            + quantity
+        );
+    }
+
+
+    function buyNow() {
+
+        alert(
+            "سيتم ربط الشراء المباشر بصفحة إتمام الطلب بعد تفعيل النظام الخلفي."
+        );
+    }
+
+
+    function contactSeller() {
+
+        window.location.href = "/chat";
+    }
+
+
+    function openSeller() {
+
+        {% if product and product.seller_id %}
+            window.location.href =
+                "/seller/{{ product.seller_id }}";
+        {% else %}
+            alert("صفحة المتجر ستُربط بالبيانات الحقيقية لاحقاً.");
+        {% endif %}
+    }
+
+
+    function openCart() {
+
+        window.location.href = "/cart";
+    }
 
 </script>
 
 </body>
-</html>
+    </html>
