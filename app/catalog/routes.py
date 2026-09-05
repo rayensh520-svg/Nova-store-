@@ -1,4 +1,4 @@
-from flask import jsonify, request
+from flask import jsonify, request, session
 
 from . import catalog_bp
 from .models import Product
@@ -81,15 +81,6 @@ def list_store_products(store_id):
 def create_store_product(store_id):
     data = request.get_json(silent=True) or {}
 
-    name = data.get("name", "")
-    description = data.get("description", "")
-    price = data.get("price", 0)
-    stock_quantity = data.get("stock_quantity", 0)
-    fulfillment_type = data.get(
-        "fulfillment_type",
-        "ready_stock"
-    )
-
     connection = get_connection()
 
     try:
@@ -98,7 +89,9 @@ def create_store_product(store_id):
             SELECT
                 stores.id,
                 stores.seller_id,
-                sellers.user_id
+                sellers.user_id,
+                sellers.is_active,
+                sellers.verification_status
             FROM stores
             JOIN sellers
                 ON sellers.id = stores.seller_id
@@ -116,20 +109,35 @@ def create_store_product(store_id):
             "error": "Store not found."
         }), 404
 
-    if store["user_id"] != request.environ.get(
-        "nova_user_id",
-        store["user_id"]
-    ):
-        pass
+    if store["user_id"] != session["user_id"]:
+        return jsonify({
+            "success": False,
+            "error": "You do not own this store."
+        }), 403
+
+    if not store["is_active"]:
+        return jsonify({
+            "success": False,
+            "error": "Seller account is inactive."
+        }), 403
+
+    if store["verification_status"] != "approved":
+        return jsonify({
+            "success": False,
+            "error": "Seller is not approved."
+        }), 403
 
     try:
         product_id = create_product(
             store_id=store_id,
-            name=name,
-            description=description,
-            price=price,
-            stock_quantity=stock_quantity,
-            fulfillment_type=fulfillment_type,
+            name=data.get("name", ""),
+            description=data.get("description", ""),
+            price=data.get("price", 0),
+            stock_quantity=data.get("stock_quantity", 0),
+            fulfillment_type=data.get(
+                "fulfillment_type",
+                "ready_stock"
+            ),
         )
 
         return jsonify({
