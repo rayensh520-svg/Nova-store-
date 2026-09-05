@@ -76,7 +76,10 @@ def create_store(
     try:
         seller = connection.execute(
             """
-            SELECT id
+            SELECT
+                id,
+                verification_status,
+                is_active
             FROM sellers
             WHERE id = ?
             LIMIT 1
@@ -86,6 +89,14 @@ def create_store(
 
         if seller is None:
             raise SellerError("Seller not found.")
+
+        if not seller["is_active"]:
+            raise SellerError("Seller account is inactive.")
+
+        if seller["verification_status"] != "approved":
+            raise SellerError(
+                "Seller must be approved before creating a store."
+            )
 
         existing_store = connection.execute(
             """
