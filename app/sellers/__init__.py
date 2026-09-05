@@ -6,3 +6,6 @@ seller_bp = Blueprint(
     __name__,
     url_prefix="/api/v1/seller"
 )
+
+
+from . import routes
