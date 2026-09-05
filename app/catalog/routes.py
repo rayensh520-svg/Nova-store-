@@ -81,52 +81,6 @@ def list_store_products(store_id):
 def create_store_product(store_id):
     data = request.get_json(silent=True) or {}
 
-    connection = get_connection()
-
-    try:
-        store = connection.execute(
-            """
-            SELECT
-                stores.id,
-                stores.seller_id,
-                sellers.user_id,
-                sellers.is_active,
-                sellers.verification_status
-            FROM stores
-            JOIN sellers
-                ON sellers.id = stores.seller_id
-            WHERE stores.id = ?
-            LIMIT 1
-            """,
-            (store_id,),
-        ).fetchone()
-    finally:
-        connection.close()
-
-    if store is None:
-        return jsonify({
-            "success": False,
-            "error": "Store not found."
-        }), 404
-
-    if store["user_id"] != session["user_id"]:
-        return jsonify({
-            "success": False,
-            "error": "You do not own this store."
-        }), 403
-
-    if not store["is_active"]:
-        return jsonify({
-            "success": False,
-            "error": "Seller account is inactive."
-        }), 403
-
-    if store["verification_status"] != "approved":
-        return jsonify({
-            "success": False,
-            "error": "Seller is not approved."
-        }), 403
-
     try:
         product_id = create_product(
             store_id=store_id,
@@ -138,6 +92,7 @@ def create_store_product(store_id):
                 "fulfillment_type",
                 "ready_stock"
             ),
+            owner_user_id=session["user_id"],
         )
 
         return jsonify({
@@ -146,10 +101,23 @@ def create_store_product(store_id):
         }), 201
 
     except ProductError as error:
+        error_message = str(error)
+
+        if error_message == "Store not found.":
+            status_code = 404
+        elif error_message in {
+            "You do not own this store.",
+            "Seller account is inactive.",
+            "Seller is not approved.",
+        }:
+            status_code = 403
+        else:
+            status_code = 400
+
         return jsonify({
             "success": False,
-            "error": str(error)
-        }), 400
+            "error": error_message
+        }), status_code
 
 
 @catalog_bp.patch("/products/<int:product_id>")
@@ -301,6 +269,8 @@ def update_product(product_id):
 
     finally:
         connection.close()
+
+
 @catalog_bp.delete("/products/<int:product_id>")
 @role_required("seller")
 def deactivate_product(product_id):
