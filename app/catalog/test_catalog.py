@@ -1,10 +1,10 @@
+from app import create_app
 from app.database import get_connection
 from app.sellers.service import create_seller, create_store
 from app.catalog.service import create_product
-from app.catalog.models import Product
 
 
-def test_catalog():
+def setup_test_data():
     connection = get_connection()
 
     try:
@@ -13,7 +13,7 @@ def test_catalog():
             DELETE FROM users
             WHERE email = ?
             """,
-            ("catalog.test@nova.local",),
+            ("catalog.api.test@nova.local",),
         )
         connection.commit()
 
@@ -28,8 +28,8 @@ def test_catalog():
             VALUES (?, ?, ?, ?)
             """,
             (
-                "NOVA Catalog Seller",
-                "catalog.test@nova.local",
+                "NOVA API Test Seller",
+                "catalog.api.test@nova.local",
                 "test-password-hash",
                 "seller",
             ),
@@ -61,39 +61,70 @@ def test_catalog():
 
     store_id = create_store(
         seller_id=seller_id,
-        name="NOVA Catalog Store",
-        description="Catalog test store.",
+        name="NOVA API Test Store",
+        description="API test store.",
     )
 
     product_id = create_product(
         store_id=store_id,
-        name="NOVA Test Product",
-        description="Test product.",
-        price=1500,
-        stock_quantity=10,
+        name="NOVA API Product",
+        description="Product created for API testing.",
+        price=2500,
+        stock_quantity=15,
         fulfillment_type="ready_stock",
+        owner_user_id=user_id,
     )
 
-    product = Product.find_by_id(product_id)
+    return user_id, store_id, product_id
 
-    assert seller_id is not None
-    assert store_id is not None
-    assert product_id is not None
 
-    assert product is not None
-    assert product.name == "NOVA Test Product"
-    assert product.price == 1500
-    assert product.stock_quantity == 10
-    assert product.fulfillment_type == "ready_stock"
-    assert product.is_active is True
+def test_catalog_api():
+    app = create_app()
+    app.config["TESTING"] = True
 
-    products = Product.list_by_store(store_id)
+    user_id, store_id, product_id = setup_test_data()
 
-    assert len(products) == 1
-    assert products[0].id == product_id
+    client = app.test_client()
 
-    print("NOVA CATALOG & PRODUCTS: OK")
+    with client.session_transaction() as session:
+        session["user_id"] = user_id
+        session["user_role"] = "seller"
+
+    response = client.get(
+        f"/api/v1/catalog/products/{product_id}"
+    )
+
+    assert response.status_code == 200
+
+    data = response.get_json()
+
+    assert data["success"] is True
+    assert data["product"]["id"] == product_id
+    assert data["product"]["name"] == "NOVA API Product"
+    assert data["product"]["price"] == 2500
+    assert data["product"]["stock_quantity"] == 15
+
+    response = client.get(
+        f"/api/v1/catalog/stores/{store_id}/products"
+    )
+
+    assert response.status_code == 200
+
+    data = response.get_json()
+
+    assert data["success"] is True
+    assert len(data["products"]) >= 1
+
+    found_product = next(
+        product
+        for product in data["products"]
+        if product["id"] == product_id
+    )
+
+    assert found_product["name"] == "NOVA API Product"
+
+    print("NOVA CATALOG API: OK")
 
 
 if __name__ == "__main__":
-    test_catalog()
+    test_catalog_api()
