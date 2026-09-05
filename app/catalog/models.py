@@ -5,6 +5,125 @@ from app.database import get_connection
 
 
 @dataclass
+class Category:
+    id: int
+    parent_id: Optional[int]
+    name: str
+    slug: str
+    is_active: bool
+
+    @classmethod
+    def find_by_id(
+        cls,
+        category_id: int
+    ) -> Optional["Category"]:
+        connection = get_connection()
+
+        try:
+            row = connection.execute(
+                """
+                SELECT
+                    id,
+                    parent_id,
+                    name,
+                    slug,
+                    is_active
+                FROM categories
+                WHERE id = ?
+                LIMIT 1
+                """,
+                (category_id,),
+            ).fetchone()
+
+            if row is None:
+                return None
+
+            return cls(
+                id=row["id"],
+                parent_id=row["parent_id"],
+                name=row["name"],
+                slug=row["slug"],
+                is_active=bool(row["is_active"]),
+            )
+
+        finally:
+            connection.close()
+
+    @classmethod
+    def find_by_slug(
+        cls,
+        slug: str
+    ) -> Optional["Category"]:
+        connection = get_connection()
+
+        try:
+            row = connection.execute(
+                """
+                SELECT
+                    id,
+                    parent_id,
+                    name,
+                    slug,
+                    is_active
+                FROM categories
+                WHERE slug = ?
+                LIMIT 1
+                """,
+                (slug.strip().lower(),),
+            ).fetchone()
+
+            if row is None:
+                return None
+
+            return cls(
+                id=row["id"],
+                parent_id=row["parent_id"],
+                name=row["name"],
+                slug=row["slug"],
+                is_active=bool(row["is_active"]),
+            )
+
+        finally:
+            connection.close()
+
+    @classmethod
+    def list_active(cls):
+        connection = get_connection()
+
+        try:
+            rows = connection.execute(
+                """
+                SELECT
+                    id,
+                    parent_id,
+                    name,
+                    slug,
+                    is_active
+                FROM categories
+                WHERE is_active = 1
+                ORDER BY
+                    parent_id IS NOT NULL,
+                    name ASC
+                """
+            ).fetchall()
+
+            return [
+                cls(
+                    id=row["id"],
+                    parent_id=row["parent_id"],
+                    name=row["name"],
+                    slug=row["slug"],
+                    is_active=bool(row["is_active"]),
+                )
+                for row in rows
+            ]
+
+
+        finally:
+            connection.close()
+
+
+@dataclass
 class Product:
     id: int
     store_id: int
