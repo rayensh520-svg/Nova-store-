@@ -150,3 +150,154 @@ def create_store_product(store_id):
             "success": False,
             "error": str(error)
         }), 400
+
+
+@catalog_bp.patch("/products/<int:product_id>")
+@role_required("seller")
+def update_product(product_id):
+    data = request.get_json(silent=True) or {}
+
+    connection = get_connection()
+
+    try:
+        product = connection.execute(
+            """
+            SELECT
+                products.id,
+                products.store_id,
+                sellers.user_id
+            FROM products
+            JOIN stores
+                ON stores.id = products.store_id
+            JOIN sellers
+                ON sellers.id = stores.seller_id
+            WHERE products.id = ?
+            LIMIT 1
+            """,
+            (product_id,),
+        ).fetchone()
+
+        if product is None:
+            return jsonify({
+                "success": False,
+                "error": "Product not found."
+            }), 404
+
+        if product["user_id"] != session["user_id"]:
+            return jsonify({
+                "success": False,
+                "error": "You do not own this product."
+            }), 403
+
+        fields = []
+        values = []
+
+        if "name" in data:
+            name = " ".join(
+                str(data["name"]).split()
+            )
+
+            if not name or len(name) > 200:
+                return jsonify({
+                    "success": False,
+                    "error": "Invalid product name."
+                }), 400
+
+            fields.append("name = ?")
+            values.append(name)
+
+        if "description" in data:
+            description = " ".join(
+                str(data["description"]).split()
+            )
+
+            if len(description) > 5000:
+                return jsonify({
+                    "success": False,
+                    "error": "Product description is too long."
+                }), 400
+
+            fields.append("description = ?")
+            values.append(description)
+
+        if "price" in data:
+            try:
+                price = float(data["price"])
+            except (TypeError, ValueError):
+                return jsonify({
+                    "success": False,
+                    "error": "Invalid product price."
+                }), 400
+
+            if price < 0:
+                return jsonify({
+                    "success": False,
+                    "error": "Product price cannot be negative."
+                }), 400
+
+            fields.append("price = ?")
+            values.append(price)
+
+        if "stock_quantity" in data:
+            try:
+                stock = int(data["stock_quantity"])
+            except (TypeError, ValueError):
+                return jsonify({
+                    "success": False,
+                    "error": "Invalid stock quantity."
+                }), 400
+
+            if stock < 0:
+                return jsonify({
+                    "success": False,
+                    "error": "Stock quantity cannot be negative."
+                }), 400
+
+            fields.append("stock_quantity = ?")
+            values.append(stock)
+
+        if "fulfillment_type" in data:
+            fulfillment_type = data["fulfillment_type"]
+
+            if fulfillment_type not in {
+                "ready_stock",
+                "made_to_order",
+            }:
+                return jsonify({
+                    "success": False,
+                    "error": "Invalid fulfillment type."
+                }), 400
+
+            fields.append("fulfillment_type = ?")
+            values.append(fulfillment_type)
+
+        if not fields:
+            return jsonify({
+                "success": False,
+                "error": "No valid fields to update."
+            }), 400
+
+        fields.append(
+            "updated_at = CURRENT_TIMESTAMP"
+        )
+
+        values.append(product_id)
+
+        connection.execute(
+            f"""
+            UPDATE products
+            SET {", ".join(fields)}
+            WHERE id = ?
+            """,
+            values,
+        )
+
+        connection.commit()
+
+        return jsonify({
+            "success": True,
+            "message": "Product updated successfully."
+        })
+
+    finally:
+        connection.close()
