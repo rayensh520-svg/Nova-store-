@@ -6,6 +6,7 @@ from app.catalog.service import (
     create_category,
     assign_product_category,
     get_product_categories,
+    add_product_media,
 )
 
 
@@ -18,7 +19,7 @@ def setup_test_data():
             DELETE FROM users
             WHERE email = ?
             """,
-            ("catalog.full.test@nova.local",),
+            ("catalog.media.test@nova.local",),
         )
         connection.commit()
 
@@ -33,8 +34,8 @@ def setup_test_data():
             VALUES (?, ?, ?, ?)
             """,
             (
-                "NOVA Catalog Test Seller",
-                "catalog.full.test@nova.local",
+                "NOVA Catalog Media Test Seller",
+                "catalog.media.test@nova.local",
                 "test-password-hash",
                 "seller",
             ),
@@ -66,14 +67,14 @@ def setup_test_data():
 
     store_id = create_store(
         seller_id=seller_id,
-        name="NOVA Catalog Test Store",
-        description="Full catalog test store.",
+        name="NOVA Media Test Store",
+        description="Media test store.",
     )
 
     product_id = create_product(
         store_id=store_id,
-        name="NOVA Test Product",
-        description="Catalog test product.",
+        name="NOVA Media Test Product",
+        description="Product media test.",
         price=2500,
         stock_quantity=15,
         fulfillment_type="ready_stock",
@@ -81,8 +82,8 @@ def setup_test_data():
     )
 
     category_id = create_category(
-        name="Electronics",
-        slug="electronics-test",
+        name="Media Test Category",
+        slug=f"media-test-{product_id}",
     )
 
     assign_product_category(
@@ -106,17 +107,34 @@ def test_catalog():
         category_id,
     ) = setup_test_data()
 
+    # Category service test
     categories = get_product_categories(product_id)
 
     assert len(categories) == 1
     assert categories[0]["id"] == category_id
-    assert categories[0]["slug"] == "electronics-test"
 
+    # Media service test
+    media_id = add_product_media(
+        product_id=product_id,
+        media_type="image",
+        storage_key=f"products/{product_id}/test-image.jpg",
+        original_name="test-image.jpg",
+        mime_type="image/jpeg",
+        file_size=1024,
+        sort_order=0,
+        is_primary=True,
+        owner_user_id=user_id,
+    )
+
+    assert media_id is not None
+
+    # API application
     app = create_app()
     app.config["TESTING"] = True
 
     client = app.test_client()
 
+    # Product API
     response = client.get(
         f"/api/v1/catalog/products/{product_id}"
     )
@@ -128,6 +146,7 @@ def test_catalog():
     assert data["success"] is True
     assert data["product"]["id"] == product_id
 
+    # Categories API
     response = client.get(
         f"/api/v1/catalog/products/{product_id}/categories"
     )
@@ -140,6 +159,7 @@ def test_catalog():
     assert len(data["categories"]) == 1
     assert data["categories"][0]["id"] == category_id
 
+    # All categories API
     response = client.get(
         "/api/v1/catalog/categories"
     )
@@ -157,7 +177,22 @@ def test_catalog():
 
     assert found is True
 
-    print("NOVA CATALOG + CATEGORIES: OK")
+    # Media API
+    response = client.get(
+        f"/api/v1/catalog/products/{product_id}/media"
+    )
+
+    assert response.status_code == 200
+
+    data = response.get_json()
+
+    assert data["success"] is True
+    assert len(data["media"]) == 1
+    assert data["media"][0]["id"] == media_id
+    assert data["media"][0]["media_type"] == "image"
+    assert data["media"][0]["is_primary"] is True
+
+    print("NOVA CATALOG + CATEGORIES + MEDIA: OK")
 
 
 if __name__ == "__main__":
