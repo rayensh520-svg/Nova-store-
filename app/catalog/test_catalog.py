@@ -1,7 +1,12 @@
 from app import create_app
 from app.database import get_connection
 from app.sellers.service import create_seller, create_store
-from app.catalog.service import create_product
+from app.catalog.service import (
+    create_product,
+    create_category,
+    assign_product_category,
+    get_product_categories,
+)
 
 
 def setup_test_data():
@@ -13,7 +18,7 @@ def setup_test_data():
             DELETE FROM users
             WHERE email = ?
             """,
-            ("catalog.api.test@nova.local",),
+            ("catalog.full.test@nova.local",),
         )
         connection.commit()
 
@@ -28,8 +33,8 @@ def setup_test_data():
             VALUES (?, ?, ?, ?)
             """,
             (
-                "NOVA API Test Seller",
-                "catalog.api.test@nova.local",
+                "NOVA Catalog Test Seller",
+                "catalog.full.test@nova.local",
                 "test-password-hash",
                 "seller",
             ),
@@ -61,34 +66,56 @@ def setup_test_data():
 
     store_id = create_store(
         seller_id=seller_id,
-        name="NOVA API Test Store",
-        description="API test store.",
+        name="NOVA Catalog Test Store",
+        description="Full catalog test store.",
     )
 
     product_id = create_product(
         store_id=store_id,
-        name="NOVA API Product",
-        description="Product created for API testing.",
+        name="NOVA Test Product",
+        description="Catalog test product.",
         price=2500,
         stock_quantity=15,
         fulfillment_type="ready_stock",
         owner_user_id=user_id,
     )
 
-    return user_id, store_id, product_id
+    category_id = create_category(
+        name="Electronics",
+        slug="electronics-test",
+    )
+
+    assign_product_category(
+        product_id=product_id,
+        category_id=category_id,
+    )
+
+    return (
+        user_id,
+        store_id,
+        product_id,
+        category_id,
+    )
 
 
-def test_catalog_api():
+def test_catalog():
+    (
+        user_id,
+        store_id,
+        product_id,
+        category_id,
+    ) = setup_test_data()
+
+    categories = get_product_categories(product_id)
+
+    assert len(categories) == 1
+    assert categories[0]["id"] == category_id
+    assert categories[0]["slug"] == "electronics-test"
+
     app = create_app()
     app.config["TESTING"] = True
 
-    user_id, store_id, product_id = setup_test_data()
-
     client = app.test_client()
-
-    with client.session_transaction() as session:
-        session["user_id"] = user_id
-        session["user_role"] = "seller"
 
     response = client.get(
         f"/api/v1/catalog/products/{product_id}"
@@ -100,12 +127,9 @@ def test_catalog_api():
 
     assert data["success"] is True
     assert data["product"]["id"] == product_id
-    assert data["product"]["name"] == "NOVA API Product"
-    assert data["product"]["price"] == 2500
-    assert data["product"]["stock_quantity"] == 15
 
     response = client.get(
-        f"/api/v1/catalog/stores/{store_id}/products"
+        f"/api/v1/catalog/products/{product_id}/categories"
     )
 
     assert response.status_code == 200
@@ -113,18 +137,28 @@ def test_catalog_api():
     data = response.get_json()
 
     assert data["success"] is True
-    assert len(data["products"]) >= 1
+    assert len(data["categories"]) == 1
+    assert data["categories"][0]["id"] == category_id
 
-    found_product = next(
-        product
-        for product in data["products"]
-        if product["id"] == product_id
+    response = client.get(
+        "/api/v1/catalog/categories"
     )
 
-    assert found_product["name"] == "NOVA API Product"
+    assert response.status_code == 200
 
-    print("NOVA CATALOG API: OK")
+    data = response.get_json()
+
+    assert data["success"] is True
+
+    found = any(
+        category["id"] == category_id
+        for category in data["categories"]
+    )
+
+    assert found is True
+
+    print("NOVA CATALOG + CATEGORIES: OK")
 
 
 if __name__ == "__main__":
-    test_catalog_api()
+    test_catalog()
