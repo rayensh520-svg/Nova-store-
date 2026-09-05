@@ -1,4 +1,5 @@
 from app.database import get_connection
+from app.sellers.service import create_seller
 
 from .security import hash_password, verify_password
 from .validation import (
@@ -79,12 +80,37 @@ def register_user(
             ),
         )
 
+        user_id = cursor.lastrowid
+
         connection.commit()
 
-        return cursor.lastrowid
+    except Exception:
+        connection.rollback()
+        raise
 
     finally:
         connection.close()
+
+    if role == "seller":
+        try:
+            create_seller(user_id)
+        except Exception as error:
+            connection = get_connection()
+
+            try:
+                connection.execute(
+                    "DELETE FROM users WHERE id = ?",
+                    (user_id,),
+                )
+                connection.commit()
+            finally:
+                connection.close()
+
+            raise RegistrationError(
+                f"Seller account creation failed: {error}"
+            )
+
+    return user_id
 
 
 def login_user(email: str, password: str):
