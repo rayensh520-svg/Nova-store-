@@ -52,3 +52,75 @@ def create_seller(user_id: int):
 
     finally:
         connection.close()
+
+
+def create_store(
+    seller_id: int,
+    name: str,
+    description: str = "",
+):
+    name = " ".join(name.split())
+    description = " ".join(description.split())
+
+    if not name:
+        raise SellerError("Store name is required.")
+
+    if len(name) > 120:
+        raise SellerError("Store name is too long.")
+
+    if len(description) > 2000:
+        raise SellerError("Store description is too long.")
+
+    connection = get_connection()
+
+    try:
+        seller = connection.execute(
+            """
+            SELECT id
+            FROM sellers
+            WHERE id = ?
+            LIMIT 1
+            """,
+            (seller_id,),
+        ).fetchone()
+
+        if seller is None:
+            raise SellerError("Seller not found.")
+
+        existing_store = connection.execute(
+            """
+            SELECT id
+            FROM stores
+            WHERE seller_id = ?
+            LIMIT 1
+            """,
+            (seller_id,),
+        ).fetchone()
+
+        if existing_store is not None:
+            raise SellerError(
+                "This seller already has a store."
+            )
+
+        cursor = connection.execute(
+            """
+            INSERT INTO stores (
+                seller_id,
+                name,
+                description
+            )
+            VALUES (?, ?, ?)
+            """,
+            (
+                seller_id,
+                name,
+                description,
+            ),
+        )
+
+        connection.commit()
+
+        return cursor.lastrowid
+
+    finally:
+        connection.close()
