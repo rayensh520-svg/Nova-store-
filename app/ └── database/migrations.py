@@ -87,6 +87,38 @@ def run_migrations():
 
         connection.execute(
             """
+            CREATE TABLE IF NOT EXISTS categories (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                parent_id INTEGER,
+                name TEXT NOT NULL,
+                slug TEXT NOT NULL UNIQUE,
+                is_active INTEGER NOT NULL DEFAULT 1,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+                FOREIGN KEY (parent_id)
+                    REFERENCES categories(id)
+                    ON DELETE SET NULL
+            )
+            """
+        )
+
+        connection.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_categories_parent_id
+            ON categories(parent_id)
+            """
+        )
+
+        connection.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_categories_active
+            ON categories(is_active)
+            """
+        )
+
+        connection.execute(
+            """
             CREATE TABLE IF NOT EXISTS products (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 store_id INTEGER NOT NULL,
@@ -124,6 +156,35 @@ def run_migrations():
             """
             CREATE INDEX IF NOT EXISTS idx_products_active
             ON products(is_active)
+            """
+        )
+
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS product_categories (
+                product_id INTEGER NOT NULL,
+                category_id INTEGER NOT NULL,
+
+                PRIMARY KEY (
+                    product_id,
+                    category_id
+                ),
+
+                FOREIGN KEY (product_id)
+                    REFERENCES products(id)
+                    ON DELETE CASCADE,
+
+                FOREIGN KEY (category_id)
+                    REFERENCES categories(id)
+                    ON DELETE CASCADE
+            )
+            """
+        )
+
+        connection.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_product_categories_category
+            ON product_categories(category_id)
             """
         )
 
