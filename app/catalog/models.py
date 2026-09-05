@@ -13,10 +13,7 @@ class Category:
     is_active: bool
 
     @classmethod
-    def find_by_id(
-        cls,
-        category_id: int
-    ) -> Optional["Category"]:
+    def find_by_id(cls, category_id: int):
         connection = get_connection()
 
         try:
@@ -50,10 +47,7 @@ class Category:
             connection.close()
 
     @classmethod
-    def find_by_slug(
-        cls,
-        slug: str
-    ) -> Optional["Category"]:
+    def find_by_slug(cls, slug: str):
         connection = get_connection()
 
         try:
@@ -118,6 +112,80 @@ class Category:
                 for row in rows
             ]
 
+        finally:
+            connection.close()
+
+
+@dataclass
+class ProductMedia:
+    id: int
+    product_id: int
+    media_type: str
+    storage_key: str
+    original_name: str
+    mime_type: str
+    file_size: int
+    sort_order: int
+    is_primary: bool
+    is_active: bool
+
+    @classmethod
+    def list_by_product(
+        cls,
+        product_id: int,
+        active_only: bool = True
+    ):
+        connection = get_connection()
+
+        try:
+            query = """
+                SELECT
+                    id,
+                    product_id,
+                    media_type,
+                    storage_key,
+                    original_name,
+                    mime_type,
+                    file_size,
+                    sort_order,
+                    is_primary,
+                    is_active
+                FROM product_media
+                WHERE product_id = ?
+            """
+
+            params = [product_id]
+
+            if active_only:
+                query += " AND is_active = 1"
+
+            query += """
+                ORDER BY
+                    is_primary DESC,
+                    sort_order ASC,
+                    id ASC
+            """
+
+            rows = connection.execute(
+                query,
+                params,
+            ).fetchall()
+
+            return [
+                cls(
+                    id=row["id"],
+                    product_id=row["product_id"],
+                    media_type=row["media_type"],
+                    storage_key=row["storage_key"],
+                    original_name=row["original_name"] or "",
+                    mime_type=row["mime_type"] or "",
+                    file_size=int(row["file_size"]),
+                    sort_order=int(row["sort_order"]),
+                    is_primary=bool(row["is_primary"]),
+                    is_active=bool(row["is_active"]),
+                )
+                for row in rows
+            ]
 
         finally:
             connection.close()
@@ -135,10 +203,7 @@ class Product:
     is_active: bool
 
     @classmethod
-    def find_by_id(
-        cls,
-        product_id: int
-    ) -> Optional["Product"]:
+    def find_by_id(cls, product_id: int):
         connection = get_connection()
 
         try:
