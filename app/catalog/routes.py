@@ -133,7 +133,9 @@ def update_product(product_id):
             SELECT
                 products.id,
                 products.store_id,
-                sellers.user_id
+                sellers.user_id,
+                sellers.is_active,
+                sellers.verification_status
             FROM products
             JOIN stores
                 ON stores.id = products.store_id
@@ -155,6 +157,18 @@ def update_product(product_id):
             return jsonify({
                 "success": False,
                 "error": "You do not own this product."
+            }), 403
+
+        if not product["is_active"]:
+            return jsonify({
+                "success": False,
+                "error": "Seller account is inactive."
+            }), 403
+
+        if product["verification_status"] != "approved":
+            return jsonify({
+                "success": False,
+                "error": "Seller is not approved."
             }), 403
 
         fields = []
@@ -267,6 +281,10 @@ def update_product(product_id):
             "message": "Product updated successfully."
         })
 
+    except Exception:
+        connection.rollback()
+        raise
+
     finally:
         connection.close()
 
@@ -281,7 +299,9 @@ def deactivate_product(product_id):
             """
             SELECT
                 products.id,
-                sellers.user_id
+                sellers.user_id,
+                sellers.is_active,
+                sellers.verification_status
             FROM products
             JOIN stores
                 ON stores.id = products.store_id
@@ -305,6 +325,18 @@ def deactivate_product(product_id):
                 "error": "You do not own this product."
             }), 403
 
+        if not product["is_active"]:
+            return jsonify({
+                "success": False,
+                "error": "Seller account is inactive."
+            }), 403
+
+        if product["verification_status"] != "approved":
+            return jsonify({
+                "success": False,
+                "error": "Seller is not approved."
+            }), 403
+
         connection.execute(
             """
             UPDATE products
@@ -322,6 +354,10 @@ def deactivate_product(product_id):
             "success": True,
             "message": "Product deactivated successfully."
         })
+
+    except Exception:
+        connection.rollback()
+        raise
 
     finally:
         connection.close()
