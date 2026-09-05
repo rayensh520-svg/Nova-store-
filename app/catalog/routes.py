@@ -301,3 +301,57 @@ def update_product(product_id):
 
     finally:
         connection.close()
+@catalog_bp.delete("/products/<int:product_id>")
+@role_required("seller")
+def deactivate_product(product_id):
+    connection = get_connection()
+
+    try:
+        product = connection.execute(
+            """
+            SELECT
+                products.id,
+                sellers.user_id
+            FROM products
+            JOIN stores
+                ON stores.id = products.store_id
+            JOIN sellers
+                ON sellers.id = stores.seller_id
+            WHERE products.id = ?
+            LIMIT 1
+            """,
+            (product_id,),
+        ).fetchone()
+
+        if product is None:
+            return jsonify({
+                "success": False,
+                "error": "Product not found."
+            }), 404
+
+        if product["user_id"] != session["user_id"]:
+            return jsonify({
+                "success": False,
+                "error": "You do not own this product."
+            }), 403
+
+        connection.execute(
+            """
+            UPDATE products
+            SET
+                is_active = 0,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE id = ?
+            """,
+            (product_id,),
+        )
+
+        connection.commit()
+
+        return jsonify({
+            "success": True,
+            "message": "Product deactivated successfully."
+        })
+
+    finally:
+        connection.close()
