@@ -18,9 +18,10 @@ def create_product(
     price=0,
     stock_quantity=0,
     fulfillment_type: str = "ready_stock",
+    owner_user_id: int | None = None,
 ):
-    name = " ".join(name.split())
-    description = " ".join(description.split())
+    name = " ".join(str(name).split())
+    description = " ".join(str(description).split())
 
     if not name:
         raise ProductError("Product name is required.")
@@ -60,10 +61,14 @@ def create_product(
         store = connection.execute(
             """
             SELECT
-                id,
-                is_visible
+                stores.id,
+                sellers.user_id,
+                sellers.is_active,
+                sellers.verification_status
             FROM stores
-            WHERE id = ?
+            JOIN sellers
+                ON sellers.id = stores.seller_id
+            WHERE stores.id = ?
             LIMIT 1
             """,
             (store_id,),
@@ -71,6 +76,22 @@ def create_product(
 
         if store is None:
             raise ProductError("Store not found.")
+
+        if owner_user_id is not None:
+            if store["user_id"] != owner_user_id:
+                raise ProductError(
+                    "You do not own this store."
+                )
+
+        if not store["is_active"]:
+            raise ProductError(
+                "Seller account is inactive."
+            )
+
+        if store["verification_status"] != "approved":
+            raise ProductError(
+                "Seller is not approved."
+            )
 
         cursor = connection.execute(
             """
@@ -97,6 +118,10 @@ def create_product(
         connection.commit()
 
         return cursor.lastrowid
+
+    except Exception:
+        connection.rollback()
+        raise
 
     finally:
         connection.close()
