@@ -12,7 +12,10 @@ class Seller:
     is_active: bool
 
     @classmethod
-    def find_by_user_id(cls, user_id: int) -> Optional["Seller"]:
+    def find_by_user_id(
+        cls,
+        user_id: int
+    ) -> Optional["Seller"]:
         connection = get_connection()
 
         try:
@@ -28,6 +31,41 @@ class Seller:
                 LIMIT 1
                 """,
                 (user_id,),
+            ).fetchone()
+
+            if row is None:
+                return None
+
+            return cls(
+                id=row["id"],
+                user_id=row["user_id"],
+                verification_status=row["verification_status"],
+                is_active=bool(row["is_active"]),
+            )
+
+        finally:
+            connection.close()
+
+    @classmethod
+    def find_by_id(
+        cls,
+        seller_id: int
+    ) -> Optional["Seller"]:
+        connection = get_connection()
+
+        try:
+            row = connection.execute(
+                """
+                SELECT
+                    id,
+                    user_id,
+                    verification_status,
+                    is_active
+                FROM sellers
+                WHERE id = ?
+                LIMIT 1
+                """,
+                (seller_id,),
             ).fetchone()
 
             if row is None:
