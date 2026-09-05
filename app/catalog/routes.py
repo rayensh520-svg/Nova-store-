@@ -469,3 +469,92 @@ def get_product_categories_api(product_id):
         "success": True,
         "categories": categories
     })
+@catalog_bp.post("/products/<int:product_id>/media")
+@role_required("seller")
+def add_product_media_api(product_id):
+    from .service import (
+        MediaError,
+        add_product_media,
+    )
+
+    data = request.get_json(silent=True) or {}
+
+    media_type = data.get("media_type", "")
+    storage_key = data.get("storage_key", "")
+    original_name = data.get("original_name", "")
+    mime_type = data.get("mime_type", "")
+    file_size = data.get("file_size", 0)
+    sort_order = data.get("sort_order", 0)
+    is_primary = data.get("is_primary", False)
+
+    try:
+        media_id = add_product_media(
+            product_id=product_id,
+            media_type=media_type,
+            storage_key=storage_key,
+            original_name=original_name,
+            mime_type=mime_type,
+            file_size=file_size,
+            sort_order=sort_order,
+            is_primary=is_primary,
+            owner_user_id=session["user_id"],
+        )
+
+        return jsonify({
+            "success": True,
+            "media_id": media_id,
+            "message": "Product media added successfully."
+        }), 201
+
+    except MediaError as error:
+        error_message = str(error)
+
+        if error_message == "Product not found.":
+            status_code = 404
+        elif error_message in {
+            "You do not own this product.",
+            "Seller account is inactive.",
+            "Seller is not approved.",
+        }:
+            status_code = 403
+        else:
+            status_code = 400
+
+        return jsonify({
+            "success": False,
+            "error": error_message
+        }), status_code
+
+
+@catalog_bp.get("/products/<int:product_id>/media")
+def get_product_media_api(product_id):
+    from .models import ProductMedia
+
+    product = Product.find_by_id(product_id)
+
+    if product is None or not product.is_active:
+        return jsonify({
+            "success": False,
+            "error": "Product not found."
+        }), 404
+
+    media = ProductMedia.list_by_product(product_id)
+
+    return jsonify({
+        "success": True,
+        "media": [
+            {
+                "id": item.id,
+                "product_id": item.product_id,
+                "media_type": item.media_type,
+                "storage_key": item.storage_key,
+                "original_name": item.original_name,
+                "mime_type": item.mime_type,
+                "file_size": item.file_size,
+                "sort_order": item.sort_order,
+                "is_primary": item.is_primary,
+                "is_active": item.is_active
+            }
+            for item in media
+        ]
+    })
