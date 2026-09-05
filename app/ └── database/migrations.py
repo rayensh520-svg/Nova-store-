@@ -188,6 +188,50 @@ def run_migrations():
             """
         )
 
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS product_media (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                product_id INTEGER NOT NULL,
+                media_type TEXT NOT NULL
+                    CHECK (
+                        media_type IN (
+                            'image',
+                            'video'
+                        )
+                    ),
+                storage_key TEXT NOT NULL,
+                original_name TEXT NOT NULL DEFAULT '',
+                mime_type TEXT NOT NULL DEFAULT '',
+                file_size INTEGER NOT NULL DEFAULT 0
+                    CHECK (file_size >= 0),
+                sort_order INTEGER NOT NULL DEFAULT 0
+                    CHECK (sort_order >= 0),
+                is_primary INTEGER NOT NULL DEFAULT 0,
+                is_active INTEGER NOT NULL DEFAULT 1,
+                created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+                FOREIGN KEY (product_id)
+                    REFERENCES products(id)
+                    ON DELETE CASCADE
+            )
+            """
+        )
+
+        connection.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_product_media_product
+            ON product_media(product_id)
+            """
+        )
+
+        connection.execute(
+            """
+            CREATE INDEX IF NOT EXISTS idx_product_media_type
+            ON product_media(media_type)
+            """
+        )
+
         connection.commit()
 
     finally:
