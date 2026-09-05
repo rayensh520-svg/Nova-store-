@@ -34,12 +34,24 @@ def test_seller_store():
         )
 
         user_id = cursor.lastrowid
+
+        connection.commit()
+
+        seller_id = create_seller(user_id)
+
+        connection.execute(
+            """
+            UPDATE sellers
+            SET verification_status = 'approved'
+            WHERE id = ?
+            """,
+            (seller_id,),
+        )
+
         connection.commit()
 
     finally:
         connection.close()
-
-    seller_id = create_seller(user_id)
 
     store_id = create_store(
         seller_id=seller_id,
