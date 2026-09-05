@@ -1,7 +1,8 @@
-from flask import jsonify, session
+from flask import jsonify, request, session
 
 from . import seller_bp
 from .models import Seller
+from .service import SellerError, create_store
 from .store import Store
 from app.auth.guards import role_required
 
@@ -57,3 +58,38 @@ def seller_store():
             "is_visible": store.is_visible
         }
     })
+
+
+@seller_bp.post("/store")
+@role_required("seller")
+def create_seller_store():
+    data = request.get_json(silent=True) or {}
+
+    name = data.get("name", "")
+    description = data.get("description", "")
+
+    seller = Seller.find_by_user_id(session["user_id"])
+
+    if seller is None:
+        return jsonify({
+            "success": False,
+            "error": "Seller profile not found."
+        }), 404
+
+    try:
+        store_id = create_store(
+            seller_id=seller.id,
+            name=name,
+            description=description,
+        )
+
+        return jsonify({
+            "success": True,
+            "store_id": store_id
+        }), 201
+
+    except SellerError as error:
+        return jsonify({
+            "success": False,
+            "error": str(error)
+        }), 400
