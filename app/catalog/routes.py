@@ -380,3 +380,92 @@ def list_categories():
             for category in categories
         ]
     })
+@catalog_bp.post("/products/<int:product_id>/categories")
+@role_required("seller")
+def add_product_category(product_id):
+    from .service import (
+        CategoryError,
+        assign_product_category,
+    )
+
+    data = request.get_json(silent=True) or {}
+
+    category_id = data.get("category_id")
+
+    try:
+        category_id = int(category_id)
+    except (TypeError, ValueError):
+        return jsonify({
+            "success": False,
+            "error": "Invalid category ID."
+        }), 400
+
+    connection = get_connection()
+
+    try:
+        product = connection.execute(
+            """
+            SELECT
+                products.id,
+                sellers.user_id
+            FROM products
+            JOIN stores
+                ON stores.id = products.store_id
+            JOIN sellers
+                ON sellers.id = stores.seller_id
+            WHERE products.id = ?
+            LIMIT 1
+            """,
+            (product_id,),
+        ).fetchone()
+    finally:
+        connection.close()
+
+    if product is None:
+        return jsonify({
+            "success": False,
+            "error": "Product not found."
+        }), 404
+
+    if product["user_id"] != session["user_id"]:
+        return jsonify({
+            "success": False,
+            "error": "You do not own this product."
+        }), 403
+
+    try:
+        assign_product_category(
+            product_id=product_id,
+            category_id=category_id,
+        )
+
+        return jsonify({
+            "success": True,
+            "message": "Category assigned successfully."
+        })
+
+    except CategoryError as error:
+        return jsonify({
+            "success": False,
+            "error": str(error)
+        }), 400
+
+
+@catalog_bp.get("/products/<int:product_id>/categories")
+def get_product_categories_api(product_id):
+    from .service import get_product_categories
+
+    product = Product.find_by_id(product_id)
+
+    if product is None or not product.is_active:
+        return jsonify({
+            "success": False,
+            "error": "Product not found."
+        }), 404
+
+    categories = get_product_categories(product_id)
+
+    return jsonify({
+        "success": True,
+        "categories": categories
+    })
