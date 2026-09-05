@@ -361,3 +361,22 @@ def deactivate_product(product_id):
 
     finally:
         connection.close()
+@catalog_bp.get("/categories")
+def list_categories():
+    from .models import Category
+
+    categories = Category.list_active()
+
+    return jsonify({
+        "success": True,
+        "categories": [
+            {
+                "id": category.id,
+                "parent_id": category.parent_id,
+                "name": category.name,
+                "slug": category.slug,
+                "is_active": category.is_active
+            }
+            for category in categories
+        ]
+    })
